@@ -1,0 +1,27 @@
+# testing
+/coverage
+
+# build tool files
+.gradle/
+.mvn/
+/out
+/build
+node_modules/
+
+# misc
+.DS_Store
+*.pem
+
+# log files
+*.log
+
+# local env files
+.env*.local
+
+# IDE files
+.idea/
+.vscode/
+nbproject/
+*.iml
+*.ipr
+*.iws
