@@ -1,0 +1,10 @@
+{
+  "name": "Test 1",
+  "title": "Example experiment configuration 1",
+  "tests": [
+    {
+      "id": 1,
+      "testType": "AB"
+    }
+  ]
+}

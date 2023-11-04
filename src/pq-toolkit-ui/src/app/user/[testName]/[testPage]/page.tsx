@@ -1,6 +1,6 @@
 'use client'
-import { useEffect, useRef, useState } from 'react'
-import { Howl } from 'howler'
+import { useState } from 'react'
+import SinglePlayer from '@/components/player/SinglePlayer'
 
 const TestPage = (): JSX.Element => {
   const testEntry = {
@@ -9,12 +9,12 @@ const TestPage = (): JSX.Element => {
     samples: [
       {
         id: 'a',
-        assetPath: 'samples/file_sample_5.mp3',
+        assetPath: '/examples/samples/file_sample_5.mp3',
         name: 'Sample A'
       },
       {
         id: 'b',
-        assetPath: 'samples/file_sample_700.mp3',
+        assetPath: '/examples/samples/file_sample_700.mp3',
         name: 'Sample B'
       }
     ],
@@ -40,7 +40,7 @@ const TestPage = (): JSX.Element => {
         </div>
         <div className="flex gap-md mt-md">
           {samples.map((sample, idx) => (
-            <SamplePlayer
+            <SinglePlayer
               key={`sample_player_${idx}`}
               assetPath={sample.assetPath}
               name={`Sample ${idx + 1}`}
@@ -58,7 +58,7 @@ const TestPage = (): JSX.Element => {
         </div>
         <div className="flex justify-center mt-md">
           <button className="bg-blue-500 rounded-md p-xs font-semibold text-white">
-            Submit
+            Next
           </button>
         </div>
       </div>
@@ -108,99 +108,6 @@ const SingleSelectQuestion = ({
         ))}
       </div>
     </div>
-  )
-}
-
-const SamplePlayer = ({
-  assetPath,
-  name
-}: {
-  assetPath: string
-  name: string
-}): JSX.Element => {
-  const playerRef = useRef<Howl>(
-    new Howl({
-      src: [assetPath],
-      volume: 0.1
-    })
-  )
-
-  const [progress, setProgress] = useState(0)
-
-  const length = Math.round(playerRef.current.duration() ?? 0)
-
-  const formatTime = (time: number): string => {
-    const min = Math.floor(time / 60)
-    const sec = String(time % 60)
-    return `${min}:${sec.padStart(2, '0')}`
-  }
-
-  const [status, setStatus] = useState<'stopped' | 'playing' | 'paused'>(
-    'stopped'
-  )
-
-  useEffect(() => {
-    const player = playerRef.current
-
-    setProgress(Math.round(playerRef.current.seek() ?? 0))
-
-    switch (status) {
-      case 'playing':
-        player.play()
-        break
-      case 'paused':
-        player.pause()
-        break
-      case 'stopped':
-        player.stop()
-        break
-    }
-  }, [playerRef, status])
-
-  return (
-    <div className="flex flex-col items-center min-w-[16rem]">
-      <div className="text-md font-semibold">{name}</div>
-      <div className="w-full rounded-full h-2 bg-blue-100">
-        <div
-          className="h-2 rounded-xl bg-blue-600"
-          style={{ width: `${((progress / length) * 100).toFixed(0)}%` }}
-        />
-      </div>
-      <div className="w-full flex justify-end text-sm font-light">
-        {formatTime(progress)}/{formatTime(length)}
-      </div>
-      <div className="flex gap-sm justify-center">
-        <ControlButton
-          button=">"
-          onClick={() => {
-            setStatus('playing')
-          }}
-        />
-        <ControlButton
-          button="||"
-          onClick={() => {
-            setStatus('paused')
-          }}
-        />
-      </div>
-    </div>
-  )
-}
-
-const ControlButton = ({
-  button,
-  onClick
-}: {
-  button: string
-  onClick: () => void
-}): JSX.Element => {
-  return (
-    <button
-      className="bg-blue-600 text-white rounded-md h-8 w-8 flex items-center justify-center"
-      onClick={onClick}
-    >
-      {button}
-    </button>
   )
 }
 
