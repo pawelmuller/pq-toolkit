@@ -1,9 +1,4 @@
 export const fetchJsonData = async (url: string): Promise<any> => {
-  const sleep = async (ms: number): Promise<void> => {
-    await new Promise((resolve) => setTimeout(resolve, ms))
-  }
-  await sleep(1000) // sleep
-
   try {
     const response = await fetch(url, {
       headers: {

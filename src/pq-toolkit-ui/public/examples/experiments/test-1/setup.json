@@ -4,7 +4,25 @@
   "tests": [
     {
       "id": 1,
-      "testType": "AB"
+      "type": "AB",
+      "samples": [
+        {
+          "id": "a",
+          "assetPath": "samples/file_sample_5.mp3"
+        },
+        {
+          "id": "b",
+          "assetPath": "samples/file_sample_700.mp3"
+        }
+      ],
+      "questions": [
+        {
+          "text": "Select better quality"
+        },
+        {
+          "text": "Select more warmth"
+        }
+      ]
     }
   ]
 }

@@ -1,38 +1,87 @@
 {
-  "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "title": "Experiment setup",
-  "description": "Configuration for PQ Toolkit experiment",
-  "type": "object",
-  "properties": {
-    "name": {
-      "type": "string"
-    },
-    "title": {
-      "type": "string"
-    },
-    "tests": {
-      "type": "array",
-      "items": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "number"
-          },
-          "testType": {
-            "type": "string"
-          }
+  "$ref": "#/definitions/ExperimentSetup",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "definitions": {
+    "ExperimentSetup": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string"
         },
-        "required": [
-          "id",
-          "testType"
-        ]
+        "tests": {
+          "items": {
+            "$ref": "#/definitions/TestSetup"
+          },
+          "type": "array"
+        },
+        "title": {
+          "type": "string"
+        }
       },
-      "minItems": 1
+      "required": [
+        "name",
+        "title",
+        "tests"
+      ],
+      "type": "object"
+    },
+    "TestQuestion": {
+      "additionalProperties": false,
+      "properties": {
+        "text": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "text"
+      ],
+      "type": "object"
+    },
+    "TestSample": {
+      "additionalProperties": false,
+      "properties": {
+        "assetPath": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "assetPath"
+      ],
+      "type": "object"
+    },
+    "TestSetup": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "number"
+        },
+        "questions": {
+          "items": {
+            "$ref": "#/definitions/TestQuestion"
+          },
+          "type": "array"
+        },
+        "samples": {
+          "items": {
+            "$ref": "#/definitions/TestSample"
+          },
+          "type": "array"
+        },
+        "type": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "type",
+        "samples",
+        "questions"
+      ],
+      "type": "object"
     }
-  },
-  "required": [
-    "name",
-    "title",
-    "tests"
-  ]
+  }
 }
