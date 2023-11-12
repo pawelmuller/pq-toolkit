@@ -14,7 +14,8 @@ const SinglePlayer = ({
   const playerRef = useRef<Howl>(
     new Howl({
       src: [assetPath],
-      volume: 0.1
+      volume: 0.1,
+      loop: true
     })
   )
 
@@ -26,20 +27,40 @@ const SinglePlayer = ({
     'stopped'
   )
 
+  const progressUpdater: React.MutableRefObject<NodeJS.Timeout | null> =
+    useRef(null)
+
+  const startUpdating = (): void => {
+    if (progressUpdater.current == null) {
+      progressUpdater.current = setInterval(() => {
+        setProgress(Math.round(playerRef.current.seek() ?? 0))
+      }, 100)
+    }
+  }
+
+  const stopUpdating = (): void => {
+    if (progressUpdater.current != null) {
+      clearInterval(progressUpdater.current)
+      progressUpdater.current = null
+    }
+  }
+
   useEffect(() => {
     const player = playerRef.current
-
-    setProgress(Math.round(playerRef.current.seek() ?? 0))
 
     switch (status) {
       case 'playing':
         player.play()
+        startUpdating()
         break
       case 'paused':
         player.pause()
+        stopUpdating()
         break
       case 'stopped':
         player.stop()
+        stopUpdating()
+        setProgress(Math.round(playerRef.current.seek() ?? 0))
         break
     }
   }, [playerRef, status])
