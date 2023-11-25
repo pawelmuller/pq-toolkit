@@ -9,6 +9,7 @@ export const fetchJsonData = async (url: string): Promise<any> => {
     const data = JSON.parse(text)
     return data
   } catch (err) {
+    console.log(err)
     throw new Error('Invalid JSON file')
   }
 }
