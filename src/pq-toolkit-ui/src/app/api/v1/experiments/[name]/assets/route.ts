@@ -1,19 +1,6 @@
 import fs from 'fs'
-import path from 'path'
 import { writeFile } from 'fs/promises'
 import { type NextRequest, NextResponse } from 'next/server'
-
-export const GET = async (
-  request: Request,
-  { params }: { params: { name: string } }
-): Promise<Response> => {
-  const name = params.name
-  const dir = path.resolve('./public/examples/experiments', name)
-  const data = fs.readFileSync(path.resolve(dir, 'setup.json'), 'utf8') // TODO: check if file exists
-  const jsonData = JSON.parse(data)
-
-  return Response.json(jsonData)
-}
 
 export const POST = async (
   request: NextRequest,
@@ -30,8 +17,14 @@ export const POST = async (
   const bytes = await file.arrayBuffer()
   const buffer = Buffer.from(bytes)
 
-  const path = `./public/examples/experiments/${name}/${file.name}`
-  await writeFile(path, buffer, 'utf-8')
+  const dir = `./public/examples/experiments/${name}/samples`
+
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir)
+  }
+
+  const path = `./public/examples/experiments/${name}/samples/${file.name}`
+  await writeFile(path, buffer)
   console.log(`uploaded ${path}`)
 
   return NextResponse.json({ success: true })
