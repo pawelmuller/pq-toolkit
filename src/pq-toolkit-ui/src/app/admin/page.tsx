@@ -1,5 +1,8 @@
 'use client'
 
+import { useState } from 'react'
+import { UploadForm } from './uploadForm'
+
 const AdminPage = (): JSX.Element => {
   const addNewExperiment = (name: string): void => {
     console.log(name)
@@ -8,6 +11,16 @@ const AdminPage = (): JSX.Element => {
       body: JSON.stringify({ name })
     }).catch(console.error)
   }
+
+  const deleteExperiment = (name: string): void => {
+    console.log(name)
+    fetch('/api/v1/experiments', {
+      method: 'DELETE',
+      body: JSON.stringify({ name })
+    }).catch(console.error)
+  }
+
+  const [name, setName] = useState('')
 
   return (
     <main className="flex min-h-screen p-24">
@@ -19,13 +32,41 @@ const AdminPage = (): JSX.Element => {
           <h1 className="text-6xl font-bold">Admin page</h1>
         </div>
         <div className="mt-md">
+          <div>
+            <input
+              className="text-black"
+              onChange={(e) => {
+                setName(e.target.value)
+              }}
+            />
+          </div>
+          <div className="mt-sm items-center flex justify-center">
+            <button
+              className="bg-green-500 text-white p-xs rounded-sm"
+              onClick={() => {
+                addNewExperiment(name)
+              }}
+            >
+              ADD
+            </button>
+          </div>
+        </div>
+        <div className="mt-md">
+          Upload configuration
+          <UploadForm url={`/api/v1/experiments/${name}`} />
+        </div>
+        <div className="mt-md">
+          Upload samples
+          <UploadForm url={`/api/v1/experiments/${name}/assets`} />
+        </div>
+        <div className="mt-lg">
           <button
-            className=""
+            className="bg-red-500 text-white p-xs rounded-sm"
             onClick={() => {
-              addNewExperiment('new')
+              deleteExperiment(name)
             }}
           >
-            ADD
+            DELETE
           </button>
         </div>
       </div>
