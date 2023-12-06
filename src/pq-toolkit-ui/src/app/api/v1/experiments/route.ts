@@ -1,14 +1,32 @@
 import fs from 'fs'
-import path from 'path'
+import {
+  getAllExperimentsBasePath,
+  getAllExperimentsIndexBasePath,
+  getExperimentBasePath,
+  readJsonFile,
+  writeJsonFile
+} from '../utils'
+import { EXPERIMENT_INDEX_TEMPLATE } from '../constants'
 
-const readJsonFile = (filePath: string, fileName: string): any => {
-  const dir = path.resolve(filePath)
-  const data = fs.readFileSync(path.resolve(dir, fileName), 'utf8')
-  return JSON.parse(data)
+const initCheck = (): boolean => {
+  const dir = getAllExperimentsBasePath()
+  if (!fs.existsSync(dir)) return false
+  const indexPath = getAllExperimentsIndexBasePath()
+  if (!fs.existsSync(indexPath)) return false
+  return true
+}
+
+const runInit = (): void => {
+  console.log(`Experiment index init at ${getAllExperimentsBasePath()}`)
+  const dir = getAllExperimentsBasePath()
+  fs.mkdirSync(dir, { recursive: true })
+  const indexPath = getAllExperimentsIndexBasePath()
+  fs.writeFileSync(indexPath, EXPERIMENT_INDEX_TEMPLATE)
 }
 
 export const GET = async (): Promise<Response> => {
-  const jsonData = readJsonFile('./public/examples/experiments', 'index.json')
+  if (!initCheck()) runInit()
+  const jsonData = readJsonFile(getAllExperimentsIndexBasePath())
 
   return Response.json(jsonData)
 }
@@ -16,20 +34,16 @@ export const GET = async (): Promise<Response> => {
 export const POST = async (request: Request): Promise<Response> => {
   const body = await request.json()
 
+  // Update experiment index
   const jsonData: { experiments: string[] } = readJsonFile(
-    './public/examples/experiments',
-    'index.json'
+    getAllExperimentsIndexBasePath()
   )
   const { experiments } = jsonData
   experiments.push(body.name)
+  writeJsonFile(getAllExperimentsIndexBasePath(), { experiments })
 
-  fs.writeFileSync(
-    './public/examples/experiments/index.json',
-    JSON.stringify({ experiments })
-  )
-
-  const dir = `./public/examples/experiments/${body.name}`
-
+  // Create dir for new experiment configuration
+  const dir = getExperimentBasePath(body.name)
   if (!fs.existsSync(dir)) {
     fs.mkdirSync(dir)
   }
@@ -40,20 +54,18 @@ export const POST = async (request: Request): Promise<Response> => {
 export const DELETE = async (request: Request): Promise<Response> => {
   const body = await request.json()
 
+  // Update experiment index
   const jsonData: { experiments: string[] } = readJsonFile(
-    './public/examples/experiments',
-    'index.json'
+    getAllExperimentsIndexBasePath()
   )
   const { experiments } = jsonData
   const filteredExperiments = experiments.filter((item) => item !== body.name)
+  writeJsonFile(getAllExperimentsIndexBasePath(), {
+    experiments: filteredExperiments
+  })
 
-  fs.writeFileSync(
-    './public/examples/experiments/index.json',
-    JSON.stringify({ experiments: filteredExperiments })
-  )
-
-  const dir = `./public/examples/experiments/${body.name}`
-
+  // Remove experiment directory (with all data)
+  const dir = getExperimentBasePath(body.name)
   if (fs.existsSync(dir)) {
     fs.rmSync(dir, { recursive: true, force: true })
   }
