@@ -4,7 +4,7 @@ import SinglePlayer from '@/components/player/SinglePlayer'
 import Loading from '../loading'
 import { ExperimentContext } from '../layout'
 import InvalidConfigurationError from '../invalid-configuration-error'
-import { type TestSample } from '@/utils/schemas/experimentSetup'
+import { type TestSample } from '@/schemas/experimentSetup'
 import Link from 'next/link'
 
 export const revalidate = 0
@@ -12,7 +12,7 @@ export const revalidate = 0
 const TestPage = ({
   params
 }: {
-  params: { experimentName: string, step: string }
+  params: { experimentName: string; step: string }
 }): JSX.Element => {
   const context = useContext(ExperimentContext)
   const data = context?.data
@@ -62,21 +62,19 @@ const TestPage = ({
               </button>
             </Link>
           )}
-          {step === tests.length
-            ? (
+          {step === tests.length ? (
             <Link href="finish">
               <button className="bg-blue-500 rounded-md p-xs font-semibold text-white">
                 Finish
               </button>
             </Link>
-              )
-            : (
+          ) : (
             <Link href={(step + 1).toString()}>
               <button className="bg-blue-500 rounded-md p-xs font-semibold text-white">
                 Next
               </button>
             </Link>
-              )}
+          )}
         </div>
       </div>
     </main>

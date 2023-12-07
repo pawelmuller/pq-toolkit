@@ -2,8 +2,8 @@
 import { fetchJsonData } from '@/app/utils/dataFetch'
 import { type Draft, Draft07, type JsonError } from 'json-schema-library'
 import { createContext, useEffect, useState } from 'react'
-import experimentSchema from '@/utils/schemas/experiment-setup.schema.json'
-import { type ExperimentSetup } from '@/utils/schemas/experimentSetup'
+import experimentSchema from '@/schemas/experiment-setup.schema.json'
+import { type ExperimentSetup } from '@/schemas/experimentSetup'
 
 export const ExperimentContext = createContext<{
   data: ExperimentSetup
