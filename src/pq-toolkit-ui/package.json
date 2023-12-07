@@ -15,7 +15,9 @@
     "next": "^14.0.1",
     "react": "^18",
     "react-dom": "^18",
-    "react-icons": "^4.11.0"
+    "react-icons": "^4.11.0",
+    "swr": "^2.2.4",
+    "zod": "^3.22.4"
   },
   "devDependencies": {
     "@types/howler": "^2.2.10",
@@ -27,6 +29,7 @@
     "autoprefixer": "^10",
     "eslint": "^8.52.0",
     "eslint-config-next": "14.0.0",
+    "eslint-config-prettier": "^8.8.0",
     "eslint-config-standard-with-typescript": "^39.1.1",
     "eslint-plugin-import": "^2.29.0",
     "eslint-plugin-n": "^16.2.0",
