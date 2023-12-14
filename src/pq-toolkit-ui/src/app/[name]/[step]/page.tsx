@@ -12,7 +12,7 @@ export const revalidate = 0
 const TestPage = ({
   params
 }: {
-  params: { experimentName: string; step: string }
+  params: { name: string; step: string }
 }): JSX.Element => {
   const context = useContext(ExperimentContext)
   const data = context?.data
@@ -40,7 +40,7 @@ const TestPage = ({
           {samples.map((sample, idx) => (
             <SinglePlayer
               key={`sample_player_${idx}`}
-              assetPath={`${process.env.NEXT_PUBLIC_API_URL}/api/v1/experiments/${params.experimentName}/${sample.assetPath}`}
+              assetPath={`${process.env.NEXT_PUBLIC_API_URL}/api/v1/experiments/${params.name}/${sample.assetPath}`}
               name={`Sample ${idx + 1}`}
             />
           ))}

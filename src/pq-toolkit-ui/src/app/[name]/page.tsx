@@ -8,9 +8,9 @@ import InvalidConfigurationError from './invalid-configuration-error'
 const ExperimentWelcomePage = ({
   params
 }: {
-  params: { experimentName: string }
+  params: { name: string }
 }): JSX.Element => {
-  const { experimentName } = params
+  const { name: experimentName } = params
 
   return (
     <main className="flex min-h-screen min-w-[480px] flex-col items-center justify-center">
@@ -37,7 +37,7 @@ const WelcomeContent = async ({
       </div>
       <div className="mt-sm">{data.title}</div>
       <div className="mt-md">
-        <Link href={`/user/${experimentName}/1`}>
+        <Link href={`/${experimentName}/1`}>
           <button className="bg-blue-500 p-xs rounded-lg text-white font-bold">
             Start
           </button>
