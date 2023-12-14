@@ -57,7 +57,7 @@ const AdminPage = (): JSX.Element => {
         </div>
         <div className="mt-md">
           Upload samples
-          <UploadForm url={`/api/v1/experiments/${name}/assets`} />
+          <UploadForm url={`/api/v1/experiments/${name}/samples`} />
         </div>
         <div className="mt-lg">
           <button
