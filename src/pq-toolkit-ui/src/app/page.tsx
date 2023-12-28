@@ -1,8 +1,11 @@
-import { fetchJsonData } from '@/utils/dataFetch'
+import fs from 'fs'
+import path from 'path'
 import Link from 'next/link'
 import { Suspense } from 'react'
 
-const Home = async (): Promise<JSX.Element> => {
+export const revalidate = 0
+
+const Home = (): JSX.Element => {
   return (
     <main className="flex min-h-screen p-24">
       <div className="flex flex-col h-full w-full items-center justify-center my-auto">
@@ -27,13 +30,13 @@ const Home = async (): Promise<JSX.Element> => {
 }
 
 const ExperimentsList = async (): Promise<JSX.Element> => {
-  const data: { experiments: any[] } = await fetchJsonData(
-    'http://localhost:3000/examples/experiments/index.json'
-  )
+  const dir = path.resolve('./public', 'examples', 'experiments')
+  const data = fs.readFileSync(path.resolve(dir, 'index.json'), 'utf8')
+  const jsonData: { experiments: any[] } = JSON.parse(data)
 
   return (
     <ul>
-      {data.experiments.map((e, idx) => (
+      {jsonData.experiments.map((e, idx) => (
         <li key={idx}>
           <Link href={`/user/${e}`}>{e}</Link>
         </li>

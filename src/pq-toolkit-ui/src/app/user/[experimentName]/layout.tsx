@@ -1,5 +1,5 @@
 'use client'
-import { fetchJsonData } from '@/utils/dataFetch'
+import { fetchJsonData } from '@/app/utils/dataFetch'
 import { type Draft, Draft07, type JsonError } from 'json-schema-library'
 import { createContext, useEffect, useState } from 'react'
 import experimentSchema from '@/utils/schemas/experiment-setup.schema.json'
@@ -23,9 +23,7 @@ const TestProviderWrapper = ({
   const [error, setError] = useState<boolean>(false)
 
   useEffect(() => {
-    fetchJsonData(
-      `http://localhost:3000/examples/experiments/${experimentName}/setup.json`
-    )
+    fetchJsonData(`/api/v1/experiments/${experimentName}`)
       .then((result) => {
         const jsonSchema: Draft = new Draft07(experimentSchema)
         const errors: JsonError[] = jsonSchema.validate(result)

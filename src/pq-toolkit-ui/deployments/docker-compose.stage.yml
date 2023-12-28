@@ -1,0 +1,12 @@
+version: '3'
+
+services:
+  pq-toolkit-ui-stage:
+    build:
+      context: ../
+      dockerfile: Dockerfile
+      args:
+        ENV: stage
+    image: pq-toolkit-ui-stage
+    ports:
+      - 80:3000

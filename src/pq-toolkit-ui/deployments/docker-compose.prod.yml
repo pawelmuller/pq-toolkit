@@ -1,0 +1,12 @@
+version: '3'
+
+services:
+  pq-toolkit-ui-prod:
+    build:
+      context: ../
+      dockerfile: Dockerfile
+      args:
+        ENV: prod
+    image: pq-toolkit-ui-prod
+    ports:
+      - 80:3000
