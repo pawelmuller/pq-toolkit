@@ -3,15 +3,39 @@
 import { type ABTest } from '@/lib/schemas/experimentSetup'
 import SingleSelectQuestion from './common/SingleSelectQuestion'
 import SinglePlayer from '../player/SinglePlayer'
+import { type ABResult } from '@/lib/schemas/experimentState'
+import { useEffect, useState } from 'react'
 
 const ABTestComponent = ({
   testData,
-  experimentName
+  experimentName,
+  setAnswer
 }: {
   testData: ABTest
   experimentName: string
+  setAnswer: (result: ABResult) => void
 }): JSX.Element => {
   const { samples, questions } = testData
+
+  const [selected, setSelected] = useState<Record<string, string>>({})
+
+  const updateSelections = (questionId: string, sampleIdx: number): void => {
+    const selectedSampleId = samples[sampleIdx].sampleId
+    setSelected((prev) => ({
+      ...prev,
+      [questionId]: selectedSampleId
+    }))
+  }
+
+  useEffect(() => {
+    const result: ABResult = {
+      selections: Object.keys(selected).map((questionId) => ({
+        questionId,
+        sampleId: selected[questionId]
+      }))
+    }
+    setAnswer(result)
+  }, [setAnswer, selected])
 
   return (
     <div className="bg-white rounded-md p-lg flex flex-col items-center text-black">
@@ -31,7 +55,7 @@ const ABTestComponent = ({
             text={question.text}
             sampleCount={samples.length}
             onOptionSelect={(selectedId) => {
-              console.log(selectedId)
+              updateSelections(question.questionId, selectedId)
             }}
           />
         ))}

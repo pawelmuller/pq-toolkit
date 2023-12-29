@@ -11,6 +11,13 @@ import {
 import useSWR from 'swr'
 import Loading from './loading'
 import { validateTestSchema } from '@/lib/schemas/utils'
+import {
+  type BaseResult,
+  type ABResult,
+  type ABXResult,
+  type APEResult,
+  type MUSHRAResult
+} from '@/lib/schemas/experimentState'
 
 /**
  * Context which provides all values used during testing
@@ -19,6 +26,9 @@ import { validateTestSchema } from '@/lib/schemas/utils'
 export const ExperimentContext = createContext<{
   data: ExperimentSetup
   error: boolean
+  results: Record<string, unknown>
+  setAnswer: (testNumber: number, result: BaseResult) => void
+  saveResults: () => Promise<void>
 } | null>(null)
 
 const ExperimentContextProvider = ({
@@ -30,6 +40,7 @@ const ExperimentContextProvider = ({
 }): JSX.Element => {
   const { name: experimentName } = params
 
+  // Loading and parsing experiment data
   const {
     data: apiData,
     error,
@@ -50,7 +61,6 @@ const ExperimentContextProvider = ({
     apiData,
     ExperimentSetupSchema
   )
-  console.log(validationError)
   if (validationError != null)
     return (
       <div className="flex w-full min-h-screen items-center justify-center text-center h2">
@@ -65,7 +75,6 @@ const ExperimentContextProvider = ({
       testValidationErrors.push(validationResult.validationError)
     else test = validationResult.data
   })
-  console.log(testValidationErrors)
   if (testValidationErrors.length > 0)
     return (
       <div className="flex w-full min-h-screen items-center justify-center text-center h2">
@@ -73,8 +82,28 @@ const ExperimentContextProvider = ({
       </div>
     )
 
+  // Prepare results object
+  const results: Record<string, BaseResult> = {}
+
+  const setAnswer = (
+    testNumber: number,
+    result: ABResult | ABXResult | MUSHRAResult | APEResult
+  ): void => {
+    results[testNumber] = result
+  }
+
+  const saveResults = async (): Promise<void> => {
+    await fetch(`/api/v1/experiments/${experimentName}/results`, {
+      method: 'POST',
+      body: JSON.stringify(results)
+    })
+    console.log(results)
+  }
+
   return (
-    <ExperimentContext.Provider value={{ data, error }}>
+    <ExperimentContext.Provider
+      value={{ data, error, results, setAnswer, saveResults }}
+    >
       {children}
     </ExperimentContext.Provider>
   )

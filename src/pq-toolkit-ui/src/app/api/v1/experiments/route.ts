@@ -3,6 +3,7 @@ import {
   getAllExperimentsBasePath,
   getAllExperimentsIndexBasePath,
   getExperimentBasePath,
+  getExperimentResultsPath,
   getExperimentSamplesPath,
   readJsonFile,
   writeJsonFile
@@ -52,6 +53,11 @@ export const POST = async (request: Request): Promise<Response> => {
   const samplesDir = getExperimentSamplesPath(body.name)
   if (!fs.existsSync(samplesDir)) {
     fs.mkdirSync(samplesDir)
+  }
+
+  const resultsDir = getExperimentResultsPath(body.name)
+  if (!fs.existsSync(resultsDir)) {
+    fs.mkdirSync(resultsDir)
   }
 
   return Response.json({ experiments })

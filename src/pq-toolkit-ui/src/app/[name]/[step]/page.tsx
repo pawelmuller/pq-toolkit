@@ -25,6 +25,7 @@ const TestPage = ({
 }): JSX.Element => {
   const context = useContext(ExperimentContext)
   const data = context?.data
+  const saveResults = context?.saveResults
 
   if (context?.error === true) return <InvalidConfigurationError />
   if (data == null) return <Loading />
@@ -45,6 +46,9 @@ const TestPage = ({
           <ABTestComponent
             testData={currentTest as ABTest}
             experimentName={params.name}
+            setAnswer={(result) => {
+              context?.setAnswer(currentTest.testNumber, result)
+            }}
           />
         )
       case TestTypeEnum.enum.ABX:
@@ -70,7 +74,7 @@ const TestPage = ({
             </Link>
           )}
           {step === tests.length ? (
-            <Link href="finish">
+            <Link href="finish" onClick={saveResults}>
               <button className="bg-blue-500 rounded-md p-xs font-semibold text-white">
                 Finish
               </button>

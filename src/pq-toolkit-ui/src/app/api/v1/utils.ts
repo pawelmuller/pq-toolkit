@@ -74,3 +74,7 @@ export const getExperimentBasePath = (experimentName: string): string => {
 export const getExperimentSamplesPath = (experimentName: string): string => {
   return path.resolve(getExperimentBasePath(experimentName), 'samples')
 }
+
+export const getExperimentResultsPath = (experimentName: string): string => {
+  return path.resolve(getExperimentBasePath(experimentName), 'results')
+}
