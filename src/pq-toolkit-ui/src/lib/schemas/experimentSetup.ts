@@ -40,8 +40,9 @@ export type TestType = z.infer<typeof TestTypeEnum>
  * Base test schema, all test schemas extend it
  */
 export const BaseTestSchema = z.object({
-  testId: z.number(),
-  type: TestTypeEnum
+  testNumber: z.number(),
+  type: TestTypeEnum,
+  samples: z.array(SampleSchema)
 })
 
 export type BaseTest = z.infer<typeof BaseTestSchema>
@@ -53,7 +54,7 @@ export type BaseTest = z.infer<typeof BaseTestSchema>
  */
 export const ABTestSchema = BaseTestSchema.extend({
   type: z.enum(['AB']),
-  samples: z.array(SampleSchema).length(2),
+  samples: z.array(SampleSchema).min(2),
   questions: z.array(QuestionSchema).min(1)
 })
 

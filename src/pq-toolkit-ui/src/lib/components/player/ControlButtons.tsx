@@ -5,7 +5,11 @@ export const PlayButton = ({
 }: {
   onClick: () => void
 }): JSX.Element => {
-  return <ControlButton label={<FaPlay />} onClick={onClick} />
+  return (
+    <div data-testid="play-button">
+      <ControlButton label={<FaPlay />} onClick={onClick} />
+    </div>
+  )
 }
 
 export const PauseButton = ({
@@ -13,7 +17,11 @@ export const PauseButton = ({
 }: {
   onClick: () => void
 }): JSX.Element => {
-  return <ControlButton label={<FaPause />} onClick={onClick} />
+  return (
+    <div data-testid="pause-button">
+      <ControlButton label={<FaPause />} onClick={onClick} />
+    </div>
+  )
 }
 
 export const StopButton = ({
@@ -21,7 +29,11 @@ export const StopButton = ({
 }: {
   onClick: () => void
 }): JSX.Element => {
-  return <ControlButton label={<FaStop />} onClick={onClick} />
+  return (
+    <div data-testid="stop-button">
+      <ControlButton label={<FaStop />} onClick={onClick} />
+    </div>
+  )
 }
 
 const ControlButton = ({
