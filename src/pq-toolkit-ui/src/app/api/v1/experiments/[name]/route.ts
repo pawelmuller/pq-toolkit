@@ -1,8 +1,6 @@
 import path from 'path'
 import { type NextRequest, NextResponse } from 'next/server'
 import { getExperimentBasePath, readJsonFile, writeJsonFile } from '../../utils'
-import { type Draft, Draft07, type JsonError } from 'json-schema-library'
-import experimentSetupSchema from '@/schemas/experiment-setup.schema.json'
 
 export const GET = async (
   request: Request,
@@ -34,18 +32,8 @@ export const POST = async (
     )
   }
 
-  // validate if json setup is correct
+  // parse file content
   const jsonContent = await JSON.parse(await file.text())
-  const jsonSchema: Draft = new Draft07(experimentSetupSchema)
-  const errors: JsonError[] = jsonSchema.validate(jsonContent)
-
-  if (errors.length > 0) {
-    return NextResponse.json(
-      { message: 'Invalid json setup file', errors },
-      { status: 400 }
-    )
-  }
-
   const filePath = path.resolve(getExperimentBasePath(name), 'setup.json')
   writeJsonFile(filePath, jsonContent)
 

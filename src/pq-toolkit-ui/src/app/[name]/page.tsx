@@ -14,15 +14,15 @@ const ExperimentWelcomePage = ({
 
   return (
     <main className="flex min-h-screen min-w-[480px] flex-col items-center justify-center">
-      <WelcomeContent testName={experimentName} />
+      <WelcomeContent name={experimentName} />
     </main>
   )
 }
 
 const WelcomeContent = async ({
-  testName: experimentName
+  name: experimentName
 }: {
-  testName: string
+  name: string
 }): Promise<JSX.Element> => {
   const context = useContext(ExperimentContext)
   const data = context?.data
@@ -33,9 +33,9 @@ const WelcomeContent = async ({
   return (
     <div className="bg-white rounded-md p-lg flex flex-col items-center text-black">
       <div className="text-lg">
-        This is welcome page for experiment <b>{experimentName}</b>
+        Welcome to experiment <b>{data.name}</b>
       </div>
-      <div className="mt-sm">{data.title}</div>
+      <div className="mt-sm">{data.description}</div>
       <div className="mt-md">
         <Link href={`/${experimentName}/1`}>
           <button className="bg-blue-500 p-xs rounded-lg text-white font-bold">

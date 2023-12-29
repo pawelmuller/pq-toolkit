@@ -1,10 +1,19 @@
 'use client'
-import { useContext, useState } from 'react'
-import SinglePlayer from '@/components/player/SinglePlayer'
+import { useContext } from 'react'
 import Loading from '../loading'
 import { ExperimentContext } from '../layout'
 import InvalidConfigurationError from '../invalid-configuration-error'
-import { type TestSample } from '@/schemas/experimentSetup'
+import {
+  type ABTest,
+  type ABXTest,
+  type APETest,
+  type MUSHRATest,
+  TestTypeEnum
+} from '@/lib/schemas/experimentSetup'
+import ABTestComponent from '@/lib/components/experiments/ABTestComponent'
+import ABXTestComponent from '@/lib/components/experiments/ABXTestComponent'
+import MUSHRATestComponent from '@/lib/components/experiments/MUSHRATestComponent'
+import APETestComponent from '@/lib/components/experiments/APETestComponent'
 import Link from 'next/link'
 
 export const revalidate = 0
@@ -28,32 +37,30 @@ const TestPage = ({
   }
 
   const currentTest = tests[step - 1]
-  const { type, samples, questions } = currentTest
+
+  const getTestComponent = (): JSX.Element => {
+    switch (currentTest.type) {
+      case TestTypeEnum.enum.AB:
+        return (
+          <ABTestComponent
+            testData={currentTest as ABTest}
+            experimentName={params.name}
+          />
+        )
+      case TestTypeEnum.enum.ABX:
+        return <ABXTestComponent testData={currentTest as ABXTest} />
+      case TestTypeEnum.enum.MUSHRA:
+        return <MUSHRATestComponent testData={currentTest as MUSHRATest} />
+      case TestTypeEnum.enum.APE:
+        return <APETestComponent testData={currentTest as APETest} />
+    }
+  }
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center">
-      <div className="bg-white rounded-md p-lg flex flex-col items-center text-black">
-        <div className="text-xl font-semibold">
-          Test {type} #{step}
-        </div>
-        <div className="flex gap-md mt-md">
-          {samples.map((sample, idx) => (
-            <SinglePlayer
-              key={`sample_player_${idx}`}
-              assetPath={`${process.env.NEXT_PUBLIC_API_URL}/api/v1/experiments/${params.name}/${sample.assetPath}`}
-              name={`Sample ${idx + 1}`}
-            />
-          ))}
-        </div>
-        <div className="flex flex-col gap-sm w-full mt-md">
-          {questions.map((question, idx) => (
-            <SingleSelectQuestion
-              key={`question_${idx}`}
-              text={question.text}
-              options={samples}
-            />
-          ))}
-        </div>
+    <div className="min-h-screen flex flex-col items-center">
+      <h1 className="text-xl font-semibold pt-md mt-auto">Test #{step}</h1>
+      <div className="mb-auto mt-md">
+        {getTestComponent()}
         <div className="flex justify-center mt-md gap-sm">
           {step > 1 && (
             <Link href={(step - 1).toString()}>
@@ -76,51 +83,6 @@ const TestPage = ({
             </Link>
           )}
         </div>
-      </div>
-    </main>
-  )
-}
-
-const SingleSelectQuestion = ({
-  text,
-  options
-}: {
-  text: string
-  options: TestSample[]
-}): JSX.Element => {
-  const [selectableOptions, setSelectableOptions] = useState(
-    options.map((option) => ({
-      ...option,
-      selected: false
-    }))
-  )
-
-  const onOptionSelect = (selectedId: string): void => {
-    setSelectableOptions((prevState) => {
-      return prevState.map((option) => ({
-        ...option,
-        selected: option.id === selectedId
-      }))
-    })
-  }
-
-  return (
-    <div className="w-full">
-      <div className="text-md font-semibold">{text}</div>
-      <div className="flex gap-sm">
-        {selectableOptions.map((option, idx) => (
-          <div
-            key={`option_${idx}`}
-            className={`w-full min-h-[4rem] h-max max-h-[8rem] rounded-md ${
-              option.selected ? 'bg-blue-500' : 'bg-blue-100'
-            } flex items-center justify-center cursor-pointer`}
-            onClick={() => {
-              onOptionSelect(option.id)
-            }}
-          >
-            Sample {idx + 1}
-          </div>
-        ))}
       </div>
     </div>
   )
