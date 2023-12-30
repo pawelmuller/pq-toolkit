@@ -41,6 +41,14 @@ export const POST = async (request: Request): Promise<Response> => {
     getAllExperimentsIndexBasePath()
   )
   const { experiments } = jsonData
+
+  if (experiments.includes(body.name)) {
+    return Response.json(
+      { error: 'Experiment already exists' },
+      { status: 409 }
+    )
+  }
+
   experiments.push(body.name)
   writeJsonFile(getAllExperimentsIndexBasePath(), { experiments })
 

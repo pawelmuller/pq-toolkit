@@ -20,7 +20,13 @@ export const readJsonFile = (filePath: string): any => {
  * @param data any data to be saved, parsed by JSON.stringify
  * @note uses UTF8 encoding
  */
-export const writeJsonFile = (filePath: string, data: any): void => {
+export const writeJsonFile = (
+  filePath: string,
+  data: any,
+  overwriteProtection?: boolean
+): void => {
+  if (overwriteProtection === true && fs.existsSync(filePath))
+    throw new Error(`File already exists: ${filePath}`)
   fs.writeFileSync(path.resolve(filePath), JSON.stringify(data), 'utf-8')
 }
 
@@ -46,6 +52,21 @@ export const writeFile = async (
   const bytes = await data.arrayBuffer()
   const buffer = Buffer.from(bytes)
   fs.writeFileSync(path.resolve(filePath, fileName), buffer)
+}
+
+/**
+ * Gets filenames with extension from given directory
+ * @param dirPath
+ * @param extension (optional)
+ * @returns array of filenames
+ */
+export const getFilesInDir = (
+  dirPath: string,
+  extension?: string
+): string[] => {
+  const files = fs.readdirSync(dirPath)
+  if (extension == null) return files
+  return files.filter((file) => file.endsWith(extension))
 }
 
 /**

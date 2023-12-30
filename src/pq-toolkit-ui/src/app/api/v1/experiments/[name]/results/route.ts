@@ -1,12 +1,21 @@
 import path from 'path'
 import { type NextRequest, NextResponse } from 'next/server'
-import { getExperimentResultsPath, writeJsonFile } from '../../../utils'
+import {
+  getExperimentResultsPath,
+  getFilesInDir,
+  writeJsonFile
+} from '../../../utils'
 
 export const GET = async (
   request: Request,
   { params }: { params: { name: string } }
 ): Promise<Response> => {
-  return NextResponse.json({ message: 'Not implemented' }, { status: 501 })
+  const name = params.name
+
+  const dirPath = getExperimentResultsPath(name)
+  const files = getFilesInDir(dirPath, '.json')
+
+  return NextResponse.json({ results: files })
 }
 
 export const POST = async (
