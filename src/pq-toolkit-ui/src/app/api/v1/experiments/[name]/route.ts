@@ -1,18 +1,20 @@
-import fs from 'fs'
 import path from 'path'
-import { writeFile } from 'fs/promises'
 import { type NextRequest, NextResponse } from 'next/server'
+import { getExperimentBasePath, readJsonFile, writeJsonFile } from '../../utils'
 
 export const GET = async (
   request: Request,
   { params }: { params: { name: string } }
 ): Promise<Response> => {
-  const name = params.name
-  const dir = path.resolve('./public/examples/experiments', name)
-  const data = fs.readFileSync(path.resolve(dir, 'setup.json'), 'utf8') // TODO: check if file exists
-  const jsonData = JSON.parse(data)
-
-  return Response.json(jsonData)
+  const experimentName = params.name
+  try {
+    const jsonData = readJsonFile(
+      path.resolve(getExperimentBasePath(experimentName), 'setup.json')
+    )
+    return Response.json(jsonData)
+  } catch (error) {
+    return NextResponse.json({ message: 'File not found' }, { status: 404 })
+  }
 }
 
 export const POST = async (
@@ -23,16 +25,18 @@ export const POST = async (
   const file: File | null = data.get('file') as unknown as File
   const name = params.name
 
-  if (file == null || name == null) {
-    return NextResponse.json({ success: false })
+  if (file == null) {
+    return NextResponse.json(
+      { message: 'Missing file in request body' },
+      { status: 400 }
+    )
   }
 
-  const bytes = await file.arrayBuffer()
-  const buffer = Buffer.from(bytes)
+  // parse file content
+  const jsonContent = await JSON.parse(await file.text())
+  const filePath = path.resolve(getExperimentBasePath(name), 'setup.json')
+  writeJsonFile(filePath, jsonContent)
 
-  const path = `./public/examples/experiments/${name}/${file.name}`
-  await writeFile(path, buffer, 'utf-8')
-  console.log(`uploaded ${path}`)
-
+  console.log(`Uploaded setup file to ${filePath}`)
   return NextResponse.json({ success: true })
 }
