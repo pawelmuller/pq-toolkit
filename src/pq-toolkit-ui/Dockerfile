@@ -24,7 +24,7 @@ COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 # This will do the trick, use the corresponding env file for each environment.
 ARG ENV
-COPY .env.$ENV.sample .env.production
+COPY .env.$ENV .env.production
 RUN yarn build
 
 # 3. Production image, copy all the files and run next

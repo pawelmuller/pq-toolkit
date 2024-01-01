@@ -1,8 +1,15 @@
-.h1, h1 {
+.h1,
+h1 {
   font-size: 4rem;
 }
 
-.h2, h2 {
+.h2,
+h2 {
   font-size: 2rem;
   font-weight: 600;
+}
+
+div {
+  font-size: 1.5rem;
+  font-weight: 400;
 }
