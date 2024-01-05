@@ -29,13 +29,14 @@ const ABTestComponent = ({
 
   useEffect(() => {
     const result: ABResult = {
+      testNumber: testData.testNumber,
       selections: Object.keys(selected).map((questionId) => ({
         questionId,
         sampleId: selected[questionId]
       }))
     }
     setAnswer(result)
-  }, [setAnswer, selected])
+  }, [setAnswer, selected, testData.testNumber])
 
   return (
     <div className="bg-white rounded-md p-lg flex flex-col items-center text-black">
