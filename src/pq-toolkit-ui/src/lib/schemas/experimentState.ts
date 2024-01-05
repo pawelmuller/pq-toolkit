@@ -1,6 +1,8 @@
 import { z } from 'zod'
 
-export const BaseResultSchema = z.object({})
+export const BaseResultSchema = z.object({
+  testNumber: z.number()
+})
 
 export type BaseResult = z.infer<typeof BaseResultSchema>
 

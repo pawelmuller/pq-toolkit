@@ -47,7 +47,7 @@ const TestPage = ({
             testData={currentTest as ABTest}
             experimentName={params.name}
             setAnswer={(result) => {
-              context?.setAnswer(currentTest.testNumber, result)
+              context?.setAnswer(result)
             }}
           />
         )

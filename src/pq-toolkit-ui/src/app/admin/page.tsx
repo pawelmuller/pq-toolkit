@@ -1,8 +1,6 @@
 'use client'
 
-import { Suspense, useState } from 'react'
-import { ErrorBoundary } from 'next/dist/client/components/error-boundary'
-import Error from '../error'
+import { useState } from 'react'
 import { adminExperimentsListSchema } from './models'
 import Link from 'next/link'
 import { FaPlus, FaTrash } from 'react-icons/fa'
@@ -72,14 +70,10 @@ const AdminPage = (): JSX.Element => {
         >
           <h1 className="font-bold">PQ Toolkit admin page</h1>
         </div>
-        <ErrorBoundary errorComponent={Error}>
-          <Suspense fallback={<div>Loading</div>}>
-            <AdminExperimentsListWidget
-              experiments={data.experiments}
-              deleteExperiment={deleteExperiment}
-            />
-          </Suspense>
-        </ErrorBoundary>
+        <AdminExperimentsListWidget
+          experiments={data.experiments}
+          deleteExperiment={deleteExperiment}
+        />
         <AddExperimentWidget
           experiments={data.experiments}
           addExperiment={addNewExperiment}
@@ -89,13 +83,13 @@ const AdminPage = (): JSX.Element => {
   )
 }
 
-const AdminExperimentsListWidget = async ({
+const AdminExperimentsListWidget = ({
   experiments,
   deleteExperiment
 }: {
   experiments: string[]
   deleteExperiment: (name: string) => void
-}): Promise<JSX.Element> => {
+}): JSX.Element => {
   return (
     <div className="flex flex-col items-center z-10">
       <div className="">Configured experiments:</div>

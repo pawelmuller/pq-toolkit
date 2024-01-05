@@ -1,9 +1,12 @@
+'use client'
 import Link from 'next/link'
 import { Suspense } from 'react'
-import { type ExperimentsList, experimentsListSchema } from './models'
-import { apiFetch } from '@/core/apiHandlers/serverApiHandler'
+import { experimentsListSchema } from './models'
 import { ErrorBoundary } from 'next/dist/client/components/error-boundary'
 import Error from './error'
+import useSWR from 'swr'
+import Loading from './[name]/loading'
+import { validateApiData } from '@/core/apiHandlers/clientApiHandler'
 
 const Home = (): JSX.Element => {
   return (
@@ -28,16 +31,30 @@ const Home = (): JSX.Element => {
   )
 }
 
-const getExperimentsList = async (): Promise<ExperimentsList> => {
-  const data = await apiFetch<ExperimentsList>(
-    'api/v1/experiments',
+const ExperimentsListWidget = async (): Promise<JSX.Element> => {
+  const { data: apiData, error, isLoading } = useSWR(`/api/v1/experiments`)
+
+  if (isLoading) return <Loading />
+  if (error != null)
+    return (
+      <div className="flex w-full items-center justify-center text-center h2">
+        API Error
+        <br />
+        {error.toString()}
+      </div>
+    )
+  const { data, validationError } = validateApiData(
+    apiData,
     experimentsListSchema
   )
-  return data
-}
-
-const ExperimentsListWidget = async (): Promise<JSX.Element> => {
-  const data = await getExperimentsList()
+  if (validationError != null) {
+    console.error(validationError)
+    return (
+      <div className="flex w-full items-center justify-center text-center h2">
+        Invalid data from API, please check console for details
+      </div>
+    )
+  }
 
   return (
     <div className="flex flex-col items-center z-10">
