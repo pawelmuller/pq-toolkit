@@ -3,13 +3,9 @@
 ## Development:
 
 - Running development server:
+
 ```bash
 npm run dev
-```
-
-- generating json schema for experiment setup (must be run after changing setup object definition to ensure correct data validation)
-```bash
-ts-json-schema-generator --path ./src/utils/schemas/experimentSetup.ts --type ExperimentSetup -o ./src/utils/schemas/experiment-setup.schema.json
 ```
 
 ## Deployment
