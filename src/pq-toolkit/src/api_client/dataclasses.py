@@ -9,22 +9,24 @@ class PqTestTypes(Enum):
 
 
 class PqSample(BaseModel):
-    id: str
-    asset_path: str = Field(serialization_alias="assetPath")
+    sample_id: str = Field(alias="sampleId")
+    asset_path: str = Field(alias="assetPath")
 
 
 class PqQuestion(BaseModel):
+    question_id: str = Field(alias="questionId")
     text: str
 
 
 class PqTest(BaseModel):
-    id: int
+    test_number: int = Field(alias="testNumber")
     type: PqTestTypes
     samples: list[PqSample]
     questions: list[PqQuestion]
 
 
-class PqTestSetup(BaseModel):
+class PqExperiment(BaseModel):
+    uid: str
     name: str
-    title: str
+    description: str
     tests: list[PqTest]

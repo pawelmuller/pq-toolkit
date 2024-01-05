@@ -1,33 +1,10 @@
-import uvicorn
-
-from api import PqToolkitAPI
-
-pq = PqToolkitAPI()
+from api_client import PqToolkitAPIClient
 
 
 if __name__ == "__main__":
-    # test_setup = PqTestSetup(
-    #     name="Test py",
-    #     title="Example test generated from python API",
-    #     tests=[
-    #         PqTest(
-    #             id=1, type=PqTestTypes.AB,
-    #             samples=[
-    #                 PqSample(
-    #                     id="a", asset_path="samples/file_sample_5.mp3"
-    #                 ),
-    #                 PqSample(
-    #                     id="b", asset_path="samples/file_sample_700.mp3"
-    #                 )
-    #             ],
-    #             questions=[
-    #                 PqQuestion(
-    #                     text="Select worse quality"
-    #                 )
-    #             ]
-    #         )
-    #     ]
-    # )
-    # print(test_setup.model_dump_json(by_alias=True, indent=4))
+    api_client = PqToolkitAPIClient()
+    # experiments = api_client.get_experiments()
+    # print(experiments)
 
-    uvicorn.run("main:pq", host="localhost", port=8080)
+    experiment = api_client.get_experiment(name="Blablabla")
+    print(experiment)

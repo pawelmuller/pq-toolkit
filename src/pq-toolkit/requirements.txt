@@ -1,6 +1,2 @@
-annotated-types==0.6.0
-fastapi==0.108.0
 pydantic==2.5.2
-pydantic_core==2.14.5
-typing_extensions==4.8.0
-uvicorn==0.25.0
+requests==2.31.0
