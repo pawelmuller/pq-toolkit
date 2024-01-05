@@ -1,25 +1,28 @@
 {
+  "uid": "1234-5678-1234-1234",
   "name": "Test 1",
-  "title": "Example experiment configuration 1",
+  "description": "Example experiment configuration 1",
   "tests": [
     {
-      "id": 1,
+      "testNumber": 1,
       "type": "AB",
       "samples": [
         {
-          "id": "a",
+          "sampleId": "s1",
           "assetPath": "samples/file_sample_5.mp3"
         },
         {
-          "id": "b",
+          "sampleId": "s2",
           "assetPath": "samples/file_sample_700.mp3"
         }
       ],
       "questions": [
         {
+          "questionId": "q1",
           "text": "Select better quality"
         },
         {
+          "questionId": "q2",
           "text": "Select more warmth"
         }
       ]
