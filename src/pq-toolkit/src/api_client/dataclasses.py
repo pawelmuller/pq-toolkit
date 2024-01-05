@@ -5,6 +5,8 @@ from pydantic import BaseModel, Field
 
 class PqTestTypes(Enum):
     AB = "AB"
+    ABX = "ABX"
+    APE = "APE"
     MUSHRA = "MUSHRA"
 
 
