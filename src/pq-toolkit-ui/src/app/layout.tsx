@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import '@/styles/globals.css'
+import { SWRConfigProvider } from '@/core/apiHandlers/clientApiHandler'
 
 const inter = Inter({ subsets: ['latin-ext'] })
 
@@ -17,7 +18,9 @@ const RootLayout = ({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <div>{children}</div>
+        <SWRConfigProvider>
+          <div>{children}</div>
+        </SWRConfigProvider>
       </body>
     </html>
   )
