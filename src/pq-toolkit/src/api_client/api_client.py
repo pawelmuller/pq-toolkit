@@ -43,7 +43,7 @@ class PqToolkitAPIClient:
             type_to_return = type_hints.get("return")
             if not type_to_return:
                 raise PqToolkitException(f"Function {func.__name__} has not ben annotated with any return type")
-            if not isinstance(type_to_return, BaseModel):
+            if not issubclass(type_to_return, BaseModel):
                 raise PqToolkitException(f"Function {func.__name__} has not ben annotated with Pydantic return type")
 
             result = func(*args, **kwargs)
