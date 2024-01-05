@@ -36,7 +36,7 @@ class PqToolkitAPIClient:
         return self._request(method="POST", url=self._endpoint + path, **kwargs)
 
     @staticmethod
-    def _pack_in_pydantic(func):
+    def _serialize_with_pydantic(func):
         @wraps(func)
         def wrapper(*args, **kwargs):
             type_hints = get_type_hints(func)
@@ -66,7 +66,7 @@ class PqToolkitAPIClient:
         except Exception:
             return None
 
-    @_pack_in_pydantic
+    @_serialize_with_pydantic
     def get_experiment(self, *, name: str) -> PqExperiment:
         # TODO: Experiment name validation
         response = requests.get(self._endpoint + f"/experiments/{name}")
