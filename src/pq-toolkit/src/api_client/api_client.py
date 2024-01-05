@@ -1,9 +1,9 @@
 import logging
 from functools import wraps
+from typing import get_type_hints
 
 import requests
 from pydantic import PydanticSchemaGenerationError, BaseModel
-from pydantic._internal._typing_extra import get_type_hints
 from requests import ConnectTimeout
 
 from api_client.dataclasses import PqExperiment
