@@ -57,14 +57,10 @@ class PqToolkitAPIClient:
         return wrapper
 
     def get_experiments(self) -> list[str]:
-        response = self._get("/experiments")
-        try:
-            json = response.json()
-            if experiments := json.get("experiments"):
-                return experiments
-            return []
-        except Exception:
-            return None
+        response = self._get("/experiments").json()
+        if experiments := response.get("experiments"):
+            return experiments
+        return []
 
     @_serialize_with_pydantic
     def get_experiment(self, *, name: str) -> PqExperiment:
