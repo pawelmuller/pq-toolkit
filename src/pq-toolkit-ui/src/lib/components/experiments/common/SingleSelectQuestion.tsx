@@ -4,29 +4,29 @@ import { useState } from 'react'
 
 const SingleSelectQuestion = ({
   text,
-  sampleCount,
+  sampleNames,
   onOptionSelect
 }: {
   text: string
-  sampleCount: number
+  sampleNames: string[]
   onOptionSelect: (i: number) => void
 }): JSX.Element => {
   const [selectableOptions, setSelectableOptions] = useState(
-    Array.from({ length: sampleCount }).map((_, idx) => ({
-      id: idx,
-      name: `Sample ${idx + 1}`,
+    sampleNames.map((name, idx) => ({
+      idx,
+      name,
       selected: false
     }))
   )
 
-  const onSelect = (selectedId: number): void => {
+  const onSelect = (selectedIdx: number): void => {
     setSelectableOptions((prevState) => {
       return prevState.map((option) => ({
         ...option,
-        selected: option.id === selectedId
+        selected: option.idx === selectedIdx
       }))
     })
-    onOptionSelect(selectedId)
+    onOptionSelect(selectedIdx)
   }
 
   return (
@@ -40,7 +40,7 @@ const SingleSelectQuestion = ({
               option.selected ? 'bg-blue-500' : 'bg-blue-100'
             } flex items-center justify-center cursor-pointer`}
             onClick={() => {
-              onSelect(option.id)
+              onSelect(option.idx)
             }}
           >
             Sample {idx + 1}
