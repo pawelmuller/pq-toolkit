@@ -13,8 +13,10 @@ import {
   type ABResult,
   type ABXResult,
   type APEResult,
-  type MUSHRAResult
+  type MUSHRAResult,
+  type PartialResult
 } from '@/lib/schemas/experimentState'
+import { fillTest } from './utils'
 
 /**
  * Context which provides all values used during testing
@@ -79,11 +81,18 @@ const ExperimentContextProvider = ({
       </div>
     )
 
+  // Fill all randomizable values
+  data.tests = data.tests.map((test) => fillTest(test))
+
   // Prepare results object
   const results: { results: BaseResult[] } = { results: [] }
 
   const setAnswer = (
-    result: ABResult | ABXResult | MUSHRAResult | APEResult
+    result:
+      | PartialResult<ABResult>
+      | PartialResult<ABXResult>
+      | PartialResult<MUSHRAResult>
+      | PartialResult<APEResult>
   ): void => {
     const temp = results.results.filter(
       (v) => v.testNumber !== result.testNumber
