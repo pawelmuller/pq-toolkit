@@ -5,6 +5,7 @@ import SingleSelectQuestion from './common/SingleSelectQuestion'
 import SinglePlayer from '../player/SinglePlayer'
 import { type ABResult } from '@/lib/schemas/experimentState'
 import { useEffect, useState } from 'react'
+import { getSampleUrl } from './common/utils'
 
 const ABTestComponent = ({
   testData,
@@ -44,7 +45,7 @@ const ABTestComponent = ({
         {samples.map((sample, idx) => (
           <SinglePlayer
             key={`sample_player_${idx}`}
-            assetPath={`${process.env.NEXT_PUBLIC_API_URL}/api/v1/experiments/${experimentName}/${sample.assetPath}`}
+            assetPath={getSampleUrl(experimentName, sample.assetPath)}
             name={`Sample ${idx + 1}`}
           />
         ))}
@@ -54,9 +55,12 @@ const ABTestComponent = ({
           <SingleSelectQuestion
             key={`question_${idx}`}
             text={question.text}
-            sampleCount={samples.length}
-            onOptionSelect={(selectedId) => {
-              updateSelections(question.questionId, selectedId)
+            sampleNames={Array.from(
+              { length: samples.length },
+              (_, i) => `Sample ${i + 1}`
+            )}
+            onOptionSelect={(selectedIdx) => {
+              updateSelections(question.questionId, selectedIdx)
             }}
           />
         ))}
