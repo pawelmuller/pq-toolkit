@@ -4,10 +4,7 @@ import {
   ExperimentSetupSchema,
   type ExperimentSetup
 } from '@/lib/schemas/experimentSetup'
-import {
-  SWRConfigProvider,
-  validateApiData
-} from '@/core/apiHandlers/clientApiHandler'
+import { validateApiData } from '@/core/apiHandlers/clientApiHandler'
 import useSWR from 'swr'
 import Loading from './loading'
 import { validateTestSchema } from '@/lib/schemas/utils'
@@ -27,7 +24,7 @@ export const ExperimentContext = createContext<{
   data: ExperimentSetup
   error: boolean
   results: Record<string, unknown>
-  setAnswer: (testNumber: number, result: BaseResult) => void
+  setAnswer: (result: BaseResult) => void
   saveResults: () => Promise<void>
 } | null>(null)
 
@@ -83,13 +80,16 @@ const ExperimentContextProvider = ({
     )
 
   // Prepare results object
-  const results: Record<string, BaseResult> = {}
+  const results: { results: BaseResult[] } = { results: [] }
 
   const setAnswer = (
-    testNumber: number,
     result: ABResult | ABXResult | MUSHRAResult | APEResult
   ): void => {
-    results[testNumber] = result
+    const temp = results.results.filter(
+      (v) => v.testNumber !== result.testNumber
+    )
+    temp.push(result)
+    results.results = temp
   }
 
   const saveResults = async (): Promise<void> => {
@@ -97,7 +97,6 @@ const ExperimentContextProvider = ({
       method: 'POST',
       body: JSON.stringify(results)
     })
-    console.log(results)
   }
 
   return (
@@ -122,11 +121,9 @@ const ExperimentContextWrapper = ({
   params: { name: string }
 }): JSX.Element => {
   return (
-    <SWRConfigProvider>
-      <ExperimentContextProvider params={params}>
-        {children}
-      </ExperimentContextProvider>
-    </SWRConfigProvider>
+    <ExperimentContextProvider params={params}>
+      {children}
+    </ExperimentContextProvider>
   )
 }
 
