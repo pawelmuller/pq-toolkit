@@ -7,7 +7,7 @@ import requests
 from pydantic import PydanticSchemaGenerationError, BaseModel
 from requests import ConnectTimeout
 
-from api_client.dataclasses import PqExperiment
+from api_client.dataclasses import PqExperiment, PqTestResult
 from api_client.exceptions import PqToolkitException
 
 HTTP_200_OK = 200
@@ -84,8 +84,20 @@ class PqToolkitAPIClient:
         return []
 
     @_serialize_with_pydantic
-    def get_experiment(self, *, name: str) -> PqExperiment:
-        # TODO: Experiment name validation
-        response = requests.get(self._endpoint + f"/experiments/{name}")
-        json = response.json()
-        return json
+    def get_experiment(self, *, experiment_name: str) -> PqExperiment:
+        experiment = self._get(f"/experiments/{experiment_name}").json()
+        return experiment
+
+    def get_experiment_results(self, *, experiment_name: str) -> list[str]:
+        response = self._get(f"/experiments/{experiment_name}/results").json()
+        if experiment_results := response.get("results"):
+            return experiment_results
+        return []
+
+    @_serialize_with_pydantic
+    def get_experiment_result(self, *, experiment_name: str, result_name: str) -> PqTestResult | None:
+        response = self._get(f"/experiments/{experiment_name}/results/{result_name}")
+        if response.status_code == HTTP_200_OK:
+            experiment_result = response.json().get("results")[0]
+            return experiment_result
+        return None

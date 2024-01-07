@@ -10,6 +10,11 @@ class PqTestTypes(Enum):
     MUSHRA = "MUSHRA"
 
 
+class PqSelection(BaseModel):
+    question_id: str = Field(alias="questionId")
+    sample_id: str = Field(alias="sampleId")
+
+
 class PqSample(BaseModel):
     sample_id: str = Field(alias="sampleId")
     asset_path: str = Field(alias="assetPath")
@@ -25,6 +30,11 @@ class PqTest(BaseModel):
     type: PqTestTypes
     samples: list[PqSample]
     questions: list[PqQuestion]
+
+
+class PqTestResult(BaseModel):
+    test_number: int = Field(alias="testNumber")
+    selections: list[PqSelection]
 
 
 class PqExperiment(BaseModel):
