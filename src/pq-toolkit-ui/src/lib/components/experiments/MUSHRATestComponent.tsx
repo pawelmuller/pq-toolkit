@@ -6,7 +6,7 @@ import {
   type PartialResult
 } from '@/lib/schemas/experimentState'
 import MultiPlayer from '../player/MultiPlayer'
-import { getSampleUrl } from './common/utils'
+import {getSampleUrl, shuffleArray} from './common/utils'
 import VerticalMultislider from './common/VerticalMultislider'
 
 const MUSHRATestComponent = ({
@@ -20,13 +20,23 @@ const MUSHRATestComponent = ({
 }): JSX.Element => {
   const { reference, anchor, samples, question } = testData
 
+  function prepareSamples(): {sampleId: string, assetPath: string}[] {
+    const samples_anchor = [...samples, anchor]
+    const samples_anchor_mixed = shuffleArray(samples_anchor)
+    const reference_samples_anchor = [reference, ...samples_anchor_mixed]
+    return reference_samples_anchor
+  }
+
+  const shuffled_samples = prepareSamples()
+
   return (
     <div className="bg-white rounded-md p-lg flex flex-col items-center text-black">
       <div className="flex gap-md mt-md">
         <MultiPlayer
-          assets={samples.reduce<Map<string, string>>((map, sample, idx) => {
+          assets={shuffled_samples.reduce<Map<string, string>>((map, sample, idx) => {
+            const sample_name = sample.sampleId === 'ref' ? 'Reference' : `Sample ${idx + 1}`
             map.set(
-              `Sample ${idx + 1}`,
+              sample_name,
               getSampleUrl(experimentName, sample.assetPath)
             )
             return map
@@ -34,7 +44,7 @@ const MUSHRATestComponent = ({
         />
       </div>
       <div className="flex w-full mt-md">
-        <VerticalMultislider samples={samples}/>
+        <VerticalMultislider samples={shuffled_samples}/>
       </div>
     </div>
   )
