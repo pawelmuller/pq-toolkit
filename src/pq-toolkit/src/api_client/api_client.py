@@ -1,5 +1,6 @@
 import logging
 from functools import wraps
+from types import UnionType
 from typing import get_type_hints
 
 import requests
@@ -40,19 +41,35 @@ class PqToolkitAPIClient:
         @wraps(func)
         def wrapper(*args, **kwargs):
             type_hints = get_type_hints(func)
-            type_to_return = type_hints.get("return")
-            if not type_to_return:
+            types_to_return = type_hints.get("return")
+
+            if not types_to_return:
                 raise PqToolkitException(f"Function {func.__name__} has not ben annotated with any return type")
+
+            type_to_return = None
+            if isinstance(types_to_return, UnionType):
+                for iterable_type in types_to_return.__args__:
+                    if iterable_type is not type(None):
+                        type_to_return = iterable_type
+                        if issubclass(iterable_type, BaseModel):
+                            break
+            else:
+                type_to_return = types_to_return
+
             if not issubclass(type_to_return, BaseModel):
-                raise PqToolkitException(f"Function {func.__name__} has not ben annotated with Pydantic return type")
+                raise PqToolkitException(f"Function {func.__name__} has not ben annotated with Pydantic's BaseModel "
+                                         f"subclass or an Union with its subclass.")
 
             result = func(*args, **kwargs)
+
+            if result is None:
+                return None
 
             try:
                 casted_result = type_to_return(**result)
                 return casted_result
             except (RuntimeError, PydanticSchemaGenerationError) as e:
-                raise TypeError(f"Cannot cast the result to {type_to_return}: ", e)
+                raise TypeError(f"Cannot cast the result to {types_to_return}: ", e)
 
         return wrapper
 
