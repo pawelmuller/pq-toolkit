@@ -10,10 +10,6 @@ from requests import ConnectTimeout
 from api_client.dataclasses import PqExperiment, PqTestResult
 from api_client.exceptions import PqSerializationException, PqExperimentAlreadyExists
 
-HTTP_200_OK = 200
-HTTP_201_CREATED = 201
-HTTP_404_NOT_FOUND = 404
-
 
 class PqToolkitAPIClient:
     def __init__(self, *, base_host: str = "http://localhost", base_port: int = 3000):
