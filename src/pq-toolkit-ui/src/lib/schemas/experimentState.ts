@@ -45,7 +45,12 @@ export type ABXResult = z.infer<typeof ABXResultSchema>
  */
 export const MUSHRAResultSchema = BaseResultSchema.extend({
   referenceScore: z.number().min(0).max(100),
-  anchorScore: z.number().min(0).max(100),
+  anchorsScores: z.array(
+    z.object({
+      sampleId: z.string().min(1),
+      score: z.number().min(0).max(100)
+    })
+  ),
   samplesScores: z.array(
     z.object({
       sampleId: z.string().min(1),

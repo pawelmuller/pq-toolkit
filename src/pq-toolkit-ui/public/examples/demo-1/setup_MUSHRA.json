@@ -10,10 +10,16 @@
         "sampleId": "ref",
         "assetPath": "file_sample_5.mp3"
       },
-      "anchor": {
-        "sampleId": "anchor",
-        "assetPath": "file_sample_700.mp3"
-      },
+      "anchors": [
+        {
+          "sampleId": "a1",
+          "assetPath": "file_sample_700.mp3"
+        },
+        {
+          "sampleId": "a2",
+          "assetPath": "file_sample_5.mp3"
+        }
+      ],
       "samples": [
         {
           "sampleId": "s1",
