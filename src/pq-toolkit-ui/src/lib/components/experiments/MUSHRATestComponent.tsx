@@ -34,7 +34,7 @@ const MUSHRATestComponent = ({
         />
       </div>
       <div className="flex w-full mt-md">
-        <VerticalMultislider />
+        <VerticalMultislider samples={samples}/>
       </div>
     </div>
   )
