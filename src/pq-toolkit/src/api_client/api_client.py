@@ -8,7 +8,7 @@ from pydantic import PydanticSchemaGenerationError, BaseModel
 from requests import ConnectTimeout
 
 from api_client.dataclasses import PqExperiment, PqTestResult
-from api_client.exceptions import PqToolkitException
+from api_client.exceptions import PqSerializationException, PqExperimentAlreadyExists
 
 HTTP_200_OK = 200
 HTTP_201_CREATED = 201
@@ -48,7 +48,7 @@ class PqToolkitAPIClient:
             types_to_return = type_hints.get("return")
 
             if not types_to_return:
-                raise PqToolkitException(f"Function {func.__name__} has not ben annotated with any return type")
+                raise PqSerializationException(f"Function {func.__name__} has not ben annotated with any return type")
 
             type_to_return = None
             if isinstance(types_to_return, UnionType):
@@ -61,8 +61,8 @@ class PqToolkitAPIClient:
                 type_to_return = types_to_return
 
             if not issubclass(type_to_return, BaseModel):
-                raise PqToolkitException(f"Function {func.__name__} has not ben annotated with Pydantic's BaseModel "
-                                         f"subclass or an Union with its subclass.")
+                raise PqSerializationException(f"Function {func.__name__} has not ben annotated with Pydantic's "
+                                               f"BaseModel subclass or an Union with its subclass.")
 
             result = func(*args, **kwargs)
 
@@ -73,7 +73,7 @@ class PqToolkitAPIClient:
                 casted_result = type_to_return(**result)
                 return casted_result
             except (RuntimeError, PydanticSchemaGenerationError) as e:
-                raise TypeError(f"Cannot cast the result to {types_to_return}: ", e)
+                raise PqSerializationException(f"Cannot cast the result to {types_to_return}: ", e)
 
         return wrapper
 
