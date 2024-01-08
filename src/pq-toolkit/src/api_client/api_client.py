@@ -93,6 +93,15 @@ class PqToolkitAPIClient:
             case 404:
                 return None
 
+    def create_experiment(self, *, experiment_name: str) -> list[str]:
+        response = self._post(f"/experiments", json={"name": f"{experiment_name}"})
+        match response.status_code:
+            case 200:
+                experiment = response.json()
+                return experiment
+            case 409:
+                raise PqExperimentAlreadyExists(experiment_name=experiment_name)
+
     def get_experiment_results(self, *, experiment_name: str) -> list[str]:
         response = self._get(f"/experiments/{experiment_name}/results").json()
         if experiment_results := response.get("results"):
