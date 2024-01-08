@@ -78,8 +78,8 @@ class PqToolkitAPIClient:
         response = self._get("/experiments")
         match response.status_code:
             case 200:
-                if experiments := response.json().get("experiments"):
-                    return experiments
+                experiments = response.json().get("experiments")
+                return experiments
             case 404:
                 return []
 
@@ -97,8 +97,8 @@ class PqToolkitAPIClient:
         response = self._post(f"/experiments", json={"name": f"{experiment_name}"})
         match response.status_code:
             case 200:
-                experiment = response.json()
-                return experiment
+                experiments = response.json().get("experiments")
+                return experiments
             case 409:
                 raise PqExperimentAlreadyExists(experiment_name=experiment_name)
 

@@ -44,7 +44,7 @@ class TestExperiments(unittest.TestCase):
 
         experiments = self.client.create_experiment(experiment_name="Blah experiment")
 
-        self.assertEqual(experiments, {"experiments": ["Blah experiment"]})
+        self.assertSequenceEqual(experiments, ["Blah experiment"])
 
 
 if __name__ == '__main__':
