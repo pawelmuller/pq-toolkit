@@ -4,7 +4,7 @@ from api_client import PqToolkitAPIClient
 from test_utils import generate_random_experiment_name
 
 
-class TestExperiments(unittest.TestCase):
+class TestExperimentsWithAPI(unittest.TestCase):
     def setUp(self):
         self.client = PqToolkitAPIClient()
         self.experiments_to_remove = []

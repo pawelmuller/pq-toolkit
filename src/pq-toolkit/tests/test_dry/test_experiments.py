@@ -4,7 +4,7 @@ from unittest.mock import patch
 from api_client import PqToolkitAPIClient
 
 
-class TestExperiments(unittest.TestCase):
+class TestExperimentsDry(unittest.TestCase):
     @patch('requests.request')
     def setUp(self, mock_request):
         mock_response = unittest.mock.Mock()
