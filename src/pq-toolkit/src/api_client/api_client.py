@@ -74,15 +74,23 @@ class PqToolkitAPIClient:
         return wrapper
 
     def get_experiments(self) -> list[str]:
-        response = self._get("/experiments").json()
-        if experiments := response.get("experiments"):
-            return experiments
-        return []
+        response = self._get("/experiments")
+        match response.status_code:
+            case 200:
+                if experiments := response.json().get("experiments"):
+                    return experiments
+            case 404:
+                return []
 
     @_serialize_with_pydantic
-    def get_experiment(self, *, experiment_name: str) -> PqExperiment:
-        experiment = self._get(f"/experiments/{experiment_name}").json()
-        return experiment
+    def get_experiment(self, *, experiment_name: str) -> PqExperiment | None:
+        response = self._get(f"/experiments/{experiment_name}")
+        match response.status_code:
+            case 200:
+                experiment = response.json()
+                return experiment
+            case 404:
+                return None
 
     def get_experiment_results(self, *, experiment_name: str) -> list[str]:
         response = self._get(f"/experiments/{experiment_name}/results").json()
@@ -93,7 +101,9 @@ class PqToolkitAPIClient:
     @_serialize_with_pydantic
     def get_experiment_result(self, *, experiment_name: str, result_name: str) -> PqTestResult | None:
         response = self._get(f"/experiments/{experiment_name}/results/{result_name}")
-        if response.status_code == HTTP_200_OK:
-            experiment_result = response.json().get("results")[0]
-            return experiment_result
-        return None
+        match response.status_code:
+            case 200:
+                experiment_result = response.json().get("results")[0]
+                return experiment_result
+            case 404:
+                return None
