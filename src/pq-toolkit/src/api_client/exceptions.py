@@ -1,8 +1,5 @@
 class PqToolkitException(Exception):
-    def __init__(self, message: str = None):
-        if not message:
-            message = "An exception occurred"
-        self.message = message
+    pass
 
 
 class PqSerializationException(PqToolkitException):
@@ -11,6 +8,16 @@ class PqSerializationException(PqToolkitException):
             message = f"Serialization exception: {details}"
         else:
             message = "A serialization exception occurred"
+        self.message = message
+        super().__init__(self.message)
+
+
+class PqValidationException(PqToolkitException):
+    def __init__(self, details: str = None):
+        if details:
+            message = f"Validation exception: {details}"
+        else:
+            message = "A validation exception occurred"
         self.message = message
         super().__init__(self.message)
 
