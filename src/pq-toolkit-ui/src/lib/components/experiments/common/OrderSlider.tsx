@@ -32,10 +32,6 @@ const OrderSlider = ({
     return zIndex
   }
 
-  function getAccentColor(index: number) {
-    return ["red", "blue", "green"].at(index % 3);
-  }
-
   useEffect(() => {
     if (currentSample === undefined)
       return
@@ -53,21 +49,15 @@ const OrderSlider = ({
     <div className="relative w-full">
       <input
         key={`background`}
-        className="custom-slider w-full absolute"
-        style={{colorScheme: "light", accentColor: getAccentColor(currentSample ?? 0)}}
+        className="custom-slider w-full absolute accent-red-600"
         type="range"
         value={responses.get(currentSampleId)}
       />
       {Array.from(responses.entries()).map(([key], index) => (
         <input
           key={`slider_${key}`}
-          className="w-full absolute"
-          style={{
-            appearance: "none",
-            backgroundColor: "transparent",
-            zIndex: Zindices[index],
-            accentColor: getAccentColor(index)
-          }}
+          className={`w-full absolute appearance-none bg-transparent ${currentSample === index ? 'accent-red-600' : 'accent-blue-600'}`}
+          style={{ zIndex: Zindices[index] }}
           type="range"
           min="1"
           max="100"
