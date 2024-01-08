@@ -1,6 +1,8 @@
 from enum import Enum
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, model_validator
+
+from api_client.exceptions import PqValidationException
 
 
 class PqTestTypes(Enum):
@@ -29,7 +31,19 @@ class PqTest(BaseModel):
     test_number: int = Field(alias="testNumber")
     type: PqTestTypes
     samples: list[PqSample]
-    questions: list[PqQuestion]
+    questions: list[PqQuestion] | None = None
+    axis: list[PqQuestion] | None = None
+    reference: PqSample | None = None
+    anchor: PqSample | None = None
+
+    @model_validator(mode='after')
+    def _check_reference_and_anchor_coexistence(self) -> 'PqTest':
+        if self.reference is None and self.anchor is None:
+            return self
+        if self.reference is not None and self.anchor is not None:
+            return self
+        else:
+            raise PqValidationException(details="Fields 'anchor' and 'reference' are required together")
 
 
 class PqTestResult(BaseModel):
