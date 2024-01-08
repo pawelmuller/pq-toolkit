@@ -33,7 +33,7 @@ class TestExperiments(unittest.TestCase):
 
         experiments = self.client.get_experiments()
 
-        self.assertEqual(experiments, ["Blah blah blah", "Some experiment"])
+        self.assertSequenceEqual(experiments, ["Blah blah blah", "Some experiment"])
 
     @patch('requests.request')
     def test_create_experiment(self, mock_request):

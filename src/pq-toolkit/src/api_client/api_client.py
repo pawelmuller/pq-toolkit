@@ -23,7 +23,8 @@ class PqToolkitAPIClient:
             raise ConnectionError(f"Cannot read status from {self._endpoint}")
         logging.info(f"Connected to {self._endpoint}, status: HEALTHY")
 
-    def _request(self, **kwargs):
+    @staticmethod
+    def _request(**kwargs):
         try:
             response = requests.request(timeout=2.0, **kwargs)
             return response
@@ -69,7 +70,7 @@ class PqToolkitAPIClient:
                 casted_result = type_to_return(**result)
                 return casted_result
             except (RuntimeError, PydanticSchemaGenerationError) as e:
-                raise PqSerializationException(f"Cannot cast the result to {types_to_return}: ", e)
+                raise PqSerializationException(f"Cannot cast the result to {types_to_return}: {e}")
 
         return wrapper
 
