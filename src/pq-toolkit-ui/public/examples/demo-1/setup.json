@@ -97,20 +97,22 @@
       "testNumber": 5,
       "type": "MUSHRA",
       "reference": {
-        "sampleId": "s1",
+        "sampleId": "ref",
         "assetPath": "file_sample_5.mp3"
       },
-      "anchor": {
-        "sampleId": "s2",
-        "assetPath": "file_sample_700.mp3"
-      },
+      "anchors": [
+        {
+          "sampleId": "a1",
+          "assetPath": "file_sample_700.mp3"
+        }
+      ],
       "samples": [
         {
-          "sampleId": "s3",
+          "sampleId": "s1",
           "assetPath": "sample-12s.mp3"
         },
         {
-          "sampleId": "s4",
+          "sampleId": "s2",
           "assetPath": "sample-15s.mp3"
         }
       ]

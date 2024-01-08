@@ -1,13 +1,15 @@
 'use client'
-import { useEffect, useRef, useState } from 'react'
+import {Dispatch, SetStateAction, useEffect, useRef, useState} from 'react'
 import { Howl } from 'howler'
 import { PauseButton, PlayButton, StopButton } from './ControlButtons'
 import { formatTime } from './utils/playerUtils'
 
 const MultiPlayer = ({
-  assets
+  assets,
+  selectedPlayerState
 }: {
   assets: Map<string, string>
+  selectedPlayerState?: [number, Dispatch<SetStateAction<number>>]
 }): JSX.Element => {
   const playersRef = useRef<Howl[]>(
     Array.from(assets.entries()).map(
@@ -26,7 +28,7 @@ const MultiPlayer = ({
 
   const getPlayerLength = (player: Howl): number => player.duration() ?? 0
 
-  const [selectedPlayer, setSelectedPlayer] = useState<number>(0)
+  const [selectedPlayer, setSelectedPlayer] = selectedPlayerState ?? useState<number>(0)
 
   useEffect(() => {
     playersRef.current.forEach((player, idx) => {

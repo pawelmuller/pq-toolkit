@@ -1,21 +1,22 @@
-import { Slider } from '@mui/material'
-import React, { useState } from 'react'
+import {Slider} from '@mui/material'
+import React, {Dispatch, SetStateAction} from 'react'
 
-const VerticalMultislider = ({
-  samples
-}: {
-  samples: {sampleId: string, assetPath: string}[]
+const VerticalMultislider = ({ratings, setRatings}: {
+  ratings: Map<string, number>
+  setRatings: Dispatch<SetStateAction<Map<string, number>>>
 }): JSX.Element => {
-  const [state, setState] = useState(
-    new Map<string, number>(
-      samples.map(i => [i.sampleId, 0])
-    )
-  )
+  const updateState = (key: string, value: number | number[]) => {
+    setRatings((prevState) => {
+      const newState = new Map(prevState)
+      if (typeof value === 'number') newState.set(key, value)
+      return newState
+    })
+  }
 
   return (
-    <div className="w-full flex justify-between px-2">
-      {Array.from(state.entries()).map(([key, value]) => (
-        <div key={`slider_${key}`} className={`${key === "ref" && 'invisible'} flex flex-col`}>
+    <div className="w-full flex justify-between mx-sm">
+      {Array.from(ratings.entries()).map(([key, value], index) => (
+        <div key={`slider_${index}`} className={`flex flex-col`}>
           <div className="flex flex-row">
             <div className="h-full flex flex-col w-10">
               <div>100</div>
@@ -27,18 +28,15 @@ const VerticalMultislider = ({
                 orientation="vertical"
                 min={0}
                 max={100}
-                value={state.get(key)}
+                value={ratings.get(key)}
                 onChange={(_, value) => {
-                  setState((prevState) => {
-                    const newState = new Map(prevState)
-                    if (typeof value === 'number') newState.set(key, value)
-                    return newState
-                  })
+                  updateState(key, value)
                 }}
               />
             </div>
             <div className="w-10"/>
           </div>
+          {/*<div className="self-center">{key}</div>*/}
         </div>
       ))}
     </div>

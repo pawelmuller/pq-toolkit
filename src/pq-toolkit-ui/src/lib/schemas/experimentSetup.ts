@@ -91,7 +91,7 @@ export const MUSHRATestSchema = BaseTestSchema.extend({
   type: z.enum(['MUSHRA']),
   question: z.string().optional(),
   reference: SampleSchema,
-  anchor: SampleSchema,
+  anchors: z.array(SampleSchema).min(1),
   samples: z.array(SampleSchema).min(2)
 })
 
