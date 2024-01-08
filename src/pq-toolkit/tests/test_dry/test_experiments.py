@@ -46,6 +46,25 @@ class TestExperiments(unittest.TestCase):
 
         self.assertSequenceEqual(experiments, ["Blah experiment"])
 
+    @patch('requests.request')
+    def test_remove_experiment(self, mock_request):
+        mock_response = unittest.mock.Mock()
+        mock_response.status_code = 200
+        mock_response.json.return_value = {"experiments": ["Newly added experiment"]}
+        mock_request.return_value = mock_response
+
+        experiments = self.client.create_experiment(experiment_name="Newly added experiment")
+
+        self.assertSequenceEqual(experiments, ["Newly added experiment"])
+
+        mock_response.status_code = 200
+        mock_response.json.return_value = {"experiments": []}
+        mock_request.return_value = mock_response
+
+        experiments = self.client.delete_experiment(experiment_name="Newly added experiment")
+
+        self.assertSequenceEqual(experiments, [])
+
 
 if __name__ == '__main__':
     unittest.main()

@@ -37,6 +37,9 @@ class PqToolkitAPIClient:
     def _post(self, path, **kwargs):
         return self._request(method="POST", url=self._endpoint + path, **kwargs)
 
+    def _delete(self, path, **kwargs):
+        return self._request(method="DELETE", url=self._endpoint + path, **kwargs)
+
     @staticmethod
     def _serialize_with_pydantic(func):
         @wraps(func)
@@ -101,6 +104,13 @@ class PqToolkitAPIClient:
                 return experiments
             case 409:
                 raise PqExperimentAlreadyExists(experiment_name=experiment_name)
+
+    def delete_experiment(self, *, experiment_name: str) -> list[str]:
+        response = self._delete(f"/experiments", json={"name": f"{experiment_name}"})
+        match response.status_code:
+            case 200:
+                experiments = response.json().get("experiments")
+                return experiments
 
     def get_experiment_results(self, *, experiment_name: str) -> list[str]:
         response = self._get(f"/experiments/{experiment_name}/results").json()
