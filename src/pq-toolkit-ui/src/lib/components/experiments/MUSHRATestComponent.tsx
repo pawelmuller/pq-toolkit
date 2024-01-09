@@ -62,7 +62,7 @@ const MUSHRATestComponent = ({
           }, new Map<string, string>())}
         />
       </div>
-      <div style={{width: `${100 * shuffled_samples.length / (shuffled_samples.length + 1)}%`}} className="flex mt-md self-end">
+      <div className="flex mt-md self-end w-full">
         <VerticalMultislider ratings={ratings} setRatings={setRatings}/>
       </div>
     </div>

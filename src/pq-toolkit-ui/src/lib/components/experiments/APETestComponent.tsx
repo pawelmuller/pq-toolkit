@@ -11,10 +11,10 @@ import OrderSlider from './common/OrderSlider'
 import {useEffect, useState} from "react";
 
 const APETestComponent = ({
-                            testData,
-                            experimentName,
-                            setAnswer
-                          }: {
+  testData,
+  experimentName,
+  setAnswer
+}: {
   testData: APETest
   experimentName: string
   setAnswer: (result: PartialResult<APEResult>) => void
@@ -25,10 +25,7 @@ const APETestComponent = ({
         map_axis.set(
           sample_axis.questionId,
           samples.reduce<Map<string, number>>((map_samples, sample_samples) => {
-            map_samples.set(
-              sample_samples.sampleId,
-              0
-            )
+            map_samples.set(sample_samples.sampleId, 0)
             return map_samples
           }, new Map<string, number>())
         )
@@ -86,18 +83,6 @@ const APETestComponent = ({
                   return newResponses
                 })
               }}
-              // This did not work - sliders in OrderSlider wouldn't update live
-              //
-              // responses={responses.get(questionId) ?? new Map<string, number>()}
-              // changeResponses={(sampleId: string, newValue: number) => {
-              //   setResponses((prevState) => {
-              //     const newState = prevState.get(questionId)
-              //     newState?.set(sampleId, newValue)
-              //     !!newState && prevState.set(questionId, newState)
-              //     console.log(prevState)
-              //     return prevState
-              //   })
-              // }}
             />
           </div>
         ))}
