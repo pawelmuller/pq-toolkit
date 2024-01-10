@@ -13,32 +13,60 @@ const VerticalMultislider = ({ratings, setRatings}: {
     })
   }
 
+  const sampleRatingLabels = ['terrible', 'bad', 'poor', 'fair', 'good', 'excellent']
+
   return (
-    <div className="w-full flex justify-between mx-sm">
-      {Array.from(ratings.entries()).map(([key, value], index) => (
-        <div key={`slider_${index}`} className={`flex flex-col`}>
-          <div className="flex flex-row">
-            <div className="h-full flex flex-col w-10">
-              <div>100</div>
-              <div className="flex-1"/>
-              <div>0</div>
+    <div className="w-full flex flex-row">
+      <table className="w-full h-full">
+        <tbody>
+        <tr>
+          <td className="h-full flex-col">
+            <div className="h-full flex flex-col justify-between w-[8rem] mr-7">
+              {sampleRatingLabels.reverse().map((label) => (
+                <div className="text-right">{label}</div>
+              ))}
             </div>
-            <div className="h-[16rem] self-center my-sm">
-              <Slider
-                orientation="vertical"
-                min={0}
-                max={100}
-                value={ratings.get(key)}
-                onChange={(_, value) => {
-                  updateState(key, value)
-                }}
-              />
+          </td>
+          <td className="w-full px-12">
+            <div className="w-full flex justify-between">
+              {Array.from(ratings.entries()).map(([key, value], index) => (
+                <div key={`slider_${index}`} className={`flex flex-col`}>
+                  <div className="flex flex-row">
+                    <div className="h-[16rem] self-center my-sm relative">
+                      <div className="absolute top-0 h-full w-full flex flex-col justify-between">
+                        {sampleRatingLabels.map(_ => (
+                          <div className="w-4 h-1 self-center" style={{backgroundColor: "#1976d2"}}/>
+                        ))}
+                      </div>
+                      <Slider
+                        orientation="vertical"
+                        min={0}
+                        max={100}
+                        value={ratings.get(key)}
+                        onChange={(_, value) => {
+                          updateState(key, value)
+                        }}
+                      />
+                    </div>
+                  </div>
+                  {/*<div className="self-center">{key}</div>*/}
+                </div>
+              ))}
             </div>
-            <div className="w-10"/>
-          </div>
-          {/*<div className="self-center">{key}</div>*/}
-        </div>
-      ))}
+          </td>
+        </tr>
+        <tr>
+          <td/>
+          <td className="flex flex-row justify-around -mx-3">
+            {Array.from(ratings.entries()).map(([key, value], index) => (
+              <div key={`slider_${index}`} className="self-center text-center w-12">
+                {value}
+              </div>
+            ))}
+          </td>
+        </tr>
+        </tbody>
+      </table>
     </div>
   )
 }
