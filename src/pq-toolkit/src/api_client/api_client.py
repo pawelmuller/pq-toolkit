@@ -8,7 +8,7 @@ from pydantic import PydanticSchemaGenerationError, BaseModel
 from requests import ConnectTimeout
 
 from api_client.dataclasses import PqExperiment, PqTestResult
-from api_client.exceptions import PqSerializationException, PqExperimentAlreadyExists
+from api_client.exceptions import PqSerializationException, PqExperimentAlreadyExists, PqExperimentSetupException
 
 
 class PqToolkitAPIClient:
@@ -111,6 +111,23 @@ class PqToolkitAPIClient:
             case 200:
                 experiments = response.json().get("experiments")
                 return experiments
+
+    def setup_experiment(self, *, experiment_name: str, experiment_settings: PqExperiment) -> list[str]:
+        if not isinstance(experiment_settings, PqExperiment):
+            raise PqExperimentSetupException(experiment_name=experiment_name,
+                                             message="The experiment settings must be a PqExperiment")
+        model_dict = experiment_settings.model_dump_json(by_alias=True, exclude_none=True, exclude_unset=True)
+        files_struct = {"file": ("setup.json", model_dict, "application/json", {"Content-Disposition": "form-data"})}
+        response = self._post(f"/experiments/{experiment_name}", files=files_struct)
+
+        match response.status_code:
+            case 200:
+                is_success = response.json().get("success")
+                if not is_success:
+                    raise PqExperimentSetupException(experiment_name=experiment_name)
+            case 400:
+                message = response.json().get("message")
+                raise PqExperimentSetupException(experiment_name=experiment_name, message=message)
 
     def get_experiment_results(self, *, experiment_name: str) -> list[str]:
         response = self._get(f"/experiments/{experiment_name}/results").json()

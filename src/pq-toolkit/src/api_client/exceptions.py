@@ -30,3 +30,13 @@ class PqExperimentAlreadyExists(PqToolkitException):
             message = f"An experiment already exists"
         self.message = message
         super().__init__(self.message)
+
+
+class PqExperimentSetupException(PqToolkitException):
+    def __init__(self, experiment_name: str, message: str = None):
+        if message:
+            _message = f"There was a problem setting up the experiment '{experiment_name}': {message}."
+        else:
+            _message = f"There was a problem setting up the experiment '{experiment_name}'."
+        self.message = _message
+        super().__init__(self.message)
