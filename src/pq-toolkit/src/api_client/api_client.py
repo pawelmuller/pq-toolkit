@@ -139,7 +139,7 @@ class PqToolkitAPIClient:
                 experiments = response.json().get("experiments")
                 return experiments
 
-    def setup_experiment(self, *, experiment_name: str, experiment_settings: PqExperiment) -> list[str]:
+    def setup_experiment(self, *, experiment_name: str, experiment_settings: PqExperiment):
         if not isinstance(experiment_settings, PqExperiment):
             raise PqExperimentSetupException(experiment_name=experiment_name,
                                              message="The experiment settings must be a PqExperiment")
@@ -163,11 +163,11 @@ class PqToolkitAPIClient:
         return []
 
     @_serialize_with_pydantic
-    def get_experiment_result(self, *, experiment_name: str, result_name: str) -> PqTestResult | None:
+    def get_experiment_test_results(self, *, experiment_name: str, result_name: str) -> list[PqTestResult] | None:
         response = self._get(f"/experiments/{experiment_name}/results/{result_name}")
         match response.status_code:
             case 200:
-                experiment_result = response.json().get("results")[0]
+                experiment_result = response.json().get("results")
                 return experiment_result
             case 404:
                 return None
