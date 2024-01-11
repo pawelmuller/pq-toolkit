@@ -1,10 +1,11 @@
+import inspect
 import logging
 from functools import wraps
-from types import UnionType
+from types import UnionType, GenericAlias
 from typing import get_type_hints
 
 import requests
-from pydantic import PydanticSchemaGenerationError, BaseModel
+from pydantic import PydanticSchemaGenerationError, BaseModel, ValidationError
 from requests import ConnectTimeout
 
 from api_client.dataclasses import PqExperiment, PqTestResult
@@ -44,23 +45,47 @@ class PqToolkitAPIClient:
 
     @staticmethod
     def _serialize_with_pydantic(func):
+        def _determine_return_type(types_to_return) -> (type, bool):
+            type_to_return = None
+            is_collection = False
+
+            if isinstance(types_to_return, GenericAlias):
+                is_collection = True
+            if isinstance(types_to_return, UnionType):
+                for iterable_type in types_to_return.__args__:
+                    if iterable_type is not type(None):
+                        type_to_return = iterable_type
+                        if isinstance(iterable_type, GenericAlias):
+                            is_collection = True
+                            type_to_return = iterable_type.__args__[0]
+                            break
+                        if inspect.isclass(iterable_type) and issubclass(iterable_type, BaseModel):
+                            break
+            else:
+                type_to_return = types_to_return
+
+            return type_to_return, is_collection
+
+        def _parse_response(result, is_collection, type_to_return):
+            if is_collection:
+                collection = []
+                for item in result:
+                    casted_item = type_to_return(**item)
+                    collection.append(casted_item)
+                return collection
+            else:
+                casted_result = type_to_return(**result)
+                return casted_result
+
         @wraps(func)
         def wrapper(*args, **kwargs):
-            type_hints = get_type_hints(func)
+            type_hints = get_type_hints(func, include_extras=True)
             types_to_return = type_hints.get("return")
 
             if not types_to_return:
                 raise PqSerializationException(f"Function {func.__name__} has not ben annotated with any return type")
 
-            type_to_return = None
-            if isinstance(types_to_return, UnionType):
-                for iterable_type in types_to_return.__args__:
-                    if iterable_type is not type(None):
-                        type_to_return = iterable_type
-                        if issubclass(iterable_type, BaseModel):
-                            break
-            else:
-                type_to_return = types_to_return
+            type_to_return, is_collection = _determine_return_type(types_to_return)
 
             if not issubclass(type_to_return, BaseModel):
                 raise PqSerializationException(f"Function {func.__name__} has not ben annotated with Pydantic's "
@@ -72,9 +97,9 @@ class PqToolkitAPIClient:
                 return None
 
             try:
-                casted_result = type_to_return(**result)
+                casted_result = _parse_response(result, is_collection, type_to_return)
                 return casted_result
-            except (RuntimeError, PydanticSchemaGenerationError) as e:
+            except (RuntimeError, PydanticSchemaGenerationError, ValidationError) as e:
                 raise PqSerializationException(f"Cannot cast the result to {types_to_return}: {e}")
 
         return wrapper
