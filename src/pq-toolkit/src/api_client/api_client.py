@@ -30,6 +30,8 @@ class PqToolkitAPIClient:
             return response
         except ConnectTimeout:
             print("Connection timed out")
+        except ConnectionError as e:
+            print(f"Encountered an error during connection: {e}")
 
     def _get(self, path, **kwargs):
         return self._request(method="GET", url=self._endpoint + path, **kwargs)
