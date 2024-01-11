@@ -1,3 +1,4 @@
+import uuid
 from enum import Enum
 
 from pydantic import BaseModel, Field, model_validator
@@ -52,7 +53,7 @@ class PqTestResult(BaseModel):
 
 
 class PqExperiment(BaseModel):
-    uid: str
+    uid: str | None = uuid.uuid4()
     name: str
     description: str
     tests: list[PqTest]
