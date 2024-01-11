@@ -34,13 +34,13 @@ class PqTest(BaseModel):
     questions: list[PqQuestion] | None = None
     axis: list[PqQuestion] | None = None
     reference: PqSample | None = None
-    anchor: PqSample | None = None
+    anchors: list[PqSample] | None = None
 
     @model_validator(mode='after')
     def _check_reference_and_anchor_coexistence(self) -> 'PqTest':
-        if self.reference is None and self.anchor is None:
+        if self.reference is None and self.anchors is None:
             return self
-        if self.reference is not None and self.anchor is not None:
+        if self.reference is not None and self.anchors is not None:
             return self
         else:
             raise PqValidationException(details="Fields 'anchor' and 'reference' are required together")
