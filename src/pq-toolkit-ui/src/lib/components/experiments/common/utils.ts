@@ -10,8 +10,8 @@ export const getSampleUrl = (
 ): string =>
   `${process.env.NEXT_PUBLIC_API_URL}/api/v1/experiments/${experimentName}/samples/${assetPath}`
 
-export function shuffleArray<ArrayItemType>(array: Array<ArrayItemType>): Array<ArrayItemType> {
-  let currentIndex = array.length, randomIndex;
+export function shuffleArray<ArrayItemType>(array: ArrayItemType[]): ArrayItemType[] {
+  let currentIndex = array.length; let randomIndex;
 
   // While there remain elements to shuffle.
   while (currentIndex > 0) {
