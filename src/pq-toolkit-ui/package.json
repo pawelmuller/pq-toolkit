@@ -8,8 +8,9 @@
     "start": "next start",
     "lint": "next lint",
     "lint:fix": "next lint --fix",
-    "test": "jest",
-    "test:watch": "jest --watch"
+    "test": "jest --coverage",
+    "test:watch": "jest --watch",
+    "build-docs": "typedoc"
   },
   "dependencies": {
     "@emotion/react": "^11.11.3",
@@ -52,6 +53,8 @@
     "prettier": "^2.8.8",
     "tailwindcss": "^3",
     "ts-node": "^10.9.2",
+    "typedoc": "^0.25.7",
+    "typedoc-plugin-zod": "^1.1.2",
     "typescript": "^5.2.2"
   },
   "engines": {
