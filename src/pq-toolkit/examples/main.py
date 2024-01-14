@@ -42,6 +42,9 @@ if __name__ == "__main__":
     # Getting experiment details by name
     experiment = api_client.get_experiment(experiment_name=experiment_name)
 
+    # The following will work ONLY if one takes the experiment through UI
+    # Expect errors otherwise
+
     # Getting experiment results list
     experiment_results = api_client.get_experiment_results(experiment_name=experiment_name)
 
@@ -50,3 +53,5 @@ if __name__ == "__main__":
         experiment_name=experiment_name,
         result_name=experiment_results[0]
     )
+
+    experiments = api_client.delete_experiment(experiment_name=experiment_name)
