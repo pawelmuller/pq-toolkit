@@ -64,7 +64,10 @@ const MUSHRATestComponent = ({
 
   return (
     <div className="bg-white rounded-md p-lg flex flex-col items-center text-black">
-      <div className="flex gap-md mt-md">
+      <div className="flex flex-col gap-md">
+        <div className="flex flex-col gap-xs">
+          <div className="text-center">{question}</div>
+        </div>
         <MultiPlayer
           assets={[reference, ...shuffledSamples].reduce<Map<string, string>>(
             (map, sample, idx) => {

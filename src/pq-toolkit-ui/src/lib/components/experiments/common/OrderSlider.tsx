@@ -43,7 +43,8 @@ const OrderSlider = ({
       newState[currentSample] = getZindex()
       return newState
     })
-  }, [currentSample, lastZindex, responses])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentSample])
 
   return (
     <div className="relative w-full">
@@ -52,6 +53,7 @@ const OrderSlider = ({
         className="custom-slider w-full absolute"
         type="range"
         value={responses.get(currentSampleId)}
+        onChange={() => {}}
       />
       {Array.from(responses.entries()).map(([key], index) => (
         <input
