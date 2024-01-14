@@ -144,7 +144,7 @@ class PqToolkitAPIClient:
         if not isinstance(experiment_setup, PqExperiment):
             raise PqExperimentSetupException(experiment_name=experiment_name,
                                              message="The experiment settings must be a PqExperiment")
-        model_dict = experiment_setup.model_dump_json(by_alias=True, exclude_none=True, exclude_unset=True)
+        model_dict = experiment_setup.model_dump_json(by_alias=True, exclude_none=True)
         files_struct = {"file": ("setup.json", model_dict, "application/json", {"Content-Disposition": "form-data"})}
         response = self._post(f"/experiments/{experiment_name}", files=files_struct)
 

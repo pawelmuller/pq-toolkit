@@ -1,5 +1,5 @@
 from api_client import PqToolkitAPIClient
-from api_client.dataclasses import PqExperiment, PqTest, PqTestTypes, PqSample, PqQuestion
+from api_client.dataclasses import PqExperiment, PqSample, PqQuestion, PqTestAB, PqTestMUSHRA
 from test_utils import generate_random_experiment_name
 
 if __name__ == "__main__":
@@ -15,9 +15,8 @@ if __name__ == "__main__":
         name="Test 1",
         description="Some test suite",
         tests=[
-            PqTest(
+            PqTestAB(
                 test_number=1,
-                type=PqTestTypes.AB,
                 samples=[
                     PqSample(sample_id="s1", asset_path="file_sample_5.mp3"),
                     PqSample(sample_id="s2", asset_path="file_sample_700.mp3")
@@ -25,6 +24,22 @@ if __name__ == "__main__":
                 questions=[
                     PqQuestion(question_id="q1", text="Select better quality"),
                     PqQuestion(question_id="q2", text="Select more warmth")
+                ]
+            ),
+            PqTestMUSHRA(
+                test_number=2,
+                reference=PqSample(sample_id="ref", asset_path="file_sample_5.mp3"),
+                anchors=[
+                    PqSample(sample_id="a1", asset_path="file_sample_700.mp3"),
+                    PqSample(sample_id="a2", asset_path="file_sample_5.mp3")
+                ],
+                samples=[
+                    PqSample(sample_id="s1", asset_path="sample-12s.mp3"),
+                    PqSample(sample_id="s2", asset_path="sample-15s.mp3"),
+                    PqSample(sample_id="s3", asset_path="sample-12s.mp3"),
+                    PqSample(sample_id="s4", asset_path="sample-15s.mp3"),
+                    PqSample(sample_id="s5", asset_path="sample-12s.mp3"),
+                    PqSample(sample_id="s6", asset_path="sample-15s.mp3")
                 ]
             )
         ]
