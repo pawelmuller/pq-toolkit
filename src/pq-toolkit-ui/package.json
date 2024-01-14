@@ -7,11 +7,16 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
+    "lint:fix": "next lint --fix",
     "test": "jest",
     "test:watch": "jest --watch"
   },
   "dependencies": {
+    "@emotion/react": "^11.11.3",
+    "@emotion/styled": "^11.11.0",
+    "@mui/material": "^5.15.3",
     "@ungap/structured-clone": "^1.2.0",
+    "axios": "^1.6.5",
     "howler": "^2.2.4",
     "next": "^14.0.1",
     "react": "^18",

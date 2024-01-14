@@ -1,20 +1,27 @@
 'use client'
-import { useContext } from 'react'
-import Loading from '../loading'
-import { ExperimentContext } from '../layout'
-import InvalidConfigurationError from '../invalid-configuration-error'
-import {
-  type ABTest,
-  type ABXTest,
-  type APETest,
-  type MUSHRATest,
-  TestTypeEnum
-} from '@/lib/schemas/experimentSetup'
 import ABTestComponent from '@/lib/components/experiments/ABTestComponent'
 import ABXTestComponent from '@/lib/components/experiments/ABXTestComponent'
-import MUSHRATestComponent from '@/lib/components/experiments/MUSHRATestComponent'
 import APETestComponent from '@/lib/components/experiments/APETestComponent'
+import MUSHRATestComponent from '@/lib/components/experiments/MUSHRATestComponent'
+import {
+  TestTypeEnum,
+  type ABTest,
+  type APETest,
+  type FullABXTest,
+  type FullMUSHRATest
+} from '@/lib/schemas/experimentSetup'
 import Link from 'next/link'
+import { useContext } from 'react'
+import InvalidConfigurationError from '../invalid-configuration-error'
+import { ExperimentContext } from '../layout'
+import Loading from '../loading'
+import {
+  type PartialResult,
+  type ABResult,
+  type ABXResult,
+  type MUSHRAResult,
+  type APEResult
+} from '@/lib/schemas/experimentState'
 
 export const revalidate = 0
 
@@ -23,12 +30,15 @@ const TestPage = ({
 }: {
   params: { name: string; step: string }
 }): JSX.Element => {
+  const { name } = params
+
   const context = useContext(ExperimentContext)
   const data = context?.data
+  const results = context?.results
   const saveResults = context?.saveResults
 
   if (context?.error === true) return <InvalidConfigurationError />
-  if (data == null) return <Loading />
+  if (data == null || results == null) return <Loading />
 
   const { tests } = data
 
@@ -45,18 +55,62 @@ const TestPage = ({
         return (
           <ABTestComponent
             testData={currentTest as ABTest}
-            experimentName={params.name}
+            initialValues={
+              results.results.find(
+                (r) => r.testNumber === currentTest.testNumber
+              ) as PartialResult<ABResult>
+            }
+            experimentName={name}
             setAnswer={(result) => {
               context?.setAnswer(result)
             }}
           />
         )
       case TestTypeEnum.enum.ABX:
-        return <ABXTestComponent testData={currentTest as ABXTest} />
+        return (
+          <ABXTestComponent
+            testData={currentTest as FullABXTest}
+            initialValues={
+              results.results.find(
+                (r) => r.testNumber === currentTest.testNumber
+              ) as PartialResult<ABXResult>
+            }
+            experimentName={name}
+            setAnswer={(result) => {
+              context?.setAnswer(result)
+            }}
+          />
+        )
       case TestTypeEnum.enum.MUSHRA:
-        return <MUSHRATestComponent testData={currentTest as MUSHRATest} />
+        return (
+          <MUSHRATestComponent
+            testData={currentTest as FullMUSHRATest}
+            initialValues={
+              results.results.find(
+                (r) => r.testNumber === currentTest.testNumber
+              ) as PartialResult<MUSHRAResult>
+            }
+            experimentName={name}
+            setAnswer={(result) => {
+              context?.setAnswer(result)
+            }}
+          />
+        )
       case TestTypeEnum.enum.APE:
-        return <APETestComponent testData={currentTest as APETest} />
+        return (
+          <APETestComponent
+            testData={currentTest as APETest}
+            initialValues={
+              results.results.find(
+                (r) => r.testNumber === currentTest.testNumber
+              ) as PartialResult<APEResult>
+            }
+            experimentName={name}
+            setAnswer={(result) => {
+              context?.setAnswer(result)
+            }}
+          />
+        )
     }
   }
 

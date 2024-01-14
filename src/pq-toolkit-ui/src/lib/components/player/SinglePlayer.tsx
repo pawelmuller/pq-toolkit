@@ -63,17 +63,27 @@ const SinglePlayer = ({
         setProgress(Math.round(playerRef.current.seek() ?? 0))
         break
     }
+
+    return () => {
+      player.stop()
+      stopUpdating()
+    }
   }, [playerRef, status])
 
   return (
     <div className="flex flex-col items-center min-w-[16rem]">
       <div className="text-md font-semibold">{name}</div>
-      <div className="w-full rounded-full h-2 bg-blue-100">
-        <div
-          className="h-2 rounded-xl bg-blue-600"
-          style={{ width: `${((progress / length) * 100).toFixed(0)}%` }}
-        />
-      </div>
+      <input
+        type="range"
+        min="0"
+        max={length}
+        value={progress}
+        onChange={(e) => {
+          playerRef.current.seek(parseInt(e.target.value))
+          setProgress(parseInt(e.target.value))
+        }}
+        className="w-full appearance-none bg-blue-100 rounded-full"
+      />
       <div className="w-full flex justify-end text-sm font-light">
         {formatTime(progress)}/{formatTime(length)}
       </div>

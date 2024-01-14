@@ -95,7 +95,7 @@ const AdminExperimentsListWidget = ({
       <div className="">Configured experiments:</div>
       <ul>
         {experiments.map((name, idx) => (
-          <li key={idx} className="flex items-center gap-sm">
+          <li key={idx} className="flex items-center gap-sm justify-center">
             <Link href={`/admin/${name}`}>{name}</Link>
             <button
               onClick={() => {

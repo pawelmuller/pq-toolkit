@@ -30,7 +30,7 @@ export type Question = z.infer<typeof QuestionSchema>
 // Definitions for all available test types
 
 /**
- * Enum of all test types
+ * Enum of all available test types
  */
 export const TestTypeEnum = z.enum(['AB', 'ABX', 'MUSHRA', 'APE'])
 
@@ -49,7 +49,7 @@ export type BaseTest = z.infer<typeof BaseTestSchema>
 
 /**
  * AB test schema
- * AB test consist of 2 samples, user must select one of them
+ * AB test consist of 2 (or more) samples, user must select one of them
  * as preferred in one or more questions attached to this test
  */
 export const ABTestSchema = BaseTestSchema.extend({
@@ -68,28 +68,50 @@ export type ABTest = z.infer<typeof ABTestSchema>
  * generated randomly when test is started
  */
 export const ABXTestSchema = BaseTestSchema.extend({
-  type: z.enum(['ABX'])
-  // TODO: fill
+  type: z.enum(['ABX']),
+  samples: z.array(SampleSchema).min(2).max(2),
+  xSampleId: z.string().optional(),
+  questions: z.array(QuestionSchema).optional()
+})
+
+/**
+ * ABX test schema with all required fields filled
+ */
+export const FullABXTestSchema = ABXTestSchema.extend({
+  xSampleId: z.string().min(1)
 })
 
 export type ABXTest = z.infer<typeof ABXTestSchema>
+export type FullABXTest = z.infer<typeof FullABXTestSchema>
 
 /**
  * MUSHRA test schema
  */
 export const MUSHRATestSchema = BaseTestSchema.extend({
-  type: z.enum(['MUSHRA'])
-  // TODO: fill
+  type: z.enum(['MUSHRA']),
+  question: z.string().optional(),
+  reference: SampleSchema,
+  anchors: z.array(SampleSchema).min(1),
+  samples: z.array(SampleSchema).min(2)
+})
+
+/**
+ * MUSHRA test schema with all required fields filled
+ */
+export const FullMUSHRATestSchema = MUSHRATestSchema.extend({
+  samplesShuffle: z.array(z.string())
 })
 
 export type MUSHRATest = z.infer<typeof MUSHRATestSchema>
+export type FullMUSHRATest = z.infer<typeof FullMUSHRATestSchema>
 
 /**
  * APE test schema
  */
 export const APETestSchema = BaseTestSchema.extend({
-  type: z.enum(['APE'])
-  // TODO: fill
+  type: z.enum(['APE']),
+  samples: z.array(SampleSchema).min(2),
+  axis: z.array(QuestionSchema).min(1)
 })
 
 export type APETest = z.infer<typeof APETestSchema>
@@ -97,7 +119,7 @@ export type APETest = z.infer<typeof APETestSchema>
 /**
  * Defines full experiment setup, which contains:
  * - start page
- * - multiple tests of different types
+ * - multiple tests (can be of different types)
  * - ending page
  */
 export const ExperimentSetupSchema = z.object({
