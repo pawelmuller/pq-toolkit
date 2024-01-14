@@ -1,14 +1,14 @@
 'use client'
 
-import {type APETest} from '@/lib/schemas/experimentSetup'
+import { type APETest } from '@/lib/schemas/experimentSetup'
 import {
   type APEResult,
   type PartialResult
 } from '@/lib/schemas/experimentState'
 import MultiPlayer from '../player/MultiPlayer'
-import {getSampleUrl} from './common/utils'
+import { getSampleUrl } from './common/utils'
 import OrderSlider from './common/OrderSlider'
-import {useEffect, useState} from "react";
+import { useEffect, useState } from 'react'
 
 const APETestComponent = ({
   testData,
@@ -19,40 +19,36 @@ const APETestComponent = ({
   experimentName: string
   setAnswer: (result: PartialResult<APEResult>) => void
 }): JSX.Element => {
-  const {axis, samples} = testData
+  const { axis, samples } = testData
   const selectedPlayerState = useState<number>(0)
-  const [responses, setResponses] = useState(axis.reduce<Map<string, Map<string, number>>>((map_axis, sample_axis) => {
-        map_axis.set(
-          sample_axis.questionId,
-          samples.reduce<Map<string, number>>((map_samples, sample_samples) => {
-            map_samples.set(sample_samples.sampleId, 0)
-            return map_samples
-          }, new Map<string, number>())
-        )
-        return map_axis
-      }, new Map<string, Map<string, number>>()
-    )
+  const [responses, setResponses] = useState(
+    axis.reduce<Map<string, Map<string, number>>>((mapAxis, sampleAxis) => {
+      mapAxis.set(
+        sampleAxis.questionId,
+        samples.reduce<Map<string, number>>((mapSamples, sampleSamples) => {
+          mapSamples.set(sampleSamples.sampleId, 0)
+          return mapSamples
+        }, new Map<string, number>())
+      )
+      return mapAxis
+    }, new Map<string, Map<string, number>>())
   )
 
   useEffect(() => {
     const result: PartialResult<APEResult> = {
       testNumber: testData.testNumber,
       axisResults: Object.keys(responses).map((questionId) => ({
-            axisId: questionId,
-            sampleRatings: Array.from(Object.keys((responses.get(questionId) as Map<string, number>).keys())).map((sampleId) => ({
-              sampleId,
-              rating: responses.get(questionId)!.get(sampleId) as number
-            }))
-          }
-        )
-      )
+        axisId: questionId,
+        sampleRatings: Array.from(
+          Object.keys((responses.get(questionId) as Map<string, number>).keys())
+        ).map((sampleId) => ({
+          sampleId,
+          rating: responses.get(questionId)?.get(sampleId) as number
+        }))
+      }))
     }
     setAnswer(result)
-  }, [
-    responses,
-    setAnswer,
-    testData.testNumber,
-  ])
+  }, [responses, setAnswer, testData.testNumber])
 
   return (
     <div className="bg-white rounded-md p-lg flex flex-col items-center text-black">
@@ -69,8 +65,8 @@ const APETestComponent = ({
         />
       </div>
       <div className="flex flex-col gap-sm w-full mt-md">
-        {axis.map(({text, questionId}) => (
-          <div className="mb-sm">
+        {axis.map(({ text, questionId }) => (
+          <div className="mb-sm" key={`q${questionId}`}>
             {text}
             <OrderSlider
               key={`slider_${questionId}`}

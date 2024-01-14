@@ -1,49 +1,49 @@
-import React, {useEffect, useState} from 'react'
+import React, { useEffect, useState } from 'react'
 
 const OrderSlider = ({
-                       currentSample,
-                       samples,
-                       updateResponses
-                     }: {
+  currentSample,
+  samples,
+  updateResponses
+}: {
   currentSample?: number
-  samples: { sampleId: string, assetPath: string }[]
+  samples: Array<{ sampleId: string; assetPath: string }>
   // changeResponses: (_1: string, _2: number) => void
   updateResponses: (state: Map<string, number>) => void
 }): JSX.Element => {
   const [responses, setResponses] = useState(
-    new Map<string, number>(samples.reduce<Map<string, number>>((map, sample) => {
-          map.set(
-            sample.sampleId,
-            0
-          )
-          return map
-        }, new Map<string, number>()
-      )
+    new Map<string, number>(
+      samples.reduce<Map<string, number>>((map, sample) => {
+        map.set(sample.sampleId, 0)
+        return map
+      }, new Map<string, number>())
     )
   )
 
   const [lastZindex, setZindex] = useState(responses.size)
-  const [Zindices, setZindices] = useState(Array.from(Array(responses.size).keys()))
-  const [currentSampleId, setCurrentSampleId] = useState(Array.from(responses.keys())[0])
-
-  function getZindex() {
-    const zIndex = lastZindex
-    setZindex((prevState) => prevState + 1)
-    return zIndex
-  }
+  const [Zindices, setZindices] = useState(
+    Array.from(Array(responses.size).keys())
+  )
+  const [currentSampleId, setCurrentSampleId] = useState(
+    Array.from(responses.keys())[0]
+  )
 
   useEffect(() => {
-    if (currentSample === undefined)
-      return
+    if (currentSample === undefined) return
 
     setCurrentSampleId(Array.from(responses.keys())[currentSample])
 
     setZindices((prevState) => {
-      let newState = prevState
+      const getZindex = (): number => {
+        const zIndex = lastZindex
+        setZindex((prevState) => prevState + 1)
+        return zIndex
+      }
+
+      const newState = prevState
       newState[currentSample] = getZindex()
       return newState
     })
-  }, [currentSample]);
+  }, [currentSample, lastZindex, responses])
 
   return (
     <div className="relative w-full">
@@ -56,7 +56,9 @@ const OrderSlider = ({
       {Array.from(responses.entries()).map(([key], index) => (
         <input
           key={`slider_${key}`}
-          className={`w-full absolute appearance-none bg-transparent ${currentSample !== index && 'accent-gray-400'}`}
+          className={`w-full absolute appearance-none bg-transparent ${
+            currentSample !== index && 'accent-gray-400'
+          }`}
           style={{ zIndex: Zindices[index] }}
           type="range"
           min="1"
