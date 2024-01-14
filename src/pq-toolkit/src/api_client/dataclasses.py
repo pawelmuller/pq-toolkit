@@ -1,7 +1,7 @@
 import uuid
 from enum import Enum
 
-from pydantic import BaseModel, Field, model_validator
+from pydantic import BaseModel, Field, model_validator, AliasChoices
 
 from api_client.exceptions import PqValidationException
 
@@ -14,17 +14,21 @@ class PqTestTypes(Enum):
 
 
 class PqSample(BaseModel):
-    sample_id: str = Field(alias="sampleId")
-    asset_path: str = Field(alias="assetPath")
+    sample_id: str = Field(alias="sampleId",
+                           validation_alias=AliasChoices("sampleId", "sample_id"))
+    asset_path: str = Field(alias="assetPath",
+                            validation_alias=AliasChoices("assetPath", "asset_path"))
 
 
 class PqQuestion(BaseModel):
-    question_id: str = Field(alias="questionId")
+    question_id: str = Field(alias="questionId",
+                             validation_alias=AliasChoices("questionId", "question_id"))
     text: str
 
 
 class PqTest(BaseModel):
-    test_number: int = Field(alias="testNumber")
+    test_number: int = Field(alias="testNumber",
+                             validation_alias=AliasChoices("testNumber", "test_number"))
     type: PqTestTypes
     samples: list[PqSample]
     questions: list[PqQuestion] | None = None
@@ -43,12 +47,15 @@ class PqTest(BaseModel):
 
 
 class PqTestBaseResult(BaseModel):
-    test_number: int = Field(alias="testNumber")
+    test_number: int = Field(alias="testNumber",
+                             validation_alias=AliasChoices("testNumber", "test_number"))
 
 
 class PqSelection(BaseModel):
-    question_id: str = Field(alias="questionId")
-    sample_id: str = Field(alias="sampleId")
+    question_id: str = Field(alias="questionId",
+                             validation_alias=AliasChoices("questionId", "question_id"))
+    sample_id: str = Field(alias="sampleId",
+                           validation_alias=AliasChoices("sampleId", "sample_id"))
 
 
 class PqTestABResult(PqTestBaseResult):
