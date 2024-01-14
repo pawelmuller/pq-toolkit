@@ -8,7 +8,7 @@ import requests
 from pydantic import PydanticSchemaGenerationError, BaseModel, ValidationError
 from requests import ConnectTimeout
 
-from api_client.dataclasses import PqExperiment, PqTestResult
+from api_client.dataclasses import PqExperiment, PqTestResultsList
 from api_client.exceptions import PqSerializationException, PqExperimentAlreadyExists, PqExperimentSetupException
 
 
@@ -163,11 +163,11 @@ class PqToolkitAPIClient:
         return []
 
     @_serialize_with_pydantic
-    def get_experiment_test_results(self, *, experiment_name: str, result_name: str) -> list[PqTestResult] | None:
+    def get_experiment_test_results(self, *, experiment_name: str, result_name: str) -> PqTestResultsList | None:
         response = self._get(f"/experiments/{experiment_name}/results/{result_name}")
         match response.status_code:
             case 200:
-                experiment_result = response.json().get("results")
-                return experiment_result
+                experiment_results = response.json()
+                return experiment_results
             case 404:
                 return None

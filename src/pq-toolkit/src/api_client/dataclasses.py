@@ -13,11 +13,6 @@ class PqTestTypes(Enum):
     MUSHRA = "MUSHRA"
 
 
-class PqSelection(BaseModel):
-    question_id: str = Field(alias="questionId")
-    sample_id: str = Field(alias="sampleId")
-
-
 class PqSample(BaseModel):
     sample_id: str = Field(alias="sampleId")
     asset_path: str = Field(alias="assetPath")
@@ -47,9 +42,52 @@ class PqTest(BaseModel):
             raise PqValidationException(details="Fields 'anchor' and 'reference' are required together")
 
 
-class PqTestResult(BaseModel):
+class PqTestBaseResult(BaseModel):
     test_number: int = Field(alias="testNumber")
+
+
+class PqSelection(BaseModel):
+    question_id: str = Field(alias="questionId")
+    sample_id: str = Field(alias="sampleId")
+
+
+class PqTestABResult(PqTestBaseResult):
     selections: list[PqSelection]
+
+
+class PqTestABXResult(PqTestBaseResult):
+    x_sample_id: str = Field(alias="xSampleId")
+    x_selected: str = Field(alias="xSelected")
+    selections: list[PqSelection] | list
+
+
+class PqTestMUSHRAScore(BaseModel):
+    sample_id: str = Field(alias="sampleId")
+    score: int
+
+
+class PqTestMUSHRAResult(PqTestBaseResult):
+    reference_score: int = Field(alias="referenceScore")
+    anchors_scores: list[PqTestMUSHRAScore] = Field(alias="anchorsScores")
+    samples_scores: list[PqTestMUSHRAScore] = Field(alias="samplesScores")
+
+
+class PqTestAPESampleRating(BaseModel):
+    sample_id: str = Field(alias="sampleId")
+    rating: int
+
+
+class PqTestAPEAxisResult(BaseModel):
+    axis_id: str = Field(alias="axisId")
+    sample_ratings: list[PqTestAPESampleRating] = Field(alias="sampleRatings")
+
+
+class PqTestAPEResult(PqTestBaseResult):
+    axis_results: list[PqTestAPEAxisResult] | list = Field(alias="axisResults")
+
+
+class PqTestResultsList(BaseModel):
+    results: list[PqTestABResult | PqTestABXResult | PqTestAPEResult | PqTestMUSHRAResult]
 
 
 class PqExperiment(BaseModel):
