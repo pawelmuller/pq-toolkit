@@ -40,3 +40,15 @@ class PqExperimentSetupException(PqToolkitException):
             _message = f"There was a problem setting up the experiment '{experiment_name}'."
         self.message = _message
         super().__init__(self.message)
+
+
+class PqExperimentSampleUploadException(PqToolkitException):
+    def __init__(self, experiment_name: str, sample_name: str, message: str = None):
+        if message:
+            _message = (f"There was a problem with uploading a sample '{sample_name}' "
+                        f"to an experiment '{experiment_name}': {message}.")
+        else:
+            _message = (f"There was a problem with uploading a sample '{sample_name}' "
+                        f"to an experiment '{experiment_name}'.")
+        self.message = _message
+        super().__init__(self.message)

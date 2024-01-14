@@ -31,6 +31,11 @@ if __name__ == "__main__":
     )
     api_client.setup_experiment(experiment_name=experiment_name, experiment_setup=experiment_setup)
 
+    # Uploading samples as a file
+    sample_path = "file_sample_5.mp3"
+    with open(sample_path, 'rb') as file:
+        api_client.upload_sample(experiment_name=experiment_name, sample_name="file_sample_5.mp3", sample_binary=file)
+
     # Getting the list of all available experiments
     experiments = api_client.get_experiments()
 

@@ -2,14 +2,15 @@ import inspect
 import logging
 from functools import wraps
 from types import UnionType, GenericAlias
-from typing import get_type_hints
+from typing import get_type_hints, BinaryIO
 
 import requests
 from pydantic import PydanticSchemaGenerationError, BaseModel, ValidationError
 from requests import ConnectTimeout
 
 from api_client.dataclasses import PqExperiment, PqTestResultsList
-from api_client.exceptions import PqSerializationException, PqExperimentAlreadyExists, PqExperimentSetupException
+from api_client.exceptions import PqSerializationException, PqExperimentAlreadyExists, PqExperimentSetupException, \
+    PqExperimentSampleUploadException
 
 
 class PqToolkitAPIClient:
@@ -155,6 +156,20 @@ class PqToolkitAPIClient:
             case 400:
                 message = response.json().get("message")
                 raise PqExperimentSetupException(experiment_name=experiment_name, message=message)
+
+    def upload_sample(self, *, experiment_name: str, sample_name: str, sample_binary: bytes | BinaryIO):
+        files_struct = {"file": (sample_name, sample_binary, "audio/mpeg", {"Content-Disposition": "form-data"})}
+        response = self._post(f"/experiments/{experiment_name}/samples", files=files_struct)
+
+        match response.status_code:
+            case 200:
+                is_success = response.json().get("success")
+                if not is_success:
+                    raise PqExperimentSampleUploadException(experiment_name=experiment_name, sample_name=sample_name)
+            case 400:
+                message = response.json().get("message")
+                raise PqExperimentSampleUploadException(experiment_name=experiment_name, sample_name=sample_name,
+                                                        message=message)
 
     def get_experiment_results(self, *, experiment_name: str) -> list[str]:
         response = self._get(f"/experiments/{experiment_name}/results").json()
