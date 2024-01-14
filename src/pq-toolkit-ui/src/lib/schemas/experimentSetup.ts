@@ -10,6 +10,12 @@ export const SampleSchema = z.object({
   assetPath: z.string().min(1)
 })
 
+/**
+ * Type from {@link SampleSchema}
+ * Defines a single sample used in test
+ * @field sampleId - unique sample identifier
+ * @field assetPath - path to audio file
+ */
 export type Sample = z.infer<typeof SampleSchema>
 
 /**
@@ -25,6 +31,12 @@ export const QuestionSchema = z.object({
   text: z.string().min(1)
 })
 
+/**
+ * Type from {@link QuestionSchema}
+ * Defines a single question used in test
+ * @field questionId - unique question identifier
+ * @field text - text displayed to user
+ */
 export type Question = z.infer<typeof QuestionSchema>
 
 // Definitions for all available test types
@@ -34,6 +46,10 @@ export type Question = z.infer<typeof QuestionSchema>
  */
 export const TestTypeEnum = z.enum(['AB', 'ABX', 'MUSHRA', 'APE'])
 
+/**
+ * Type from {@link TestTypeEnum}
+ * Enum of all available test types
+ */
 export type TestType = z.infer<typeof TestTypeEnum>
 
 /**
@@ -45,6 +61,12 @@ export const BaseTestSchema = z.object({
   samples: z.array(SampleSchema)
 })
 
+/**
+ * Type from {@link BaseTestSchema}
+ * Base test schema, all test schemas extend it
+ * @field testNumber - ordinal number of test, must be unique
+ * @field type - test type {@link TestTypeEnum}
+ */
 export type BaseTest = z.infer<typeof BaseTestSchema>
 
 /**
@@ -58,6 +80,12 @@ export const ABTestSchema = BaseTestSchema.extend({
   questions: z.array(QuestionSchema).min(1)
 })
 
+/**
+ * Type from {@link ABTestSchema}
+ * AB test schema
+ * @field samples - array of samples {@link SampleSchema}
+ * @field questions - array of questions {@link QuestionSchema}
+ */
 export type ABTest = z.infer<typeof ABTestSchema>
 
 /**
@@ -81,11 +109,29 @@ export const FullABXTestSchema = ABXTestSchema.extend({
   xSampleId: z.string().min(1)
 })
 
+/**
+ * Type from {@link ABXTestSchema}
+ * ABX test schema
+ * @field samples - array of samples {@link SampleSchema}
+ * @field xSampleId - id of sample X (optional)
+ * @field questions - array of questions {@link QuestionSchema}
+ */
 export type ABXTest = z.infer<typeof ABXTestSchema>
+/**
+ * Type from {@link FullABXTestSchema}
+ * ABX test schema with all required fields filled
+ * @field samples - array of samples {@link SampleSchema}
+ * @field xSampleId - id of sample X
+ * @field questions - array of questions {@link QuestionSchema}
+ */
 export type FullABXTest = z.infer<typeof FullABXTestSchema>
 
 /**
  * MUSHRA test schema
+ * MUSHRA test consist of reference sample, one or more
+ * anchor samples and multiple samples which are compared
+ * to reference.
+ * User must rate each sample on a scale from 0 to 100
  */
 export const MUSHRATestSchema = BaseTestSchema.extend({
   type: z.enum(['MUSHRA']),
@@ -102,11 +148,33 @@ export const FullMUSHRATestSchema = MUSHRATestSchema.extend({
   samplesShuffle: z.array(z.string())
 })
 
+/**
+ * Type from {@link MUSHRATestSchema}
+ * MUSHRA test schema
+ * @field question - question displayed to user
+ * @field reference - reference sample {@link SampleSchema}
+ * @field anchors - array of anchor samples {@link SampleSchema}
+ * @field samples - array of samples {@link SampleSchema}
+ */
 export type MUSHRATest = z.infer<typeof MUSHRATestSchema>
+/**
+ * Type from {@link FullMUSHRATestSchema}
+ * MUSHRA test schema with all required fields filled
+ * @field question - question displayed to user
+ * @field reference - reference sample {@link SampleSchema}
+ * @field anchors - array of anchor samples {@link SampleSchema}
+ * @field samples - array of samples {@link SampleSchema}
+ * @field samplesShuffle - array of sample ids in shuffled order
+ */
 export type FullMUSHRATest = z.infer<typeof FullMUSHRATestSchema>
 
 /**
  * APE test schema
+ * APE test consist of multiple samples and multiple questions
+ * User must rate each sample on a scale from 0 to 100
+ * in each question
+ * Every question has its own axis, which is displayed to user
+ * as a slider with multiple points representing samples
  */
 export const APETestSchema = BaseTestSchema.extend({
   type: z.enum(['APE']),
@@ -114,6 +182,12 @@ export const APETestSchema = BaseTestSchema.extend({
   axis: z.array(QuestionSchema).min(1)
 })
 
+/**
+ * Type from {@link APETestSchema}
+ * APE test schema
+ * @field samples - array of samples {@link SampleSchema}
+ * @field axis - array of questions {@link QuestionSchema}
+ */
 export type APETest = z.infer<typeof APETestSchema>
 
 /**
@@ -130,4 +204,16 @@ export const ExperimentSetupSchema = z.object({
   tests: z.array(BaseTestSchema.passthrough()).min(1)
 })
 
+/**
+ * Type from {@link ExperimentSetupSchema}
+ * Defines full experiment setup, which contains:
+ * - start page
+ * - multiple tests (can be of different types)
+ * - ending page
+ * @field uid - unique experiment identifier
+ * @field name - experiment name
+ * @field description - experiment description
+ * @field endText - text displayed on ending page
+ * @field tests - array of tests {@link BaseTestSchema}
+ */
 export type ExperimentSetup = z.infer<typeof ExperimentSetupSchema>
