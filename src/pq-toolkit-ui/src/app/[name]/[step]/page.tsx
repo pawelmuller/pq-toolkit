@@ -8,13 +8,20 @@ import {
   type ABTest,
   type APETest,
   type FullABXTest,
-  type MUSHRATest
+  type FullMUSHRATest
 } from '@/lib/schemas/experimentSetup'
 import Link from 'next/link'
 import { useContext } from 'react'
 import InvalidConfigurationError from '../invalid-configuration-error'
 import { ExperimentContext } from '../layout'
 import Loading from '../loading'
+import {
+  type PartialResult,
+  type ABResult,
+  type ABXResult,
+  type MUSHRAResult,
+  type APEResult
+} from '@/lib/schemas/experimentState'
 
 export const revalidate = 0
 
@@ -27,10 +34,11 @@ const TestPage = ({
 
   const context = useContext(ExperimentContext)
   const data = context?.data
+  const results = context?.results
   const saveResults = context?.saveResults
 
   if (context?.error === true) return <InvalidConfigurationError />
-  if (data == null) return <Loading />
+  if (data == null || results == null) return <Loading />
 
   const { tests } = data
 
@@ -47,6 +55,11 @@ const TestPage = ({
         return (
           <ABTestComponent
             testData={currentTest as ABTest}
+            initialValues={
+              results.results.find(
+                (r) => r.testNumber === currentTest.testNumber
+              ) as PartialResult<ABResult>
+            }
             experimentName={name}
             setAnswer={(result) => {
               context?.setAnswer(result)
@@ -57,6 +70,11 @@ const TestPage = ({
         return (
           <ABXTestComponent
             testData={currentTest as FullABXTest}
+            initialValues={
+              results.results.find(
+                (r) => r.testNumber === currentTest.testNumber
+              ) as PartialResult<ABXResult>
+            }
             experimentName={name}
             setAnswer={(result) => {
               context?.setAnswer(result)
@@ -66,7 +84,12 @@ const TestPage = ({
       case TestTypeEnum.enum.MUSHRA:
         return (
           <MUSHRATestComponent
-            testData={currentTest as MUSHRATest}
+            testData={currentTest as FullMUSHRATest}
+            initialValues={
+              results.results.find(
+                (r) => r.testNumber === currentTest.testNumber
+              ) as PartialResult<MUSHRAResult>
+            }
             experimentName={name}
             setAnswer={(result) => {
               context?.setAnswer(result)
@@ -77,6 +100,11 @@ const TestPage = ({
         return (
           <APETestComponent
             testData={currentTest as APETest}
+            initialValues={
+              results.results.find(
+                (r) => r.testNumber === currentTest.testNumber
+              ) as PartialResult<APEResult>
+            }
             experimentName={name}
             setAnswer={(result) => {
               context?.setAnswer(result)

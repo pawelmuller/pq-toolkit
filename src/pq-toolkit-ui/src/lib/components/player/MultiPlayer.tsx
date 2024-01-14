@@ -34,7 +34,9 @@ const MultiPlayer = ({
 
   const getPlayerLength = (player: Howl): number => player.duration() ?? 0
 
+  // This won't cause changing hooks on re-render because it's specific for each component
   const [selectedPlayer, setSelectedPlayer] =
+    // eslint-disable-next-line react-hooks/rules-of-hooks
     selectedPlayerState ?? useState<number>(0)
 
   useEffect(() => {

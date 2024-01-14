@@ -12,21 +12,40 @@ import { useEffect, useState } from 'react'
 
 const APETestComponent = ({
   testData,
+  initialValues,
   experimentName,
   setAnswer
 }: {
   testData: APETest
+  initialValues?: PartialResult<APEResult>
   experimentName: string
   setAnswer: (result: PartialResult<APEResult>) => void
 }): JSX.Element => {
+  // console.log(initialValues)
   const { axis, samples } = testData
   const selectedPlayerState = useState<number>(0)
   const [responses, setResponses] = useState(
     axis.reduce<Map<string, Map<string, number>>>((mapAxis, sampleAxis) => {
+      const axisResults = initialValues?.axisResults?.find(
+        (r) => r.axisId === sampleAxis.questionId
+      )
       mapAxis.set(
         sampleAxis.questionId,
         samples.reduce<Map<string, number>>((mapSamples, sampleSamples) => {
-          mapSamples.set(sampleSamples.sampleId, 0)
+          const idx =
+            axisResults?.sampleRatings.findIndex(
+              (r) => r.sampleId === sampleSamples.sampleId
+            ) ?? -1
+
+          if (idx !== -1) {
+            mapSamples.set(
+              sampleSamples.sampleId,
+              axisResults?.sampleRatings[idx].rating ?? 0
+            )
+          } else {
+            mapSamples.set(sampleSamples.sampleId, 0)
+          }
+
           return mapSamples
         }, new Map<string, number>())
       )
@@ -37,10 +56,10 @@ const APETestComponent = ({
   useEffect(() => {
     const result: PartialResult<APEResult> = {
       testNumber: testData.testNumber,
-      axisResults: Object.keys(responses).map((questionId) => ({
+      axisResults: Array.from(responses.keys()).map((questionId) => ({
         axisId: questionId,
         sampleRatings: Array.from(
-          Object.keys((responses.get(questionId) as Map<string, number>).keys())
+          Array.from((responses.get(questionId) as Map<string, number>).keys())
         ).map((sampleId) => ({
           sampleId,
           rating: responses.get(questionId)?.get(sampleId) as number
@@ -72,6 +91,7 @@ const APETestComponent = ({
               key={`slider_${questionId}`}
               currentSample={selectedPlayerState[0]}
               samples={samples}
+              initialValues={responses.get(questionId)}
               updateResponses={(newValueMap: Map<string, number>) => {
                 setResponses((prevState) => {
                   const newResponses = new Map(prevState)

@@ -3,17 +3,20 @@ import React, { useEffect, useState } from 'react'
 const OrderSlider = ({
   currentSample,
   samples,
-  updateResponses
+  updateResponses,
+  initialValues
 }: {
   currentSample?: number
   samples: Array<{ sampleId: string; assetPath: string }>
-  // changeResponses: (_1: string, _2: number) => void
   updateResponses: (state: Map<string, number>) => void
+  initialValues?: Map<string, number>
 }): JSX.Element => {
   const [responses, setResponses] = useState(
     new Map<string, number>(
       samples.reduce<Map<string, number>>((map, sample) => {
-        map.set(sample.sampleId, 0)
+        const idx = initialValues?.get(sample.sampleId)
+        if (idx !== undefined) map.set(sample.sampleId, idx)
+        else map.set(sample.sampleId, 0)
         return map
       }, new Map<string, number>())
     )
@@ -43,8 +46,11 @@ const OrderSlider = ({
       newState[currentSample] = getZindex()
       return newState
     })
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentSample])
+
+  useEffect(() => {
+    updateResponses(responses)
+  }, [responses])
 
   return (
     <div className="relative w-full">
@@ -72,7 +78,6 @@ const OrderSlider = ({
               newState.set(key, parseInt(e.target.value))
               return newState
             })
-            updateResponses(responses)
           }}
         />
       ))}

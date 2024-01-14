@@ -12,6 +12,7 @@ import {
 } from '@/lib/schemas/experimentState'
 import { fillTest } from './utils'
 import useExperimentData from '@/lib/components/experiments/hooks/useExperimentData'
+import useStorage from '@/core/hooks/useStorage'
 
 /**
  * Context which provides all values used during testing
@@ -20,7 +21,7 @@ import useExperimentData from '@/lib/components/experiments/hooks/useExperimentD
 export const ExperimentContext = createContext<{
   data: ExperimentSetup
   error: boolean
-  results: Record<string, unknown>
+  results: { results: BaseResult[] }
   setAnswer: (result: BaseResult) => void
   saveResults: () => Promise<void>
 } | null>(null)
@@ -33,6 +34,8 @@ const ExperimentContextProvider = ({
   params: { name: string }
 }): JSX.Element => {
   const { name: experimentName } = params
+
+  const { getItem, setItem, removeItem } = useStorage()
 
   // Loading and parsing experiment data
   const {
@@ -66,11 +69,26 @@ const ExperimentContextProvider = ({
       </div>
     )
 
-  // Fill all randomizable values
-  data.tests = data.tests.map((test) => fillTest(test))
+  // Fill all randomizable values with random values or restore saved values
+  const savedData = getItem(`experiment-${experimentName}-data`)
+  if (savedData != null && savedData.length > 0) {
+    const parsedData = JSON.parse(savedData)
+    data.tests = parsedData
+  } else {
+    data.tests = data.tests.map((test) => fillTest(test))
+    setItem(`experiment-${experimentName}-data`, JSON.stringify(data.tests))
+  }
 
-  // Prepare results object
-  const results: { results: BaseResult[] } = { results: [] }
+  // Prepare results object or restore saved results
+  let results: { results: BaseResult[] } = { results: [] }
+
+  const savedResults = getItem(`experiment-${experimentName}-results`)
+  if (savedResults != null && savedResults.length > 0) {
+    results = JSON.parse(savedResults)
+  } else {
+    results.results = []
+    setItem(`experiment-${experimentName}-results`, JSON.stringify(results))
+  }
 
   const setAnswer = (
     result:
@@ -84,6 +102,7 @@ const ExperimentContextProvider = ({
     )
     temp.push(result)
     results.results = temp
+    setItem(`experiment-${experimentName}-results`, JSON.stringify(results))
   }
 
   const saveResults = async (): Promise<void> => {
@@ -91,6 +110,8 @@ const ExperimentContextProvider = ({
       method: 'POST',
       body: JSON.stringify(results)
     })
+    removeItem(`experiment-${experimentName}-data`)
+    removeItem(`experiment-${experimentName}-results`)
   }
 
   return (

@@ -44,7 +44,7 @@ const AdminPage = ({ params }: { params: { name: string } }): JSX.Element => {
               </div>
             ))}
           </div>
-          <div className="w-full">
+          <div className="w-full text-center">
             <div className="">
               <div className="mb-sm">Upload configuration (setup.json)</div>
               <FileUploader
@@ -56,7 +56,7 @@ const AdminPage = ({ params }: { params: { name: string } }): JSX.Element => {
               />
             </div>
             <div className="mt-md">
-              <div className="mb-sm">Upload configuration samples</div>
+              <div className="mb-sm">Upload samples</div>
               <FileUploader
                 dataKey={'sample_uploader'}
                 url={`/api/v1/experiments/${name}/samples`}
