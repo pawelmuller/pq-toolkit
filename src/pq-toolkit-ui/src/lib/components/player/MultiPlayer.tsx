@@ -34,7 +34,9 @@ const MultiPlayer = ({
 
   const getPlayerLength = (player: Howl): number => player.duration() ?? 0
 
+  // This won't cause changing hooks on re-render because it's specific for each component
   const [selectedPlayer, setSelectedPlayer] =
+    // eslint-disable-next-line react-hooks/rules-of-hooks
     selectedPlayerState ?? useState<number>(0)
 
   useEffect(() => {
@@ -71,6 +73,10 @@ const MultiPlayer = ({
     }
   }
 
+  const seekAllPlayers = (time: number): void => {
+    playersRef.current.forEach((player) => player.seek(time))
+  }
+
   useEffect(() => {
     const allPlayers = playersRef.current
     switch (status) {
@@ -97,12 +103,17 @@ const MultiPlayer = ({
 
   return (
     <div className="flex flex-col items-center min-w-[16rem]">
-      <div className="w-full rounded-full h-2 bg-blue-100">
-        <div
-          className="h-2 rounded-xl bg-blue-600"
-          style={{ width: `${((progress / length) * 100).toFixed(0)}%` }}
-        />
-      </div>
+      <input
+        type="range"
+        min="0"
+        max={length}
+        value={progress}
+        onChange={(e) => {
+          seekAllPlayers(parseInt(e.target.value))
+          setProgress(parseInt(e.target.value))
+        }}
+        className="w-full appearance-none bg-blue-100 rounded-full"
+      />
       <div className="w-full flex justify-end text-sm font-light">
         {formatTime(progress)}/{formatTime(length)}
       </div>

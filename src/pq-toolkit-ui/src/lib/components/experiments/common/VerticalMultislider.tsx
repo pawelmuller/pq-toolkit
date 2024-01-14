@@ -65,7 +65,6 @@ const VerticalMultislider = ({
                         />
                       </div>
                     </div>
-                    {/* <div className="self-center">{key}</div> */}
                   </div>
                 ))}
               </div>
@@ -73,7 +72,7 @@ const VerticalMultislider = ({
           </tr>
           <tr>
             <td />
-            <td className="flex flex-row justify-around -mx-3">
+            <td className="flex flex-row justify-around mx-4">
               {Array.from(ratings.entries()).map(([key, value], index) => (
                 <div
                   key={`slider_${index}`}

@@ -12,19 +12,33 @@ import {
 
 const ABXTestComponent = ({
   testData,
+  initialValues,
   experimentName,
   setAnswer
 }: {
   testData: FullABXTest
+  initialValues?: PartialResult<ABXResult>
   experimentName: string
   setAnswer: (result: PartialResult<ABXResult>) => void
 }): JSX.Element => {
   const { samples, questions } = testData
 
+  const getInitialSelections = (): Record<string, string> => {
+    if (initialValues?.selections == null) return {}
+
+    const result: Record<string, string> = {}
+    initialValues.selections.forEach((selection) => {
+      result[selection.questionId] = selection.sampleId
+    })
+    return result
+  }
+
   const [questionsSelected, setQuestionsSelected] = useState<
     Record<string, string>
-  >({})
-  const [xSelected, setXSelected] = useState<string>()
+  >(getInitialSelections())
+  const [xSelected, setXSelected] = useState<string | undefined>(
+    initialValues?.xSelected
+  )
 
   const getCombinedSamples = (): Map<string, string> => {
     const map = samples.reduce<Map<string, string>>((map, sample, idx) => {
@@ -88,6 +102,7 @@ const ABXTestComponent = ({
           onOptionSelect={(selectedIdx) => {
             setXSelected(testData.samples[selectedIdx].sampleId)
           }}
+          initialSelection={samples.findIndex((s) => s.sampleId === xSelected)}
         />
       </div>
       {questions != null && (
@@ -103,6 +118,9 @@ const ABXTestComponent = ({
               onOptionSelect={(selectedId) => {
                 updateSelections(question.questionId, selectedId)
               }}
+              initialSelection={samples.findIndex(
+                (s) => s.sampleId === questionsSelected[question.questionId]
+              )}
             />
           ))}
         </div>

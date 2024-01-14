@@ -3,22 +3,39 @@
 import { type ABTest } from '@/lib/schemas/experimentSetup'
 import SingleSelectQuestion from './common/SingleSelectQuestion'
 import SinglePlayer from '../player/SinglePlayer'
-import { type ABResult } from '@/lib/schemas/experimentState'
+import {
+  type PartialResult,
+  type ABResult
+} from '@/lib/schemas/experimentState'
 import { useEffect, useState } from 'react'
 import { getSampleUrl } from './common/utils'
 
 const ABTestComponent = ({
   testData,
+  initialValues,
   experimentName,
   setAnswer
 }: {
   testData: ABTest
+  initialValues?: PartialResult<ABResult>
   experimentName: string
   setAnswer: (result: ABResult) => void
 }): JSX.Element => {
   const { samples, questions } = testData
 
-  const [selected, setSelected] = useState<Record<string, string>>({})
+  const getInitialSelections = (): Record<string, string> => {
+    if (initialValues?.selections == null) return {}
+
+    const result: Record<string, string> = {}
+    initialValues.selections.forEach((selection) => {
+      result[selection.questionId] = selection.sampleId
+    })
+    return result
+  }
+
+  const [selected, setSelected] = useState<Record<string, string>>(
+    getInitialSelections()
+  )
 
   const updateSelections = (questionId: string, sampleIdx: number): void => {
     const selectedSampleId = samples[sampleIdx].sampleId
@@ -62,6 +79,9 @@ const ABTestComponent = ({
             onOptionSelect={(selectedIdx) => {
               updateSelections(question.questionId, selectedIdx)
             }}
+            initialSelection={samples.findIndex(
+              (s) => s.sampleId === selected[question.questionId]
+            )}
           />
         ))}
       </div>

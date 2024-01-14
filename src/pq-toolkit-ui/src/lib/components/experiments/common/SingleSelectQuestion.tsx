@@ -5,17 +5,19 @@ import { useState } from 'react'
 const SingleSelectQuestion = ({
   text,
   sampleNames,
-  onOptionSelect
+  onOptionSelect,
+  initialSelection
 }: {
   text: string
   sampleNames: string[]
   onOptionSelect: (i: number) => void
+  initialSelection?: number
 }): JSX.Element => {
   const [selectableOptions, setSelectableOptions] = useState(
     sampleNames.map((name, idx) => ({
       idx,
       name,
-      selected: false
+      selected: initialSelection === idx
     }))
   )
 

@@ -15,7 +15,8 @@ const FinishPage = ({ params }: { params: { name: string } }): JSX.Element => {
     <main className="flex min-h-screen flex-col items-center justify-center">
       <div className="bg-white rounded-md p-lg flex flex-col items-center text-black">
         <div className="text-lg">
-          This is finish page for experiment <b>{params.name}</b>
+          {data.endText ??
+            'Thank you for participating in this test. Your results have been submitted.'}
         </div>
       </div>
     </main>

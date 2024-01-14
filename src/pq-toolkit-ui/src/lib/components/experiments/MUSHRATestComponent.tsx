@@ -1,21 +1,23 @@
 'use client'
 
-import { type MUSHRATest } from '@/lib/schemas/experimentSetup'
+import { type FullMUSHRATest } from '@/lib/schemas/experimentSetup'
 import {
   type MUSHRAResult,
   type PartialResult
 } from '@/lib/schemas/experimentState'
 import MultiPlayer from '../player/MultiPlayer'
-import { getSampleUrl, shuffleArray } from './common/utils'
+import { getSampleUrl } from './common/utils'
 import VerticalMultislider from './common/VerticalMultislider'
 import { useEffect, useState } from 'react'
 
 const MUSHRATestComponent = ({
   testData,
+  initialValues,
   experimentName,
   setAnswer
 }: {
-  testData: MUSHRATest
+  testData: FullMUSHRATest
+  initialValues?: PartialResult<MUSHRAResult>
   experimentName: string
   setAnswer: (result: PartialResult<MUSHRAResult>) => void
 }): JSX.Element => {
@@ -23,20 +25,46 @@ const MUSHRATestComponent = ({
 
   const prepareSamples = (): Array<{ sampleId: string; assetPath: string }> => {
     const samplesCombined = [...samples, ...anchors, reference]
-    const samplesCombinedMixed = shuffleArray(samplesCombined)
-    return samplesCombinedMixed
+    samplesCombined.sort((a, b) =>
+      testData.samplesShuffle.findIndex((v) => v === a.sampleId) >
+      testData.samplesShuffle.findIndex((v) => v === b.sampleId)
+        ? 1
+        : -1
+    )
+    return samplesCombined
   }
 
   const [shuffledSamples] = useState<
     Array<{ sampleId: string; assetPath: string }>
   >(prepareSamples())
 
-  const [ratings, setRatings] = useState<Map<string, number>>(
-    shuffledSamples.reduce<Map<string, number>>((map, sample) => {
-      map.set(sample.sampleId, 50)
+  const [ratings, setRatings] = useState<Map<string, number>>(() => {
+    const savedRatings: Array<{ sampleId: string; score: number }> = []
+    if (initialValues?.samplesScores != null) {
+      savedRatings.push(...initialValues.samplesScores)
+    }
+    if (initialValues?.anchorsScores != null) {
+      savedRatings.push(...initialValues.anchorsScores)
+    }
+    if (initialValues?.referenceScore != null) {
+      savedRatings.push({
+        sampleId: reference.sampleId,
+        score: initialValues.referenceScore
+      })
+    }
+
+    return shuffledSamples.reduce<Map<string, number>>((map, sample) => {
+      const idx = savedRatings.findIndex((r) => r.sampleId === sample.sampleId)
+
+      if (idx !== -1) {
+        map.set(sample.sampleId, savedRatings[idx].score)
+      } else {
+        map.set(sample.sampleId, 50)
+      }
+
       return map
     }, new Map<string, number>())
-  )
+  })
 
   useEffect(() => {
     const result: MUSHRAResult = {
@@ -64,7 +92,10 @@ const MUSHRATestComponent = ({
 
   return (
     <div className="bg-white rounded-md p-lg flex flex-col items-center text-black">
-      <div className="flex gap-md mt-md">
+      <div className="flex flex-col gap-md">
+        <div className="flex flex-col gap-xs">
+          <div className="text-center">{question}</div>
+        </div>
         <MultiPlayer
           assets={[reference, ...shuffledSamples].reduce<Map<string, string>>(
             (map, sample, idx) => {

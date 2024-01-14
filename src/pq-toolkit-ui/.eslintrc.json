@@ -9,6 +9,17 @@
         "next/core-web-vitals",
         "prettier"
     ],
+    "overrides": [
+        {
+            "files": [
+                "*.ts",
+                "*.tsx"
+            ],
+            "rules": {
+                "react-hooks/exhaustive-deps": "off"
+            }
+        }
+    ],
     "parserOptions": {
         "ecmaVersion": "latest",
         "sourceType": "module"

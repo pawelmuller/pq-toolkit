@@ -95,7 +95,15 @@ export const MUSHRATestSchema = BaseTestSchema.extend({
   samples: z.array(SampleSchema).min(2)
 })
 
+/**
+ * MUSHRA test schema with all required fields filled
+ */
+export const FullMUSHRATestSchema = MUSHRATestSchema.extend({
+  samplesShuffle: z.array(z.string())
+})
+
 export type MUSHRATest = z.infer<typeof MUSHRATestSchema>
+export type FullMUSHRATest = z.infer<typeof FullMUSHRATestSchema>
 
 /**
  * APE test schema
