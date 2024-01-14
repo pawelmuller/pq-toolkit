@@ -26,24 +26,37 @@ class PqQuestion(BaseModel):
     text: str
 
 
-class PqTest(BaseModel):
+class PqTestBase(BaseModel):
     test_number: int = Field(alias="testNumber",
                              validation_alias=AliasChoices("testNumber", "test_number"))
     type: PqTestTypes
-    samples: list[PqSample]
-    questions: list[PqQuestion] | None = None
-    axis: list[PqQuestion] | None = None
-    reference: PqSample | None = None
-    anchors: list[PqSample] | None = None
 
-    @model_validator(mode='after')
-    def _check_reference_and_anchor_coexistence(self) -> 'PqTest':
-        if self.reference is None and self.anchors is None:
-            return self
-        if self.reference is not None and self.anchors is not None:
-            return self
-        else:
-            raise PqValidationException(details="Fields 'anchor' and 'reference' are required together")
+
+class PqTestAB(PqTestBase):
+    type: PqTestTypes = PqTestTypes.AB
+    samples: list[PqSample]
+    questions: list[PqQuestion]
+
+
+class PqTestABX(PqTestBase):
+    type: PqTestTypes = PqTestTypes.ABX
+    samples: list[PqSample]
+    xSampleId: str | None = None
+    questions: list[PqQuestion] | None = None
+
+
+class PqTestMUSHRA(PqTestBase):
+    type: PqTestTypes = PqTestTypes.MUSHRA
+    question: str | None = None
+    reference: PqSample
+    anchors: list[PqSample]
+    samples: list[PqSample]
+
+
+class PqTestAPE(PqTestBase):
+    type: PqTestTypes = PqTestTypes.APE
+    samples: list[PqSample]
+    axis: list[PqQuestion]
 
 
 class PqTestBaseResult(BaseModel):
@@ -101,4 +114,4 @@ class PqExperiment(BaseModel):
     uid: str | None = uuid.uuid4()
     name: str
     description: str
-    tests: list[PqTest]
+    tests: list[PqTestAB | PqTestABX | PqTestAPE | PqTestMUSHRA]
