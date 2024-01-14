@@ -1,9 +1,7 @@
 import uuid
 from enum import Enum
 
-from pydantic import BaseModel, Field, model_validator, AliasChoices
-
-from api_client.exceptions import PqValidationException
+from pydantic import BaseModel, Field, AliasChoices
 
 
 class PqTestTypes(Enum):
