@@ -1,11 +1,8 @@
 'use client'
 import Link from 'next/link'
-import { Suspense } from 'react'
 import { experimentsListSchema } from './models'
-import { ErrorBoundary } from 'next/dist/client/components/error-boundary'
-import Error from './error'
 import useSWR from 'swr'
-import Loading from './[name]/loading'
+import Loading from './loading'
 import { validateApiData } from '@/core/apiHandlers/clientApiHandler'
 
 const Home = (): JSX.Element => {
@@ -21,17 +18,13 @@ const Home = (): JSX.Element => {
             Home page of experiment UI for Perceptual Qualities Python Toolkit
           </h2>
         </div>
-        <ErrorBoundary errorComponent={Error}>
-          <Suspense fallback={<div>Loading</div>}>
-            <ExperimentsListWidget />
-          </Suspense>
-        </ErrorBoundary>
+        <ExperimentsListWidget />
       </div>
     </main>
   )
 }
 
-const ExperimentsListWidget = async (): Promise<JSX.Element> => {
+const ExperimentsListWidget = (): JSX.Element => {
   const { data: apiData, error, isLoading } = useSWR(`/api/v1/experiments`)
 
   if (isLoading) return <Loading />
@@ -61,7 +54,7 @@ const ExperimentsListWidget = async (): Promise<JSX.Element> => {
       <div>Configured experiments:</div>
       <ul>
         {data.experiments.map((name, idx) => (
-          <li key={idx}>
+          <li key={idx} className="text-center">
             <Link href={`/${name}`}>{name}</Link>
           </li>
         ))}

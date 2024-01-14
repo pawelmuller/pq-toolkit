@@ -1,13 +1,7 @@
 'use client'
 import { createContext } from 'react'
-import {
-  ExperimentSetupSchema,
-  type ExperimentSetup
-} from '@/lib/schemas/experimentSetup'
-import { validateApiData } from '@/core/apiHandlers/clientApiHandler'
-import useSWR from 'swr'
+import { type ExperimentSetup } from '@/lib/schemas/experimentSetup'
 import Loading from './loading'
-import { validateTestSchema } from '@/lib/schemas/utils'
 import {
   type BaseResult,
   type ABResult,
@@ -17,6 +11,7 @@ import {
   type PartialResult
 } from '@/lib/schemas/experimentState'
 import { fillTest } from './utils'
+import useExperimentData from '@/lib/components/experiments/hooks/useExperimentData'
 
 /**
  * Context which provides all values used during testing
@@ -41,43 +36,33 @@ const ExperimentContextProvider = ({
 
   // Loading and parsing experiment data
   const {
-    data: apiData,
-    error,
-    isLoading
-  } = useSWR(`/api/v1/experiments/${experimentName}`)
+    isLoading,
+    apiError,
+    experimentData: data,
+    validationErrors
+  } = useExperimentData(experimentName)
 
   if (isLoading) return <Loading />
-  if (error != null)
+  if (apiError != null)
     return (
       <div className="flex w-full min-h-screen items-center justify-center text-center h2">
         API Error
         <br />
-        {error.toString()}
+        {apiError.toString()}
       </div>
     )
 
-  const { data, validationError } = validateApiData(
-    apiData,
-    ExperimentSetupSchema
-  )
-  if (validationError != null)
+  if (validationErrors != null && validationErrors.length > 0)
     return (
       <div className="flex w-full min-h-screen items-center justify-center text-center h2">
         Invalid experiment configuration file
       </div>
     )
 
-  const testValidationErrors: string[] = []
-  data.tests.forEach((test) => {
-    const validationResult = validateTestSchema(test)
-    if (validationResult.validationError != null)
-      testValidationErrors.push(validationResult.validationError)
-    else test = validationResult.data
-  })
-  if (testValidationErrors.length > 0)
+  if (data == null)
     return (
       <div className="flex w-full min-h-screen items-center justify-center text-center h2">
-        One or more tests have invalid configuration
+        Cannot load experiment data
       </div>
     )
 
@@ -110,7 +95,13 @@ const ExperimentContextProvider = ({
 
   return (
     <ExperimentContext.Provider
-      value={{ data, error, results, setAnswer, saveResults }}
+      value={{
+        data,
+        error: apiError != null || validationErrors != null,
+        results,
+        setAnswer,
+        saveResults
+      }}
     >
       {children}
     </ExperimentContext.Provider>
