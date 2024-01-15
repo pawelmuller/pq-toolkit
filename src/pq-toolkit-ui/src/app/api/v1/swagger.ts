@@ -2,7 +2,7 @@ import { createSwaggerSpec } from 'next-swagger-doc'
 
 import 'server-only'
 
-export const getApiDocs = async (): Promise<any> => {
+export const getApiDocs = async (): Promise<object> => {
   const spec = createSwaggerSpec({
     apiFolder: '/src/app/api',
     definition: {

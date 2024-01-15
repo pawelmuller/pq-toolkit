@@ -1,5 +1,5 @@
 'use client'
-import {Slider} from '@mui/material'
+import { Slider } from '@mui/material'
 import React from 'react'
 
 const VerticalSlider = ({
@@ -18,7 +18,7 @@ const VerticalSlider = ({
           {[...Array(6)].map((_, index) => (
             <div
               className="w-4 h-1 self-center"
-              style={{backgroundColor: '#1976d2'}}
+              style={{ backgroundColor: '#1976d2' }}
               key={index}
             />
           ))}
@@ -28,7 +28,9 @@ const VerticalSlider = ({
           min={0}
           max={100}
           value={rating}
-          onChange={(_: Event, value: number | number[]) => typeof value === 'number' && setRating(value)}
+          onChange={(_: Event, value: number | number[]) => {
+            if (typeof value === 'number') setRating(value)
+          }}
         />
       </div>
     </div>

@@ -79,7 +79,7 @@ const FileUploader = ({
   }
 
   return (
-    <div className={`flex w-full ${className ?? ''}`}>
+    <div className={`flex w-full z-20 ${className ?? ''}`}>
       <label
         htmlFor={`upload-button${dataKey}`}
         className={`bg-transparent border ${

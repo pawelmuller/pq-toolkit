@@ -7,7 +7,8 @@ import { validateTestSchema } from '@/lib/schemas/utils'
 import useSWR from 'swr'
 
 const useExperimentData = (
-  experimentName: string
+  experimentName: string,
+  config?: any
 ): { mutate: () => Promise<void> } & (
   | {
       isLoading: boolean
@@ -28,7 +29,7 @@ const useExperimentData = (
     error,
     isLoading,
     mutate
-  } = useSWR(`/api/v1/experiments/${experimentName}`)
+  } = useSWR(`/api/v1/experiments/${experimentName}`, config)
 
   if (isLoading) return { isLoading, mutate }
 
