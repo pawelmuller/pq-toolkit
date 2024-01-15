@@ -1,14 +1,15 @@
+import inspect
 import uuid
 from enum import Enum
 
-from pydantic import BaseModel, Field, AliasChoices
+from pydantic import BaseModel, Field, AliasChoices, ConfigDict, field_validator, UUID4
 
 
 class PqTestTypes(Enum):
-    AB = "AB"
-    ABX = "ABX"
-    APE = "APE"
-    MUSHRA = "MUSHRA"
+    AB: str = "AB"
+    ABX: str = "ABX"
+    APE: str = "APE"
+    MUSHRA: str = "MUSHRA"
 
 
 class PqSample(BaseModel):
@@ -25,36 +26,38 @@ class PqQuestion(BaseModel):
 
 
 class PqTestBase(BaseModel):
+    model_config = ConfigDict(use_enum_values=True, validate_default=True)
+
     test_number: int = Field(alias="testNumber",
                              validation_alias=AliasChoices("testNumber", "test_number"))
     type: PqTestTypes
 
 
 class PqTestAB(PqTestBase):
-    type: PqTestTypes = PqTestTypes.AB
     samples: list[PqSample]
     questions: list[PqQuestion]
+    type: PqTestTypes = PqTestTypes.AB
 
 
 class PqTestABX(PqTestBase):
-    type: PqTestTypes = PqTestTypes.ABX
-    samples: list[PqSample]
     xSampleId: str | None = None
+    samples: list[PqSample]
     questions: list[PqQuestion] | None = None
+    type: PqTestTypes = PqTestTypes.ABX
 
 
 class PqTestMUSHRA(PqTestBase):
-    type: PqTestTypes = PqTestTypes.MUSHRA
-    question: str | None = None
     reference: PqSample
+    question: str | None = None
     anchors: list[PqSample]
     samples: list[PqSample]
+    type: PqTestTypes = PqTestTypes.MUSHRA
 
 
 class PqTestAPE(PqTestBase):
-    type: PqTestTypes = PqTestTypes.APE
-    samples: list[PqSample]
     axis: list[PqQuestion]
+    samples: list[PqSample]
+    type: PqTestTypes = PqTestTypes.APE
 
 
 class PqTestBaseResult(BaseModel):
@@ -105,11 +108,32 @@ class PqTestAPEResult(PqTestBaseResult):
 
 
 class PqTestResultsList(BaseModel):
-    results: list[PqTestABResult | PqTestABXResult | PqTestAPEResult | PqTestMUSHRAResult]
+    results: list[PqTestABResult | PqTestABXResult | PqTestMUSHRAResult | PqTestAPEResult]
 
 
 class PqExperiment(BaseModel):
-    uid: str | None = uuid.uuid4()
+    uid: UUID4 | str | None = uuid.uuid4()
     name: str
     description: str
-    tests: list[PqTestAB | PqTestABX | PqTestAPE | PqTestMUSHRA]
+    tests: list[PqTestMUSHRA | PqTestAPE | PqTestABX | PqTestAB]
+
+    @field_validator("tests", mode="before")
+    @classmethod
+    def validate_tests(cls, v: list) -> list[PqTestMUSHRA | PqTestAPE | PqTestABX | PqTestAB]:
+        tests_list = []
+        for test in v:
+            object_type = type(test)
+            if inspect.isclass(object_type) and issubclass(object_type, PqTestBase):
+                tests_list.append(test)
+            else:
+                match PqTestTypes(test.get("type")):
+                    case PqTestTypes.AB:
+                        tests_list.append(PqTestAB(**test))
+                    case PqTestTypes.ABX:
+                        tests_list.append(PqTestABX(**test))
+                    case PqTestTypes.APE:
+                        tests_list.append(PqTestAPE(**test))
+                    case PqTestTypes.MUSHRA:
+                        tests_list.append(PqTestMUSHRA(**test))
+        return tests_list
+
