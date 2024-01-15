@@ -73,13 +73,15 @@ const APETestComponent = ({
     <div className="bg-white rounded-md p-lg flex flex-col items-center text-black">
       <div className="flex gap-md mt-md">
         <MultiPlayer
-          assets={samples.reduce<Map<string, string>>((map, sample, idx) => {
+          assets={samples.reduce<Map<string, {url: string}>>((map, sample, idx) => {
             map.set(
               `Sample ${idx + 1}`,
-              getSampleUrl(experimentName, sample.assetPath)
+              {
+                url: getSampleUrl(experimentName, sample.assetPath)
+              }
             )
             return map
-          }, new Map<string, string>())}
+          }, new Map<string, {url: string}>())}
           selectedPlayerState={selectedPlayerState}
         />
       </div>

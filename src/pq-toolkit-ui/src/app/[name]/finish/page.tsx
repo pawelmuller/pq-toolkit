@@ -3,6 +3,7 @@ import { useContext } from 'react'
 import InvalidConfigurationError from '../invalid-configuration-error'
 import Loading from '../loading'
 import { ExperimentContext } from '../layout'
+import Link from "next/link";
 
 const FinishPage = ({ params }: { params: { name: string } }): JSX.Element => {
   const context = useContext(ExperimentContext)
@@ -18,6 +19,7 @@ const FinishPage = ({ params }: { params: { name: string } }): JSX.Element => {
           {data.endText ??
             'Thank you for participating in this test. Your results have been submitted.'}
         </div>
+        <Link href={`/`} className="mt-md">Go back to homepage</Link>
       </div>
     </main>
   )

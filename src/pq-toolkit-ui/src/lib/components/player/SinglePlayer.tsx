@@ -14,7 +14,7 @@ const SinglePlayer = ({
   const playerRef = useRef<Howl>(
     new Howl({
       src: [assetPath],
-      volume: 0.1,
+      volume: 0.5,
       loop: true
     })
   )
@@ -50,6 +50,7 @@ const SinglePlayer = ({
 
     switch (status) {
       case 'playing':
+        player.seek(progress)
         player.play()
         startUpdating()
         break
@@ -60,7 +61,7 @@ const SinglePlayer = ({
       case 'stopped':
         player.stop()
         stopUpdating()
-        setProgress(Math.round(playerRef.current.seek() ?? 0))
+        setProgress(0)
         break
     }
 
@@ -68,7 +69,7 @@ const SinglePlayer = ({
       player.stop()
       stopUpdating()
     }
-  }, [playerRef, status])
+  }, [status])
 
   return (
     <div className="flex flex-col items-center min-w-[16rem]">
