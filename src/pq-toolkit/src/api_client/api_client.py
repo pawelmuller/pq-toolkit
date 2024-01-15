@@ -9,8 +9,10 @@ from pydantic import PydanticSchemaGenerationError, BaseModel, ValidationError
 from requests import ConnectTimeout
 
 from api_client.dataclasses import PqExperiment, PqTestResultsList
-from api_client.exceptions import PqSerializationException, PqExperimentAlreadyExists, PqExperimentSetupException, \
+from api_client.exceptions import (
+    PqSerializationException, PqExperimentAlreadyExistsException, PqExperimentSetupException,
     PqExperimentSampleUploadException
+)
 
 
 class PqToolkitAPIClient:
@@ -131,7 +133,7 @@ class PqToolkitAPIClient:
                 experiments = response.json().get("experiments")
                 return experiments
             case 409:
-                raise PqExperimentAlreadyExists(experiment_name=experiment_name)
+                raise PqExperimentAlreadyExistsException(experiment_name=experiment_name)
 
     def delete_experiment(self, *, experiment_name: str) -> list[str]:
         response = self._delete(f"/experiments", json={"name": f"{experiment_name}"})
