@@ -28,7 +28,7 @@ from api_client import PqToolkitAPIClient
 
 
 api_client = PqToolkitAPIClient()
-experiments = api_client.create_experiment(experiment_name="Your fancy experiment name")
+experiments = api_client.create_experiment(experiment_name="Your_fancy_experiment_name")
 ```
 
 
@@ -172,7 +172,7 @@ from api_client import PqToolkitAPIClient
 
 api_client = PqToolkitAPIClient()
 api_client.setup_experiment(
-    experiment_name="Your fancy experiment name", 
+    experiment_name="Your_fancy_experiment_name", 
     experiment_setup=experiment_setup)
 ```
 
@@ -193,7 +193,7 @@ from api_client import PqToolkitAPIClient
 api_client = PqToolkitAPIClient()
 sample_path = "./file_sample_5.mp3"
 with open(sample_path, 'rb') as file:
-    api_client.upload_sample(experiment_name="Your fancy experiment name", sample_name="file_sample_5.mp3", sample_binary=file)
+    api_client.upload_sample(experiment_name="Your_fancy_experiment_name", sample_name="file_sample_5.mp3", sample_binary=file)
 ```
 
 !!! danger
@@ -220,7 +220,7 @@ from api_client import PqToolkitAPIClient
 
 
 api_client = PqToolkitAPIClient()
-experiment = api_client.get_experiment(experiment_name="Your fancy experiment name")
+experiment = api_client.get_experiment(experiment_name="Your_fancy_experiment_name")
 ```
 
 
@@ -231,7 +231,7 @@ from api_client import PqToolkitAPIClient
 
 
 api_client = PqToolkitAPIClient()
-experiment_results = api_client.get_experiment_results(experiment_name="Your fancy experiment name")
+experiment_results = api_client.get_experiment_results(experiment_name="Your_fancy_experiment_name")
 ```
 
 
@@ -258,6 +258,6 @@ from api_client import PqToolkitAPIClient
 
 
 api_client = PqToolkitAPIClient()
-experiments = api_client.delete_experiment(experiment_name="Your fancy experiment name")
+experiments = api_client.delete_experiment(experiment_name="Your_fancy_experiment_name")
 )
 ```
