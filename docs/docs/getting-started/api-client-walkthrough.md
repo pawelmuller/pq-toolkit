@@ -203,6 +203,7 @@ with open(sample_path, 'rb') as file:
 
 
 ## Getting the list of all available experiments
+This method will allow you to obtain all experiments' names, so you can fetch them later individually.
 
 ```{ .py .copy }
 from api_client import PqToolkitAPIClient
@@ -214,6 +215,7 @@ experiments = api_client.get_experiments()
 
 
 ## Getting experiment details by name
+You can fetch detailed information about given experiment like this:
 
 ```{ .py .copy }
 from api_client import PqToolkitAPIClient
@@ -225,7 +227,7 @@ experiment = api_client.get_experiment(experiment_name="Your_fancy_experiment_na
 
 
 ## Getting experiment results list
-
+Like in experiments, you can get all experiment's results list to be able to fetch one's answers later on.
 ```{ .py .copy }
 from api_client import PqToolkitAPIClient
 
@@ -236,7 +238,7 @@ experiment_results = api_client.get_experiment_results(experiment_name="Your_fan
 
 
 ## Getting detailed experiment results
-
+This is how you obtain answers from a result:
 
 ```{ .py .copy }
 from api_client import PqToolkitAPIClient
@@ -251,7 +253,7 @@ experiment_result = api_client.get_experiment_test_results(
 
 
 ## Deleting the experiment
-
+When you're done testing you can remove the experiment from the platform like this:
 
 ```{ .py .copy }
 from api_client import PqToolkitAPIClient
