@@ -14,6 +14,8 @@ export const GET = async (
 
   const headers = new Headers()
   headers.set('Content-Type', 'audio/mpeg')
+  headers.set('Content-Length', dataBuffer.length.toString())
+  headers.set('Accept-Ranges', 'bytes')
   return new NextResponse(dataBuffer, {
     status: 200,
     statusText: 'OK',
