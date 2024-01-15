@@ -1,6 +1,9 @@
 # pq-toolkit-ui
 
-Perceptual qualities toolkit UI
+Perceptual qualities toolkit UI.
+
+UI for conducting audio quality tests using selected methodologies
+(AB, ABX, APE, MUSHRA).
 
 ## Development server:
 

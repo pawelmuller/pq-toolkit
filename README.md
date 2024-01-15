@@ -57,3 +57,6 @@ Potential improvements:
 - better UI
 - more options for test configurations (new tests or more helper components like feedback fields)
 - separate backend for data handling, storage on larger scale (relational database)
+
+Project was on schedule up to Christmas, then slight delays in finishing remaining test types
+and polishing features.
