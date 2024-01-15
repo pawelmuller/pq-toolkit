@@ -24,4 +24,4 @@ That's it! You're ready to go!
 
 # What comes next?
 
-Check how to [begin working with the toolkit](./api-client-walkthrough.md) or dive right into [direct client reference](./../reference/PqToolkitAPIClient.md).
+Check how to [begin working with the toolkit](api-client-walkthrough.md) or dive right into [direct client reference](../reference/PqToolkitAPIClient.md).
