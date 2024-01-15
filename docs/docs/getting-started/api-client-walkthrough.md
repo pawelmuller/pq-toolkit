@@ -6,7 +6,7 @@ All the communication with the backend is organised by the API Client.
 
 This is how to create its instance:
 
-```python
+```{ .py .copy }
 from api_client import PqToolkitAPIClient
 
 
@@ -23,7 +23,7 @@ Experiments are the basic elements allowing to perform tests.
 
 You can create one the following way: 
 
-```python
+```{ .py .copy }
 from api_client import PqToolkitAPIClient
 
 
