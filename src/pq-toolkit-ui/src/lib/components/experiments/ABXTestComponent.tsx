@@ -40,6 +40,8 @@ const ABXTestComponent = ({
     initialValues?.xSelected
   )
 
+  const selectedPlayerState = useState<number>(0)
+
   const getCombinedSamples = (): Map<string, {url: string}> => {
     const map = samples.reduce<Map<string, {url: string}>>((map, sample, idx) => {
       map.set(
@@ -94,7 +96,7 @@ const ABXTestComponent = ({
   return (
     <div className="bg-white rounded-md p-lg flex flex-col items-center text-black">
       <div className="flex gap-md mt-md">
-        <MultiPlayer assets={getCombinedSamples()} />
+        <MultiPlayer assets={getCombinedSamples()} selectedPlayerState={selectedPlayerState}/>
       </div>
       <div className="flex flex-col gap-sm w-full mt-md">
         <SingleSelectQuestion

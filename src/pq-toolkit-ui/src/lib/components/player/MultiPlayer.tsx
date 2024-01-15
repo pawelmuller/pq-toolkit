@@ -16,7 +16,7 @@ const MultiPlayer = ({
   selectedPlayerState
 }: {
   assets: Map<string, {url: string, footers?: JSX.Element[]}>
-  selectedPlayerState?: [number, Dispatch<SetStateAction<number>>]
+  selectedPlayerState: [number, Dispatch<SetStateAction<number>>]
 }): JSX.Element => {
   const playersRef = useRef<Howl[]>(
     Array.from(assets.entries()).map(
@@ -36,8 +36,7 @@ const MultiPlayer = ({
   const getPlayerLength = (player: Howl): number => player.duration() ?? 0
 
   // This won't cause changing hooks on re-render because it's specific for each component
-  const [selectedPlayer, setSelectedPlayer] =
-    selectedPlayerState ?? useState<number>(0)
+  const [selectedPlayer, setSelectedPlayer] = selectedPlayerState
 
   useEffect(() => {
     playersRef.current.forEach((player, idx) => {

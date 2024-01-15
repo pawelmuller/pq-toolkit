@@ -66,6 +66,8 @@ const MUSHRATestComponent = ({
     }, new Map<string, number>())
   })
 
+  const selectedPlayerState = useState<number>(0)
+
   useEffect(() => {
     const result: MUSHRAResult = {
       testNumber: testData.testNumber,
@@ -147,6 +149,7 @@ const MUSHRATestComponent = ({
             },
             new Map<string, { url: string, footers: JSX.Element[]}>()
           )}
+         selectedPlayerState={selectedPlayerState}
         />
       </div>
     </div>
