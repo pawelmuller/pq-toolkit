@@ -40,21 +40,24 @@ const ABXTestComponent = ({
     initialValues?.xSelected
   )
 
-  const getCombinedSamples = (): Map<string, string> => {
-    const map = samples.reduce<Map<string, string>>((map, sample, idx) => {
-      map.set(
-        `Sample ${idx + 1}`,
-        getSampleUrl(experimentName, sample.assetPath)
-      )
-      return map
-    }, new Map<string, string>())
-    map.set(
-      'X',
-      getSampleUrl(
+  const selectedPlayerState = useState<number>(0)
+
+  const getCombinedSamples = (): Map<string, { url: string }> => {
+    const map = samples.reduce<Map<string, { url: string }>>(
+      (map, sample, idx) => {
+        map.set(`Sample ${idx + 1}`, {
+          url: getSampleUrl(experimentName, sample.assetPath)
+        })
+        return map
+      },
+      new Map<string, { url: string }>()
+    )
+    map.set('X', {
+      url: getSampleUrl(
         experimentName,
         samples.find((s) => s.sampleId === testData.xSampleId)?.assetPath ?? ''
       )
-    )
+    })
     return map
   }
 
@@ -90,7 +93,10 @@ const ABXTestComponent = ({
   return (
     <div className="bg-white rounded-md p-lg flex flex-col items-center text-black">
       <div className="flex gap-md mt-md">
-        <MultiPlayer assets={getCombinedSamples()} />
+        <MultiPlayer
+          assets={getCombinedSamples()}
+          selectedPlayerState={selectedPlayerState}
+        />
       </div>
       <div className="flex flex-col gap-sm w-full mt-md">
         <SingleSelectQuestion

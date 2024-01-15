@@ -7,8 +7,8 @@ import {
 } from '@/lib/schemas/experimentState'
 import MultiPlayer from '../player/MultiPlayer'
 import { getSampleUrl } from './common/utils'
-import VerticalMultislider from './common/VerticalMultislider'
-import { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
+import VerticalSlider from '@/lib/components/experiments/common/VerticalSlider'
 
 const MUSHRATestComponent = ({
   testData,
@@ -66,6 +66,8 @@ const MUSHRATestComponent = ({
     }, new Map<string, number>())
   })
 
+  const selectedPlayerState = useState<number>(0)
+
   useEffect(() => {
     const result: MUSHRAResult = {
       testNumber: testData.testNumber,
@@ -90,6 +92,28 @@ const MUSHRATestComponent = ({
     reference.sampleId
   ])
 
+  const sliderSetRating = (value: number, sampleId: string): void => {
+    setRatings((prevState) => {
+      const newState = new Map(prevState)
+      newState.set(sampleId, value)
+      return newState
+    })
+  }
+
+  const getMUSHRAscale = (): JSX.Element => {
+    const scale = ['terrible', 'bad', 'poor', 'fair', 'good', 'excellent']
+
+    return (
+      <div className="h-full flex flex-col justify-between">
+        {scale.reverse().map((label: string) => (
+          <div className="text-right" key={label}>
+            {label}
+          </div>
+        ))}
+      </div>
+    )
+  }
+
   return (
     <div className="bg-white rounded-md p-lg flex flex-col items-center text-black">
       <div className="flex flex-col gap-md">
@@ -97,21 +121,32 @@ const MUSHRATestComponent = ({
           <div className="text-center">{question}</div>
         </div>
         <MultiPlayer
-          assets={[reference, ...shuffledSamples].reduce<Map<string, string>>(
-            (map, sample, idx) => {
-              const sampleName = idx === 0 ? 'Reference' : `Sample ${idx}`
-              map.set(
-                sampleName,
-                getSampleUrl(experimentName, sample.assetPath)
-              )
-              return map
-            },
-            new Map<string, string>()
-          )}
+          assets={[reference, ...shuffledSamples].reduce<
+            Map<string, { url: string; footers: JSX.Element[] }>
+          >((map, sample, idx) => {
+            const sampleName = idx === 0 ? 'Reference' : `Sample ${idx}`
+            map.set(sampleName, {
+              url: getSampleUrl(experimentName, sample.assetPath),
+              footers:
+                idx === 0
+                  ? [getMUSHRAscale()]
+                  : [
+                      <VerticalSlider
+                        key={`slider_${idx}`}
+                        rating={ratings.get(sample.sampleId) ?? 0}
+                        setRating={(value) => {
+                          sliderSetRating(value, sample.sampleId)
+                        }}
+                      />,
+                      <div className="text-center" key={`rating_${idx}`}>
+                        {ratings.get(sample.sampleId) ?? 0}
+                      </div>
+                    ]
+            })
+            return map
+          }, new Map<string, { url: string; footers: JSX.Element[] }>())}
+          selectedPlayerState={selectedPlayerState}
         />
-      </div>
-      <div className="flex mt-md self-end w-full">
-        <VerticalMultislider ratings={ratings} setRatings={setRatings} />
       </div>
     </div>
   )
