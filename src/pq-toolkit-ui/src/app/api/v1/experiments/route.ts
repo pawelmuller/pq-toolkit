@@ -90,5 +90,5 @@ export const DELETE = async (request: Request): Promise<Response> => {
     fs.rmSync(dir, { recursive: true, force: true })
   }
 
-  return Response.json({ experiments })
+  return Response.json({ experiments: filteredExperiments })
 }
