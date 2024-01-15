@@ -1,5 +1,18 @@
 import { type NextRequest, NextResponse } from 'next/server'
 import { getExperimentSamplesPath, writeFile } from '../../../utils'
+import { readdirSync } from 'fs'
+
+export const GET = async (
+  request: NextRequest,
+  { params }: { params: { name: string } }
+): Promise<Response> => {
+  const { name } = params
+
+  const samplesPath = getExperimentSamplesPath(name)
+  const samples = readdirSync(samplesPath)
+
+  return NextResponse.json(samples)
+}
 
 export const POST = async (
   request: NextRequest,
