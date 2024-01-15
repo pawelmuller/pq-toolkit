@@ -117,7 +117,7 @@ class PqExperiment(BaseModel):
     description: str
     tests: list[PqTestMUSHRA | PqTestAPE | PqTestABX | PqTestAB]
 
-    @field_validator("tests", mode="before")
+    @field_validator("tests", mode="before")  # noqa
     @classmethod
     def validate_tests(cls, v: list) -> list[PqTestMUSHRA | PqTestAPE | PqTestABX | PqTestAB]:
         tests_list = []
@@ -136,4 +136,3 @@ class PqExperiment(BaseModel):
                     case PqTestTypes.MUSHRA:
                         tests_list.append(PqTestMUSHRA(**test))
         return tests_list
-
