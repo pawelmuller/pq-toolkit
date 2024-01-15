@@ -26,6 +26,26 @@ const runInit = (): void => {
   fs.writeFileSync(indexPath, EXPERIMENT_INDEX_TEMPLATE)
 }
 
+/**
+ * @swagger
+ * /api/v1/experiments:
+ *  get:
+ *   tags:
+ *    - experiments
+ *   description: Returns the list of experiments
+ *   responses:
+ *    200:
+ *     description: List of experiments
+ *     content:
+ *       application/json:
+ *        schema:
+ *         type: object
+ *         properties:
+ *          experiments:
+ *           type: array
+ *           items:
+ *            type: string
+ */
 export const GET = async (): Promise<Response> => {
   if (!initCheck()) runInit()
   const jsonData = readJsonFile(getAllExperimentsIndexBasePath())
@@ -33,6 +53,36 @@ export const GET = async (): Promise<Response> => {
   return Response.json(jsonData)
 }
 
+/**
+ * @swagger
+ * /api/v1/experiments:
+ *  post:
+ *   tags:
+ *    - experiments
+ *   description: Creates a new experiment
+ *   requestBody:
+ *    content:
+ *     application/json:
+ *      schema:
+ *       type: object
+ *       properties:
+ *        name:
+ *         type: string
+ *   responses:
+ *    200:
+ *     description: List of experiments
+ *     content:
+ *       application/json:
+ *        schema:
+ *         type: object
+ *         properties:
+ *          experiments:
+ *           type: array
+ *           items:
+ *            type: string
+ *    409:
+ *     description: Experiment already exists
+ */
 export const POST = async (request: Request): Promise<Response> => {
   const body = await request.json()
 
@@ -71,6 +121,36 @@ export const POST = async (request: Request): Promise<Response> => {
   return Response.json({ experiments })
 }
 
+/**
+ * @swagger
+ * /api/v1/experiments:
+ *  delete:
+ *   tags:
+ *    - experiments
+ *   description: Deletes an experiment
+ *   requestBody:
+ *    content:
+ *     application/json:
+ *      schema:
+ *       type: object
+ *       properties:
+ *        name:
+ *         type: string
+ *   responses:
+ *    200:
+ *     description: List of experiments
+ *     content:
+ *       application/json:
+ *        schema:
+ *         type: object
+ *         properties:
+ *          experiments:
+ *           type: array
+ *           items:
+ *            type: string
+ *    404:
+ *     description: Experiment not found
+ */
 export const DELETE = async (request: Request): Promise<Response> => {
   const body = await request.json()
 
