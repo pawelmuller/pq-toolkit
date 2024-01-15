@@ -42,25 +42,22 @@ const ABXTestComponent = ({
 
   const selectedPlayerState = useState<number>(0)
 
-  const getCombinedSamples = (): Map<string, {url: string}> => {
-    const map = samples.reduce<Map<string, {url: string}>>((map, sample, idx) => {
-      map.set(
-        `Sample ${idx + 1}`,
-        {
+  const getCombinedSamples = (): Map<string, { url: string }> => {
+    const map = samples.reduce<Map<string, { url: string }>>(
+      (map, sample, idx) => {
+        map.set(`Sample ${idx + 1}`, {
           url: getSampleUrl(experimentName, sample.assetPath)
-        }
-      )
-      return map
-    }, new Map<string, {url: string}>())
-    map.set(
-      'X',
-      {
-        url: getSampleUrl(
-          experimentName,
-          samples.find((s) => s.sampleId === testData.xSampleId)?.assetPath ?? ''
-        )
-      }
+        })
+        return map
+      },
+      new Map<string, { url: string }>()
     )
+    map.set('X', {
+      url: getSampleUrl(
+        experimentName,
+        samples.find((s) => s.sampleId === testData.xSampleId)?.assetPath ?? ''
+      )
+    })
     return map
   }
 
@@ -96,7 +93,10 @@ const ABXTestComponent = ({
   return (
     <div className="bg-white rounded-md p-lg flex flex-col items-center text-black">
       <div className="flex gap-md mt-md">
-        <MultiPlayer assets={getCombinedSamples()} selectedPlayerState={selectedPlayerState}/>
+        <MultiPlayer
+          assets={getCombinedSamples()}
+          selectedPlayerState={selectedPlayerState}
+        />
       </div>
       <div className="flex flex-col gap-sm w-full mt-md">
         <SingleSelectQuestion
