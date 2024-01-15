@@ -14,14 +14,23 @@ import { FaCheckCircle } from 'react-icons/fa'
 const AdminPage = ({ params }: { params: { name: string } }): JSX.Element => {
   const { name } = params
 
+  const noRevalidationConfig = {
+    revalidateOnFocus: false,
+    revalidateOnMount: true,
+    revalidateOnReconnect: false,
+    refreshWhenOffline: false,
+    refreshWhenHidden: false,
+    refreshInterval: 0
+  }
+
   const { isLoading, apiError, experimentData, validationErrors, mutate } =
-    useExperimentData(name)
+    useExperimentData(name, noRevalidationConfig)
 
   const {
     data: samplesData,
     isLoading: samplesLoading,
     mutate: samplesMutate
-  } = useSWR(`/api/v1/experiments/${name}/samples`)
+  } = useSWR(`/api/v1/experiments/${name}/samples`, noRevalidationConfig)
 
   if (isLoading || samplesLoading) return <Loading />
 
@@ -60,33 +69,52 @@ const AdminPage = ({ params }: { params: { name: string } }): JSX.Element => {
               />
             </div>
           </div>
-          <div className="w-full text-center">
-            <div className="">
-              <div className="mb-sm">Upload configuration (setup.json)</div>
-              <FileUploader
-                dataKey={'setup_uploader'}
-                url={`/api/v1/experiments/${name}`}
-                onFileUploaded={async () => {
-                  await mutate()
-                }}
-              />
-            </div>
-            <div className="mt-md">
-              <div className="mb-sm">Upload samples</div>
-              <FileUploader
-                dataKey={'sample_uploader'}
-                url={`/api/v1/experiments/${name}/samples`}
-                onFileUploaded={async () => {
-                  await mutate()
-                  await samplesMutate()
-                }}
-                multi
-              />
-            </div>
-          </div>
+          <UploadersWidget
+            name={name}
+            mutateExperiments={mutate}
+            mutateSamples={samplesMutate}
+          />
         </div>
       </div>
     </main>
+  )
+}
+
+const UploadersWidget = ({
+  name,
+  mutateExperiments,
+  mutateSamples
+}: {
+  name: string
+  mutateExperiments: () => Promise<void>
+  mutateSamples: () => Promise<void>
+}): JSX.Element => {
+  return (
+    <div className="w-full text-center">
+      <div className="">
+        <div className="mb-sm">Upload configuration (setup.json)</div>
+        <FileUploader
+          dataKey={'setup_uploader'}
+          url={`/api/v1/experiments/${name}`}
+          onFileUploaded={async () => {
+            await mutateExperiments()
+            await mutateSamples()
+          }}
+        />
+      </div>
+      <div className="mt-md">
+        <div className="mb-sm">Upload samples</div>
+        <FileUploader
+          dataKey={'sample_uploader'}
+          url={`/api/v1/experiments/${name}/samples`}
+          onFileUploaded={async () => {
+            await mutateExperiments()
+            await mutateSamples()
+          }}
+          multi
+        />
+      </div>
+    </div>
   )
 }
 

@@ -2,6 +2,24 @@ import path from 'path'
 import { type NextRequest, NextResponse } from 'next/server'
 import { getExperimentBasePath, readJsonFile, writeJsonFile } from '../../utils'
 
+/**
+ * @swagger
+ * /api/v1/experiments/{name}:
+ *  get:
+ *   tags:
+ *    - experiments
+ *   description: Returns the setup of an experiment
+ *   parameters:
+ *    - in: path
+ *      name: name
+ *      required: true
+ *      description: Name of the experiment
+ *      schema:
+ *       type: string
+ *   responses:
+ *    200:
+ *     description: Setup of the experiment, for schema see generated TypeDoc docs
+ */
 export const GET = async (
   request: Request,
   { params }: { params: { name: string } }
@@ -17,6 +35,35 @@ export const GET = async (
   }
 }
 
+/**
+ * @swagger
+ * /api/v1/experiments/{name}:
+ *  post:
+ *   tags:
+ *    - experiments
+ *   description: Uploads the setup of an experiment
+ *   parameters:
+ *    - in: path
+ *      name: name
+ *      required: true
+ *      description: Name of the experiment
+ *      schema:
+ *       type: string
+ *   requestBody:
+ *    content:
+ *     multipart/form-data:
+ *      schema:
+ *       type: object
+ *       properties:
+ *        file:
+ *         type: string
+ *         format: binary
+ *   responses:
+ *    200:
+ *     description: Success
+ *    400:
+ *     description: Missing file in request body
+ */
 export const POST = async (
   request: NextRequest,
   { params }: { params: { name: string } }

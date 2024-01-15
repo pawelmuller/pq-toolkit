@@ -1,0 +1,11 @@
+{
+  "$schema": "https://typedoc.org/schema.json",
+  "entryPoints": [
+    "./src/lib/schemas/experimentSetup.ts",
+    "./src/lib/schemas/experimentState.ts"
+  ],
+  "out": "doc",
+  "plugin": [
+    "typedoc-plugin-zod"
+  ]
+}

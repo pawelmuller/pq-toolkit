@@ -8,8 +8,9 @@
     "start": "next start",
     "lint": "next lint",
     "lint:fix": "next lint --fix",
-    "test": "jest",
-    "test:watch": "jest --watch"
+    "test": "jest --coverage",
+    "test:watch": "jest --watch",
+    "build-docs": "typedoc"
   },
   "dependencies": {
     "@emotion/react": "^11.11.3",
@@ -19,9 +20,11 @@
     "axios": "^1.6.5",
     "howler": "^2.2.4",
     "next": "^14.0.1",
+    "next-swagger-doc": "^0.4.0",
     "react": "^18",
     "react-dom": "^18",
     "react-icons": "^4.11.0",
+    "swagger-ui-react": "^5.11.0",
     "sweetalert2": "^11.10.2",
     "swr": "^2.2.4",
     "zod": "^3.22.4"
@@ -34,6 +37,7 @@
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
+    "@types/swagger-ui-react": "^4.18.3",
     "@types/ungap__structured-clone": "^1.2.0",
     "@typescript-eslint/eslint-plugin": "^6.9.0",
     "@typescript-eslint/parser": "^6.9.0",
@@ -52,6 +56,8 @@
     "prettier": "^2.8.8",
     "tailwindcss": "^3",
     "ts-node": "^10.9.2",
+    "typedoc": "^0.25.7",
+    "typedoc-plugin-zod": "^1.1.2",
     "typescript": "^5.2.2"
   },
   "engines": {
