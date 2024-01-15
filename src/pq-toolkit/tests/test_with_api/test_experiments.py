@@ -2,6 +2,7 @@ import unittest
 
 from api_client import PqToolkitAPIClient
 from api_client.dataclasses import PqExperiment, PqTestAB, PqTestMUSHRA, PqSample, PqQuestion
+from api_client.exceptions import PqExperimentSetupException
 from test_utils import generate_random_experiment_name
 
 
@@ -78,6 +79,19 @@ class TestExperimentsWithAPI(unittest.TestCase):
 
         experiment = self.client.get_experiment(experiment_name=experiment_name)
         assert experiment.model_dump(exclude={"uid"}) == experiment_setup.model_dump(exclude={"uid"})
+
+    def test_setup_experiment_class_validation(self):
+        experiment_name = generate_random_experiment_name()
+        experiments = self.client.create_experiment(experiment_name=experiment_name)
+        self.experiments_to_remove.append(experiment_name)
+        self.assertIn(experiment_name, experiments)
+
+        experiment_setup = "Not a PqExperiment"
+
+        self.assertRaises(PqExperimentSetupException,
+                          self.client.setup_experiment,
+                          experiment_name=experiment_name,
+                          experiment_setup=experiment_setup)
 
 
 if __name__ == '__main__':
