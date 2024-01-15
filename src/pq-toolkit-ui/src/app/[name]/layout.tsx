@@ -13,6 +13,8 @@ import {
 import { fillTest } from './utils'
 import useExperimentData from '@/lib/components/experiments/hooks/useExperimentData'
 import useStorage from '@/core/hooks/useStorage'
+import { listExperimentSamples } from '@/lib/schemas/utils'
+import useSWR from 'swr'
 
 /**
  * Context which provides all values used during testing
@@ -45,13 +47,21 @@ const ExperimentContextProvider = ({
     validationErrors
   } = useExperimentData(experimentName)
 
-  if (isLoading) return <Loading />
-  if (apiError != null)
+  // Loading available experiment samples
+  const {
+    data: samplesData,
+    error: samplesApiError,
+    isLoading: samplesLoading
+  } = useSWR(`/api/v1/experiments/${experimentName}/samples`)
+
+  if (isLoading || samplesLoading) return <Loading />
+  if (apiError != null || samplesApiError != null)
     return (
       <div className="flex w-full min-h-screen items-center justify-center text-center h2">
         API Error
         <br />
         {apiError.toString()}
+        {samplesApiError.toString()}
       </div>
     )
 
@@ -68,6 +78,21 @@ const ExperimentContextProvider = ({
         Cannot load experiment data
       </div>
     )
+
+  if (samplesData == null)
+    return (
+      <div className="flex w-full min-h-screen items-center justify-center text-center h2">
+        Cannot load experiment samples
+      </div>
+    )
+
+  if (!validateExperimentSamples(data, samplesData)) {
+    return (
+      <div className="flex w-full min-h-screen items-center justify-center text-center h2">
+        Experiment samples are missing
+      </div>
+    )
+  }
 
   // Fill all randomizable values with random values or restore saved values
   const savedData = getItem(`experiment-${experimentName}-data`)
@@ -127,6 +152,17 @@ const ExperimentContextProvider = ({
       {children}
     </ExperimentContext.Provider>
   )
+}
+
+const validateExperimentSamples = (
+  experimentData: ExperimentSetup,
+  samplesList: string[]
+): boolean => {
+  const requiredSamples = listExperimentSamples(experimentData)
+  const missingSamples = requiredSamples.filter(
+    (sample) => !samplesList.includes(sample)
+  )
+  return missingSamples.length === 0
 }
 
 /**

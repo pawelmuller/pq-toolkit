@@ -6,14 +6,33 @@ import { CgDanger } from 'react-icons/cg'
 import { Popover } from '@mui/material'
 import { useState } from 'react'
 import FileUploader from '@/core/components/FileUploader'
+import { type ExperimentSetup } from '@/lib/schemas/experimentSetup'
+import { listExperimentSamples } from '@/lib/schemas/utils'
+import useSWR from 'swr'
+import { FaCheckCircle } from 'react-icons/fa'
 
 const AdminPage = ({ params }: { params: { name: string } }): JSX.Element => {
   const { name } = params
 
-  const { isLoading, apiError, experimentData, validationErrors, mutate } =
-    useExperimentData(name)
+  const noRevalidationConfig = {
+    revalidateOnFocus: false,
+    revalidateOnMount: true,
+    revalidateOnReconnect: false,
+    refreshWhenOffline: false,
+    refreshWhenHidden: false,
+    refreshInterval: 0
+  }
 
-  if (isLoading) return <Loading />
+  const { isLoading, apiError, experimentData, validationErrors, mutate } =
+    useExperimentData(name, noRevalidationConfig)
+
+  const {
+    data: samplesData,
+    isLoading: samplesLoading,
+    mutate: samplesMutate
+  } = useSWR(`/api/v1/experiments/${name}/samples`, noRevalidationConfig)
+
+  if (isLoading || samplesLoading) return <Loading />
 
   return (
     <main className="flex min-h-screen p-24">
@@ -43,33 +62,59 @@ const AdminPage = ({ params }: { params: { name: string } }): JSX.Element => {
                 <div className="mx-auto">{test.type}</div>
               </div>
             ))}
-          </div>
-          <div className="w-full text-center">
-            <div className="">
-              <div className="mb-sm">Upload configuration (setup.json)</div>
-              <FileUploader
-                dataKey={'setup_uploader'}
-                url={`/api/v1/experiments/${name}`}
-                onFileUploaded={async () => {
-                  await mutate()
-                }}
-              />
-            </div>
             <div className="mt-md">
-              <div className="mb-sm">Upload samples</div>
-              <FileUploader
-                dataKey={'sample_uploader'}
-                url={`/api/v1/experiments/${name}/samples`}
-                onFileUploaded={async () => {
-                  await mutate()
-                }}
-                multi
+              <SamplesCheckWidget
+                experimentData={experimentData}
+                availableSamples={samplesData}
               />
             </div>
           </div>
+          <UploadersWidget
+            name={name}
+            mutateExperiments={mutate}
+            mutateSamples={samplesMutate}
+          />
         </div>
       </div>
     </main>
+  )
+}
+
+const UploadersWidget = ({
+  name,
+  mutateExperiments,
+  mutateSamples
+}: {
+  name: string
+  mutateExperiments: () => Promise<void>
+  mutateSamples: () => Promise<void>
+}): JSX.Element => {
+  return (
+    <div className="w-full text-center">
+      <div className="">
+        <div className="mb-sm">Upload configuration (setup.json)</div>
+        <FileUploader
+          dataKey={'setup_uploader'}
+          url={`/api/v1/experiments/${name}`}
+          onFileUploaded={async () => {
+            await mutateExperiments()
+            await mutateSamples()
+          }}
+        />
+      </div>
+      <div className="mt-md">
+        <div className="mb-sm">Upload samples</div>
+        <FileUploader
+          dataKey={'sample_uploader'}
+          url={`/api/v1/experiments/${name}/samples`}
+          onFileUploaded={async () => {
+            await mutateExperiments()
+            await mutateSamples()
+          }}
+          multi
+        />
+      </div>
+    </div>
   )
 }
 
@@ -125,6 +170,40 @@ const ExperimentValidationWidget = ({
           ))}
         </div>
       </Popover>
+    </div>
+  )
+}
+
+const SamplesCheckWidget = ({
+  experimentData,
+  availableSamples
+}: {
+  experimentData?: ExperimentSetup
+  availableSamples?: string[]
+}): JSX.Element => {
+  if (experimentData == null) return <div>Cannot load experiment data</div>
+  if (availableSamples == null) return <div>Cannot load available samples</div>
+
+  const requiredSamples = listExperimentSamples(experimentData)
+
+  return (
+    <div className="">
+      <div className="mb-sm">Required samples:</div>
+      <div className="flex flex-col gap-xs">
+        {requiredSamples.map((sample, idx) => (
+          <div key={idx} className="flex gap-xs">
+            <div>{idx + 1}</div>
+            <div>{sample}</div>
+            <div>
+              {availableSamples.includes(sample) ? (
+                <FaCheckCircle />
+              ) : (
+                <CgDanger />
+              )}
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
   )
 }
