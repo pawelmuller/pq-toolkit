@@ -9,11 +9,23 @@ from pydantic import PydanticSchemaGenerationError, BaseModel, ValidationError
 from requests import ConnectTimeout
 
 from api_client.dataclasses import PqExperiment, PqTestResultsList
-from api_client.exceptions import PqSerializationException, PqExperimentAlreadyExists, PqExperimentSetupException, \
+from api_client.exceptions import (
+    PqSerializationException, PqExperimentAlreadyExistsException, PqExperimentSetupException,
     PqExperimentSampleUploadException
+)
 
 
 class PqToolkitAPIClient:
+    """
+    Main class for the Pq Toolkit python client.
+
+    When creating a new client object, class checks whether the backend is up and running.
+
+    Parameters:
+        base_host: The host of the API.
+        base_port: The port of the API.
+    """
+
     def __init__(self, *, base_host: str = "http://localhost", base_port: int = 3000):
         self._base_host = base_host
         self._base_port = base_port
@@ -106,6 +118,12 @@ class PqToolkitAPIClient:
         return wrapper
 
     def get_experiments(self) -> list[str]:
+        """
+        Method allows to get a list of all experiments currently defined.
+
+        Returns:
+            experiments: A list of strings representing names of the experiments.
+        """
         response = self._get("/experiments")
         match response.status_code:
             case 200:
@@ -116,6 +134,16 @@ class PqToolkitAPIClient:
 
     @_serialize_with_pydantic
     def get_experiment(self, *, experiment_name: str) -> PqExperiment | None:
+        """
+        Method allows to get a single experiment with all its configuration.
+
+        Parameters:
+            experiment_name: The name of the experiment.
+
+        Returns:
+            experiment: An object representing given experiment.
+        """
+
         response = self._get(f"/experiments/{experiment_name}")
         match response.status_code:
             case 200:
@@ -125,15 +153,38 @@ class PqToolkitAPIClient:
                 return None
 
     def create_experiment(self, *, experiment_name: str) -> list[str]:
+        """
+        Method allows to create an experiment.
+
+        Parameters:
+            experiment_name: The name of the experiment.
+
+        Returns:
+            experiments: A list of strings representing names of the experiments.
+
+        Raises:
+            PqExperimentAlreadyExistsException: If the experiment of given name already exists.
+        """
+
         response = self._post(f"/experiments", json={"name": f"{experiment_name}"})
         match response.status_code:
             case 200:
                 experiments = response.json().get("experiments")
                 return experiments
             case 409:
-                raise PqExperimentAlreadyExists(experiment_name=experiment_name)
+                raise PqExperimentAlreadyExistsException(experiment_name=experiment_name)
 
     def delete_experiment(self, *, experiment_name: str) -> list[str]:
+        """
+        Method allows to delete an experiment.
+
+        Parameters:
+            experiment_name: The name of the experiment.
+
+        Returns:
+            experiments: A list of strings representing names of the experiments.
+        """
+
         response = self._delete(f"/experiments", json={"name": f"{experiment_name}"})
         match response.status_code:
             case 200:
@@ -141,6 +192,17 @@ class PqToolkitAPIClient:
                 return experiments
 
     def setup_experiment(self, *, experiment_name: str, experiment_setup: PqExperiment):
+        """
+        Method allows to create an experiment.
+
+        Parameters:
+            experiment_name: The name of the experiment.
+            experiment_setup: The experiment setup object
+
+        Raises:
+            PqExperimentSetupException: Either when the given configuration is invalid or the API returns an error.
+        """
+
         if not isinstance(experiment_setup, PqExperiment):
             raise PqExperimentSetupException(experiment_name=experiment_name,
                                              message="The experiment settings must be a PqExperiment")
@@ -158,6 +220,18 @@ class PqToolkitAPIClient:
                 raise PqExperimentSetupException(experiment_name=experiment_name, message=message)
 
     def upload_sample(self, *, experiment_name: str, sample_name: str, sample_binary: bytes | BinaryIO):
+        """
+        Method allows to upload a sample to the experiment.
+
+        Parameters:
+            experiment_name: The name of the experiment.
+            sample_name: The name of the sample (must match the sample name in the experiment setup).
+            sample_binary: The music file itself.
+
+        Raises:
+            PqExperimentSampleUploadException: When the API returns an error.
+        """
+
         files_struct = {"file": (sample_name, sample_binary, "audio/mpeg", {"Content-Disposition": "form-data"})}
         response = self._post(f"/experiments/{experiment_name}/samples", files=files_struct)
 
@@ -172,6 +246,16 @@ class PqToolkitAPIClient:
                                                         message=message)
 
     def get_experiment_results(self, *, experiment_name: str) -> list[str]:
+        """
+        Method allows to get a list of experiments' results' names.
+
+        Parameters:
+            experiment_name: The name of the experiment.
+
+        Returns:
+            experiment_results: list of experiments' results' names.
+        """
+
         response = self._get(f"/experiments/{experiment_name}/results").json()
         if experiment_results := response.get("results"):
             return experiment_results
@@ -179,6 +263,17 @@ class PqToolkitAPIClient:
 
     @_serialize_with_pydantic
     def get_experiment_test_results(self, *, experiment_name: str, result_name: str) -> PqTestResultsList | None:
+        """
+        Method allows to get a list of experiments' results' names.
+
+        Parameters:
+            experiment_name: The name of the experiment.
+            result_name: The name of the experiment result.
+
+        Returns:
+            experiment_results: An object representing the experiment's results'.
+        """
+
         response = self._get(f"/experiments/{experiment_name}/results/{result_name}")
         match response.status_code:
             case 200:

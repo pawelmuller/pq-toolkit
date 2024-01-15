@@ -22,7 +22,7 @@ class PqValidationException(PqToolkitException):
         super().__init__(self.message)
 
 
-class PqExperimentAlreadyExists(PqToolkitException):
+class PqExperimentAlreadyExistsException(PqToolkitException):
     def __init__(self, experiment_name: str = None):
         if experiment_name:
             message = f"An experiment '{experiment_name}' already exists"

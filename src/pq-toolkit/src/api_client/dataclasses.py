@@ -6,6 +6,9 @@ from pydantic import BaseModel, Field, AliasChoices, ConfigDict, field_validator
 
 
 class PqTestTypes(Enum):
+    """
+    Class representing types of tests handled by PQToolkit.
+    """
     AB: str = "AB"
     ABX: str = "ABX"
     APE: str = "APE"
@@ -13,6 +16,13 @@ class PqTestTypes(Enum):
 
 
 class PqSample(BaseModel):
+    """
+    Class representing sound sample.
+
+    Attributes:
+        sample_id: An ID of the sample.
+        asset_path: Path to the sample.
+    """
     sample_id: str = Field(alias="sampleId",
                            validation_alias=AliasChoices("sampleId", "sample_id"))
     asset_path: str = Field(alias="assetPath",
@@ -20,12 +30,26 @@ class PqSample(BaseModel):
 
 
 class PqQuestion(BaseModel):
+    """
+    Class representing test question.
+
+    Attributes:
+        question_id: An ID of the question.
+        text: Text of the question.
+    """
     question_id: str = Field(alias="questionId",
                              validation_alias=AliasChoices("questionId", "question_id"))
     text: str
 
 
 class PqTestBase(BaseModel):
+    """
+    Base class for the test.
+
+    Attributes:
+        test_number: A number of the test.
+        type: A type of the test.
+    """
     model_config = ConfigDict(use_enum_values=True, validate_default=True)
 
     test_number: int = Field(alias="testNumber",
@@ -34,19 +58,50 @@ class PqTestBase(BaseModel):
 
 
 class PqTestAB(PqTestBase):
+    """
+    Base class for the AB test.
+
+    Attributes:
+        test_number: A number of the test.
+        type: A type of the test.
+        samples: list of samples associated with the test
+        questions: list of questions for the test
+    """
     samples: list[PqSample]
     questions: list[PqQuestion]
     type: PqTestTypes = PqTestTypes.AB
 
 
 class PqTestABX(PqTestBase):
-    xSampleId: str | None = None
+    """
+    Base class for the ABX test.
+
+    Attributes:
+        test_number: A number of the test.
+        type: A type of the test.
+        x_sample_id: Unknown sample id - the one to identify
+        samples: list of samples associated with the test
+        questions: list of questions for the test
+    """
+    x_sample_id: str | None = Field(None, alias="xSampleId",
+                                    validation_alias=AliasChoices("xSampleId", "x_sample_id"))
     samples: list[PqSample]
     questions: list[PqQuestion] | None = None
     type: PqTestTypes = PqTestTypes.ABX
 
 
 class PqTestMUSHRA(PqTestBase):
+    """
+    Base class for the MUSHRA test.
+
+    Attributes:
+        test_number: A number of the test.
+        type: A type of the test.
+        reference: A reference sample
+        question: A question for the test
+        anchors: list of anchor samples associated with the test
+        samples: list of samples associated with the test
+    """
     reference: PqSample
     question: str | None = None
     anchors: list[PqSample]
@@ -55,6 +110,15 @@ class PqTestMUSHRA(PqTestBase):
 
 
 class PqTestAPE(PqTestBase):
+    """
+    Base class for the APE test.
+
+    Attributes:
+        test_number: A number of the test.
+        type: A type of the test.
+        axis: A list of axis questions
+        samples: list of samples associated with the test
+    """
     axis: list[PqQuestion]
     samples: list[PqSample]
     type: PqTestTypes = PqTestTypes.APE
@@ -112,7 +176,16 @@ class PqTestResultsList(BaseModel):
 
 
 class PqExperiment(BaseModel):
-    uid: UUID4 | str | None = uuid.uuid4()
+    """
+    Class representing experiments.
+
+    Attributes:
+        uid: A unique ID of the experiment.
+        name: Experiment name.
+        description: Experiment description.
+        tests: A list of test objects
+    """
+    uid: UUID4 | str = uuid.uuid4()
     name: str
     description: str
     tests: list[PqTestMUSHRA | PqTestAPE | PqTestABX | PqTestAB]
