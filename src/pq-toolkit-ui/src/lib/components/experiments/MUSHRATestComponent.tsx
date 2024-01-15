@@ -7,8 +7,8 @@ import {
 } from '@/lib/schemas/experimentState'
 import MultiPlayer from '../player/MultiPlayer'
 import { getSampleUrl } from './common/utils'
-import VerticalMultislider from './common/VerticalMultislider'
-import { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
+import VerticalSlider from "@/lib/components/experiments/common/VerticalSlider";
 
 const MUSHRATestComponent = ({
   testData,
@@ -90,6 +90,33 @@ const MUSHRATestComponent = ({
     reference.sampleId
   ])
 
+  const sliderSetRating = (value: number, sampleId: string) => {
+    setRatings((prevState) => {
+      const newState = new Map(prevState)
+      newState.set(sampleId, value)
+      return newState
+    })
+  }
+
+  const getMUSHRAscale = () => {
+    const scale = [
+      'terrible',
+      'bad',
+      'poor',
+      'fair',
+      'good',
+      'excellent'
+    ]
+
+    return <div className="h-full flex flex-col justify-between">
+      {scale.reverse().map((label: string) => (
+        <div className="text-right" key={label}>
+          {label}
+        </div>
+      ))}
+    </div>
+  }
+
   return (
     <div className="bg-white rounded-md p-lg flex flex-col items-center text-black">
       <div className="flex flex-col gap-md">
@@ -97,21 +124,30 @@ const MUSHRATestComponent = ({
           <div className="text-center">{question}</div>
         </div>
         <MultiPlayer
-          assets={[reference, ...shuffledSamples].reduce<Map<string, string>>(
+          assets={[reference, ...shuffledSamples].reduce<Map<string, { url: string, footers: JSX.Element[] }>>(
             (map, sample, idx) => {
               const sampleName = idx === 0 ? 'Reference' : `Sample ${idx}`
               map.set(
                 sampleName,
-                getSampleUrl(experimentName, sample.assetPath)
+                {
+                  url: getSampleUrl(experimentName, sample.assetPath),
+                  footers: idx === 0 ?
+                    [getMUSHRAscale()]
+                  :
+                    [
+                      <VerticalSlider
+                        rating={ratings.get(sample.sampleId) ?? 0}
+                        setRating={(value) => sliderSetRating(value, sample.sampleId)}
+                      />,
+                      <div className="text-center">{ratings.get(sample.sampleId) ?? 0}</div>
+                    ]
+                }
               )
               return map
             },
-            new Map<string, string>()
+            new Map<string, { url: string, footers: JSX.Element[]}>()
           )}
         />
-      </div>
-      <div className="flex mt-md self-end w-full">
-        <VerticalMultislider ratings={ratings} setRatings={setRatings} />
       </div>
     </div>
   )

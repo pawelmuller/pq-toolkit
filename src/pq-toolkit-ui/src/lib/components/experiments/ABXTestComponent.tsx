@@ -40,20 +40,24 @@ const ABXTestComponent = ({
     initialValues?.xSelected
   )
 
-  const getCombinedSamples = (): Map<string, string> => {
-    const map = samples.reduce<Map<string, string>>((map, sample, idx) => {
+  const getCombinedSamples = (): Map<string, {url: string}> => {
+    const map = samples.reduce<Map<string, {url: string}>>((map, sample, idx) => {
       map.set(
         `Sample ${idx + 1}`,
-        getSampleUrl(experimentName, sample.assetPath)
+        {
+          url: getSampleUrl(experimentName, sample.assetPath)
+        }
       )
       return map
-    }, new Map<string, string>())
+    }, new Map<string, {url: string}>())
     map.set(
       'X',
-      getSampleUrl(
-        experimentName,
-        samples.find((s) => s.sampleId === testData.xSampleId)?.assetPath ?? ''
-      )
+      {
+        url: getSampleUrl(
+          experimentName,
+          samples.find((s) => s.sampleId === testData.xSampleId)?.assetPath ?? ''
+        )
+      }
     )
     return map
   }

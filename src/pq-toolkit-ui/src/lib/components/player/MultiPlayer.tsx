@@ -9,19 +9,20 @@ import {
 import { Howl } from 'howler'
 import { PauseButton, PlayButton, StopButton } from './ControlButtons'
 import { formatTime } from './utils/playerUtils'
+import {max} from "@floating-ui/utils";
 
 const MultiPlayer = ({
   assets,
   selectedPlayerState
 }: {
-  assets: Map<string, string>
+  assets: Map<string, {url: string, footers?: JSX.Element[]}>
   selectedPlayerState?: [number, Dispatch<SetStateAction<number>>]
 }): JSX.Element => {
   const playersRef = useRef<Howl[]>(
     Array.from(assets.entries()).map(
-      ([name, assetPath]) =>
+      ([_, sample]: [string, {url: string, footers?: JSX.Element[]}]) =>
         new Howl({
-          src: [assetPath],
+          src: [sample.url],
           volume: 0.0,
           loop: true,
           preload: true,
@@ -36,7 +37,6 @@ const MultiPlayer = ({
 
   // This won't cause changing hooks on re-render because it's specific for each component
   const [selectedPlayer, setSelectedPlayer] =
-    // eslint-disable-next-line react-hooks/rules-of-hooks
     selectedPlayerState ?? useState<number>(0)
 
   useEffect(() => {
@@ -58,6 +58,10 @@ const MultiPlayer = ({
   )
   const progressUpdater: React.MutableRefObject<NodeJS.Timeout | null> =
     useRef(null)
+
+  const allFooterLevels: number[] = []
+  assets.forEach((item) => allFooterLevels.push(item.footers?.length || 0))
+  const footerLevels: number = max(...allFooterLevels)
 
   const startUpdating = (): void => {
     if (progressUpdater.current == null) {
@@ -134,20 +138,38 @@ const MultiPlayer = ({
           }}
         />
       </div>
-      <div className="flex mt-sm gap-sm w-full">
-        {Array.from(assets.keys()).map((name, index) => (
-          <button
-            key={`asset-selector-${index}`}
-            onClick={() => {
-              setSelectedPlayer(index)
-            }}
-            className={`w-full rounded-md text-white font-semibold px-xs
-            ${selectedPlayer === index ? 'bg-blue-500' : 'bg-blue-300'}`}
-          >
-            {name}
-          </button>
-        ))}
-      </div>
+      <table className="mt-sm border-separate [border-spacing:0.75rem]">
+        <tbody>
+          <tr>
+            {Array.from(assets.keys()).map((name, index) => (
+              <td key={index} className="pb-sm">
+                <button
+                  key={`asset-selector-${index}`}
+                  onClick={() => {
+                    setSelectedPlayer(index)
+                  }}
+                  className={`h-full w-full rounded-md text-white font-semibold p-xs
+                              ${selectedPlayer === index ? 'bg-blue-500' : 'bg-blue-300'}`}
+                >
+                  {name}
+                </button>
+              </td>
+            ))}
+          </tr>
+          {
+            Array.from(Array(footerLevels).keys()).map((idx) => (
+              <tr key={idx} className="mt-sm gap-sm w-full">
+                {Array.from(assets.keys()).map((name) => {
+                  const footer: JSX.Element | undefined = assets.get(name)?.footers?.at(idx)
+                  return <td key={name} className="h-1">
+                    {footer}
+                  </td>
+                })}
+              </tr>
+            ))
+          }
+        </tbody>
+      </table>
     </div>
   )
 }
