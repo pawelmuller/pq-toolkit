@@ -1,5 +1,5 @@
 from api_client import PqToolkitAPIClient
-from api_client.dataclasses import PqExperiment, PqSample, PqQuestion, PqTestAB, PqTestMUSHRA
+from api_client.dataclasses import PqExperiment, PqSample, PqQuestion, PqTestAB, PqTestABX, PqTestAPE, PqTestMUSHRA
 from test_utils import generate_random_experiment_name
 
 if __name__ == "__main__":
@@ -26,8 +26,31 @@ if __name__ == "__main__":
                     PqQuestion(question_id="q2", text="Select more warmth")
                 ]
             ),
-            PqTestMUSHRA(
+            PqTestABX(
                 test_number=2,
+                samples=[
+                    PqSample(sample_id="s1", asset_path="file_sample_5.mp3"),
+                    PqSample(sample_id="s2", asset_path="file_sample_700.mp3")
+                ],
+                questions=[
+                    PqQuestion(question_id="q1", text="Select better quality"),
+                    PqQuestion(question_id="q2", text="Select more warmth")
+                ]
+            ),
+            PqTestAPE(
+                test_number=3,
+                samples=[
+                    PqSample(sample_id="s1", asset_path="file_sample_5.mp3"),
+                    PqSample(sample_id="s2", asset_path="file_sample_700.mp3"),
+                    PqSample(sample_id="s3", asset_path="sample-12s.mp3")
+                ],
+                axis=[
+                    PqQuestion(question_id="a1", text="Quality"),
+                    PqQuestion(question_id="a2", text="Depth")
+                ]
+            ),
+            PqTestMUSHRA(
+                test_number=4,
                 reference=PqSample(sample_id="ref", asset_path="file_sample_5.mp3"),
                 anchors=[
                     PqSample(sample_id="a1", asset_path="file_sample_700.mp3"),
