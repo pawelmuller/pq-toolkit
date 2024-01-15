@@ -80,6 +80,5 @@ class TestExperimentsWithAPI(unittest.TestCase):
         assert experiment.model_dump(exclude={"uid"}) == experiment_setup.model_dump(exclude={"uid"})
 
 
-
 if __name__ == '__main__':
     unittest.main()
