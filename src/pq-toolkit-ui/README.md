@@ -2,9 +2,7 @@
 
 Perceptual qualities toolkit UI
 
-## Development:
-
-- Running development server:
+## Development server:
 
 ```bash
 npm install
@@ -100,8 +98,43 @@ inability to test audio in Jest (and handling audio is main scope of this projec
 ## TypeDoc
 
 There is TypeDoc documentation available for experiment schemas.
-Is has to be build by running `npm run build-docs`, then it's available
+It has to be build by running `npm run build-docs`, then it's available
 in `doc` directory.
 
 Documentation describes all types needed to setup experiment and save results.
 Tooltip hints are also available in compatible IDEs.
+
+## SwaggerUI
+
+For API endpoints documentation start the service and visit the `/api/v1/api-docs` endpoint.
+
+## Development guide
+
+This is reference of components and flows used to access experiments for future developers.
+
+Good entry point is Next.js documentation, where app router is described.
+Then starting point of user flow is `app/page.tsx` file, where list of all experiments is shown.
+If user selects one of the experiments, then he is redirected to `app/[name]/page.tsx` where
+experiment start page is displayed. All pages starting from this are wrapped in `app/[name]/layout.tsx` component
+which handles fetching experiment setup, preparing it, storing all result values and distributing
+it via Provider.
+
+Main steps taken in `app/[name]/layout.tsx` are:
+
+- fetching data using hook that fetches and validates data
+- filling all randomizable experiment data (or loading state from session storage to ensure
+  that refreshing page won't change shuffles)
+- initializing or loading save results state (again to preserve for refreshing)
+- creating methods for updating results and saving them in API
+
+All the types are available at `lib/schemas` and are created using zod schemas to allow
+for easy validation.
+
+To add new experiment type most important steps are:
+
+- add setup and state schemas that extend base schemas
+- create test page components at `lib/components/experiments` using provided components or
+  adding new ones
+- register new component as test type handler at `app/[name]/[step]/page.tsx`
+- add randomizing function to `app/[name]/utils.ts` if needed
+- fill missing types in `app/[name]/layout.tsx`
