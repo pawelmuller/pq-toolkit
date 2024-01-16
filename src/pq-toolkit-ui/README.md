@@ -86,6 +86,11 @@ Basic structure:
   - `lib` - all components, schemas used in app
   - `styles` - base style definitions in .css files (mainly typography)
 
+## Examples
+
+There is example configuration for experiment in `public/examples` folder with 2 configurations
+and samples required to start it. It can be used after uploading via admin panel.
+
 ## Testing
 
 This project uses Jest for testing, to run test suite use `npm run test` command
