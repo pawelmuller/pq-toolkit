@@ -1,0 +1,21 @@
+html {
+  line-height: 1.25;
+  font-size: 1.25rem;
+  font-weight: 400;
+}
+
+.h1,
+h1 {
+  font-size: 4rem;
+}
+
+.h2,
+h2 {
+  font-size: 2rem;
+  font-weight: 600;
+}
+
+.subtitle {
+  font-size: 0.75rem;
+  font-weight: 400;
+}

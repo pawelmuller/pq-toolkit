@@ -1,0 +1,18 @@
+version: '3'
+
+services:
+  pq-toolkit-ui-prod:
+    build:
+      context: ../
+      dockerfile: Dockerfile
+      args:
+        ENV: prod
+        DATA_PATH: "/pq-toolkit/data"
+    image: pq-toolkit-ui-prod
+    ports:
+      - 80:3000
+    volumes:
+      - pq-toolkit-data:/pq-toolkit/data
+
+volumes:
+  pq-toolkit-data:

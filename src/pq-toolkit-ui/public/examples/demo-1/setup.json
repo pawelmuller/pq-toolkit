@@ -1,0 +1,122 @@
+{
+  "uid": "1234-5678-1234-1234",
+  "name": "Test 1",
+  "description": "Example experiment configuration 1",
+  "endText": "This is custom end text",
+  "tests": [
+    {
+      "testNumber": 1,
+      "type": "AB",
+      "samples": [
+        {
+          "sampleId": "s1",
+          "assetPath": "file_sample_5.mp3"
+        },
+        {
+          "sampleId": "s2",
+          "assetPath": "file_sample_700.mp3"
+        }
+      ],
+      "questions": [
+        {
+          "questionId": "q1",
+          "text": "Select better quality"
+        },
+        {
+          "questionId": "q2",
+          "text": "Select more warmth"
+        }
+      ]
+    },
+    {
+      "testNumber": 2,
+      "type": "ABX",
+      "samples": [
+        {
+          "sampleId": "s3",
+          "assetPath": "sample-12s.mp3"
+        },
+        {
+          "sampleId": "s4",
+          "assetPath": "sample-15s.mp3"
+        }
+      ]
+    },
+    {
+      "testNumber": 3,
+      "type": "ABX",
+      "samples": [
+        {
+          "sampleId": "s1",
+          "assetPath": "file_sample_5.mp3"
+        },
+        {
+          "sampleId": "s2",
+          "assetPath": "file_sample_700.mp3"
+        }
+      ],
+      "questions": [
+        {
+          "questionId": "q1",
+          "text": "Select better quality"
+        },
+        {
+          "questionId": "q2",
+          "text": "Select more warmth"
+        }
+      ]
+    },
+    {
+      "testNumber": 4,
+      "type": "APE",
+      "samples": [
+        {
+          "sampleId": "s1",
+          "assetPath": "file_sample_5.mp3"
+        },
+        {
+          "sampleId": "s3",
+          "assetPath": "sample-12s.mp3"
+        },
+        {
+          "sampleId": "s4",
+          "assetPath": "sample-15s.mp3"
+        }
+      ],
+      "axis": [
+        {
+          "questionId": "q1",
+          "text": "Quality"
+        },
+        {
+          "questionId": "q2",
+          "text": "Depth"
+        }
+      ]
+    },
+    {
+      "testNumber": 5,
+      "type": "MUSHRA",
+      "reference": {
+        "sampleId": "ref",
+        "assetPath": "file_sample_5.mp3"
+      },
+      "anchors": [
+        {
+          "sampleId": "a1",
+          "assetPath": "file_sample_700.mp3"
+        }
+      ],
+      "samples": [
+        {
+          "sampleId": "s1",
+          "assetPath": "sample-12s.mp3"
+        },
+        {
+          "sampleId": "s2",
+          "assetPath": "sample-15s.mp3"
+        }
+      ]
+    }
+  ]
+}

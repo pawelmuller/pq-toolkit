@@ -1,0 +1,51 @@
+{
+  "uid": "1234-5678-1234-1234",
+  "name": "MUSHRA test",
+  "description": "MUSHRA configuration",
+  "tests": [
+    {
+      "testNumber": 1,
+      "type": "MUSHRA",
+      "reference": {
+        "sampleId": "ref",
+        "assetPath": "file_sample_5.mp3"
+      },
+      "anchors": [
+        {
+          "sampleId": "a1",
+          "assetPath": "file_sample_700.mp3"
+        },
+        {
+          "sampleId": "a2",
+          "assetPath": "file_sample_5.mp3"
+        }
+      ],
+      "samples": [
+        {
+          "sampleId": "s1",
+          "assetPath": "sample-12s.mp3"
+        },
+        {
+          "sampleId": "s2",
+          "assetPath": "sample-15s.mp3"
+        },
+        {
+          "sampleId": "s3",
+          "assetPath": "sample-15s.mp3"
+        },
+        {
+          "sampleId": "s4",
+          "assetPath": "sample-15s.mp3"
+        },
+        {
+          "sampleId": "s5",
+          "assetPath": "sample-12s.mp3"
+        },
+        {
+          "sampleId": "s6",
+          "assetPath": "sample-12s.mp3"
+        }
+      ]
+    }
+  ]
+}
