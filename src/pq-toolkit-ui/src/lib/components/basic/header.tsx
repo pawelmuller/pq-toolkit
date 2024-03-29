@@ -8,7 +8,7 @@ const Header = (props: any): JSX.Element => {
                         <span className='text-indigo-400 no-underline hover:no-underline font-bold text-3xl lg:text-4xl md:text-4xl'>
                             PQ
                         </span>
-                        <span className="bg-clip-text no-underline hover:no-underline font-bold text-3xl lg:text-4xl md:text-4xl text-transparent bg-gradient-to-r from-green-400 via-pink-500 to-purple-500">
+                        <span className="bg-clip-text no-underline hover:no-underline font-bold text-3xl lg:text-4xl md:text-4xl text-transparent bg-gradient-to-r from-cyan-500 via-pink-500 to-purple-500">
                             Toolkit
                         </span>
                     </a>
