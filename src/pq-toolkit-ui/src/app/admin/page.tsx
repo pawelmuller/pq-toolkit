@@ -4,8 +4,9 @@ import useSWR from "swr"
 import { string } from "zod"
 import AdminPage from "../components/admin-page"
 import { useState } from "react"
-
-
+import Loading from "../loading"
+import LoginPage from "../components/login-page"
+import Header from "@/lib/components/basic/header"
 const AdminPageNew = (): JSX.Element => {
     const {
         data: apiData,
@@ -13,26 +14,12 @@ const AdminPageNew = (): JSX.Element => {
         isLoading,
         mutate
     } = useSWR(`/api/v1/login`)
-    const [password, setPassword] = useState('')
-    if (isLoading) return <div>loading</div>
-    if (error != null) return <div>error</div>
+    if (isLoading) return <Loading />
+    if (error != null) return <div><div>Authorization Error</div><div>{error.toString()}</div></div>
     if (apiData === 'Authorized') {
         return <AdminPage refresh={mutate} />
     } else {
-        return <div><input style={{color:'black'}} value={password} onChange={e=>setPassword(e.target.value)}></input>
-            <div onClick={async () => {
-            fetch("/api/v1/login", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ password: password}),
-            }).then(async () => {
-                setPassword('')
-                await mutate()
-            }).catch(() => {
-                setPassword('')
-                console.error
-            })
-        }}>Zaloguj się</div></div>
+        return <Header><LoginPage refresh={mutate} /></Header>
     }
 }
 

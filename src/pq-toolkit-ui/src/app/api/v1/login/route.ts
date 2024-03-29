@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { getJwtSecretKey } from "@/lib/authentication/get-jwt";
 import { SignJWT } from "jose";
+import isAuth from "@/lib/authentication/is-auth";
 
 // Create a POST request handler
 export async function POST(request: Request) {
@@ -54,14 +55,16 @@ export async function POST(request: Request) {
   }
 }
 
-export async function GET(request: Request) {
+export async function GET():Promise<Response> {
 
   // Check that the password is correct
   try {
-    if (cookies().has('auth')) {
+    const authorizationStatus = await isAuth()
+    if (authorizationStatus) {
       return NextResponse.json('Authorized',{status:200})
+    } else {
+      return NextResponse.json('Unauthorized', { status: 200 })
     }
-      return NextResponse.json('Unauthorized',{status:200})
   } catch (error) {
     // Redirect the user back to the login page if there was an error
     console.error("Error:", error);
