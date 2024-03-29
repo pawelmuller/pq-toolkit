@@ -52,4 +52,10 @@ body {
   .animation-delay-6000 {
     animation-delay: 6s;
   }
+  .animation-delay-8000 {
+    animation-delay: 8s;
+  }
+  .animation-delay-10000 {
+    animation-delay: 10s;
+  }
 }

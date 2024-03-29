@@ -14,7 +14,7 @@ const Home = (): JSX.Element => {
         <div className="w-full flex items-center justify-between pt-7 pb-2 pr-2 pl-0"> 
           <a className="flex items-center text-indigo-400 no-underline hover:no-underline font-bold text-3xl lg:text-4xl md:text-4xl transform duration-300 ease-in-out fadeInUp" href="/">
             <img  src='/logo.svg' alt="image" className="flex -mt-2.5 w-20 h-11 md:h-auto md:p-2 transform hover:scale-125 duration-300 ease-in-out"/>
-            PQ<span className="bg-clip-text text-transparent bg-gradient-to-r from-green-400 via-pink-500 to-purple-500">Toolkit</span>
+            PQ<span className="bg-clip-text text-transparent bg-gradient-to-r from-cyan-500 via-pink-500 to-purple-500">Toolkit</span>
           </a>
           <div className="flex w-1/2 justify-end content-center fadeInUp">
             <a className="inline-block text-blue-400 no-underline hover:text-pink-500 hover:text-underline text-center h-10 p-2 -mt-2.5 md:h-auto md:p-1 transform hover:scale-125 duration-300 ease-in-out" href="https://github.com/pawelmuller/pq-toolkit">
@@ -29,9 +29,11 @@ const Home = (): JSX.Element => {
       </div>
       <div className="flex flex-col h-full w-full items-center justify-center my-auto fadeInUp">
         <div className="relative text-center mb-md">
-          <div className='absolute -top-10 right-36 w-80 h-80 bg-blue-600 rounded-full mix-blend-multiply filter blur-xl opacity-50 animate-blob animation-delay-2000' />
-          <div className='absolute -top-10 left-36 w-80 h-80 bg-violet-600 rounded-full mix-blend-multiply filter blur-xl opacity-50 animate-blob animation-delay-6000' />
-          <div className='absolute top-1 right-64 w-80 h-80 bg-pink-700 rounded-full mix-blend-multiply filter blur-xl opacity-50 animate-blob animation-delay-4000' />
+          <div className='absolute -top-14 right-36 w-80 h-80 bg-gradient-to-r from-pink-700 to-purple-500 rounded-full mix-blend-multiply filter blur-xl opacity-50 animate-blob animation-delay-2000' />
+          <div className='absolute -top-14 left-36 w-80 h-80 bg-gradient-to-r from-cyan-600 to-pink-500 rounded-full mix-blend-multiply filter blur-xl opacity-60 animate-blob animation-delay-6000' />
+          <div className='absolute top-10 right-64 w-80 h-80 bg-gradient-to-r from-pink-500 to-pink-700 rounded-full mix-blend-multiply filter blur-xl opacity-50 animate-blob animation-delay-4000' />
+          <div className='absolute -top-28 -right-6 w-96 h-96 bg-gradient-to-r from-purple-500 to-violet-600 rounded-full mix-blend-multiply filter blur-xl opacity-60 animate-blob animation-delay-8000' />
+          <div className='absolute -top-24 -left-11 w-96 h-96 bg-gradient-to-r from-indigo-500 to-cyan-600 rounded-full mix-blend-multiply filter blur-xl opacity-50 animate-blob animation-delay-10000' />
           <h1 className="relative text-6xl font-bold">Perceptual Qualities Toolkit</h1>
           <h2 className="relative text-xl font-semibold mt-sm">
             Home page of experiment UI for Perceptual Qualities Python Toolkit
