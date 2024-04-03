@@ -19,7 +19,7 @@ const AdminPageNew = (): JSX.Element => {
     if (apiData === 'Authorized') {
         return <AdminPage refresh={mutate} />
     } else {
-        return <Header><LoginPage refresh={mutate} /></Header>
+        return <LoginPage refresh={mutate} />
     }
 }
 

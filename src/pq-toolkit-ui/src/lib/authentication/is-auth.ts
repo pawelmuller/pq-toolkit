@@ -13,7 +13,6 @@ export default async function isAuth(): Promise<boolean> {
 
   // If no auth cookie is found, log the event and return false
   if (!authCookie) {
-    console.log("Auth cookie not found");
     return false;
   }
 
@@ -22,10 +21,8 @@ export default async function isAuth(): Promise<boolean> {
 
   // If the token is verified, log the event and return true, otherwise log the failure and return false
   if (verifiedToken) {
-    console.log("Auth cookie verified");
     return true;
   } else {
-    console.log("Auth cookie not verified");
     return false;
   }
 }
