@@ -10,7 +10,7 @@ const Home = (): JSX.Element => {
   return (
     <div className=" min-h-screen bg-gray-100">
       <Header>
-        <div className="flex flex-col h-full w-full items-center justify-center my-auto fadeInUp">
+        <div className="flex flex-col h-full w-full items-center justify-center my-auto fadeInUp mt-40">
           <div className="relative text-center mb-md">
             <div className='absolute -top-14 right-36 w-80 h-80 bg-gradient-to-r from-pink-700 to-purple-500 rounded-full mix-blend-multiply filter blur-xl opacity-50 animate-blob animation-delay-2000' />
             <div className='absolute -top-14 left-36 w-80 h-80 bg-gradient-to-r from-cyan-600 to-pink-500 rounded-full mix-blend-multiply filter blur-xl opacity-60 animate-blob animation-delay-6000' />
