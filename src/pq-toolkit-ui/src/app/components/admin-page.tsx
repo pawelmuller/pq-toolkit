@@ -1,20 +1,23 @@
 import { useState } from 'react'
 import { adminExperimentsListSchema } from '../admin/models'
 import Link from 'next/link'
-import { FaPlus, FaTrash } from 'react-icons/fa'
+import { FaCheck, FaPlus, FaTrash } from 'react-icons/fa'
 import useSWR from 'swr'
 import Loading from '../[name]/loading'
 import { validateApiData } from '@/core/apiHandlers/clientApiHandler'
 import { fireConfirmationModal } from '@/lib/components/modals/confirmationModals'
 import verifyAuth from "@/lib/authentication/is-auth";
-
-const AdminPage = (props:any): JSX.Element => {
+import Header from '@/lib/components/basic/header'
+import DeleteButton from './deleteButton'
+import CreateExperimentForm from './createExperimentForm'
+const AdminPage = (props: any): JSX.Element => {
   const {
     data: apiData,
     error,
     isLoading,
     mutate
   } = useSWR(`/api/v1/experiments`)
+  const [selectedExperiment, setSelectedExperiment] = useState(undefined)
   if (isLoading) return <Loading />
   if (error != null)
     return (
@@ -61,64 +64,71 @@ const AdminPage = (props:any): JSX.Element => {
 
 
   return (
-    <main className="flex min-h-screen p-24">
-      <div className="flex flex-col h-full w-full items-center justify-center my-auto">
-        <div
-          className="relative before:absolute before:h-[300px] before:w-[480px] before:-translate-x-1/2 before:-translate-y-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-[240px] after:translate-x-1/3 after:-translate-y-1/2 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700 before:dark:opacity-10 after:dark:from-sky-900 after:dark:via-[#0141ff] after:dark:opacity-40 before:lg:h-[360px] z-[-1]
-        text-center mb-md"
-        >
-          <h1 className="font-bold">PQ Toolkit admin page</h1>
+    <div className="min-h-screen bg-gray-100">
+      <Header>
+        <div className='flex justify-end mr-10'>
+          <button className='text-black' onClick={() => {
+            fetch("/api/v1/logout", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+            }).then(async () => {
+              await props.refresh()
+            });
+          }}>Wyloguj</button>
         </div>
-        <AdminExperimentsListWidget
-          experiments={data.experiments}
-          deleteExperiment={deleteExperiment}
-        />
-        <AddExperimentWidget
-          experiments={data.experiments}
-          addExperiment={addNewExperiment}
-        />
-        <button onClick={() => {
-          fetch("/api/v1/logout", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-        }).then(async () => {
-            await props.refresh()
-          });
-        }}>Wyloguj</button>
-      </div>
-    </main>
+        <div className="flex flex-col h-full w-full items-center justify-center my-auto fadeInUp mt-40">
+          <div className="relative -mb-xl">
+            <div className='absolute -top-14 right-36 w-80 h-80 bg-gradient-to-r from-pink-700 to-purple-500 rounded-full mix-blend-multiply filter blur-xl opacity-50 animate-blob animation-delay-2000' />
+            <div className='absolute -top-14 left-36 w-80 h-80 bg-gradient-to-r from-cyan-600 to-pink-500 rounded-full mix-blend-multiply filter blur-xl opacity-60 animate-blob animation-delay-6000' />
+            <div className='absolute top-10 right-64 w-80 h-80 bg-gradient-to-r from-pink-500 to-pink-700 rounded-full mix-blend-multiply filter blur-xl opacity-50 animate-blob animation-delay-4000' />
+            <div className='absolute -top-28 -right-6 w-96 h-96 bg-gradient-to-r from-purple-500 to-violet-600 rounded-full mix-blend-multiply filter blur-xl opacity-60 animate-blob animation-delay-8000' />
+            <div className='absolute -top-24 -left-11 w-96 h-96 bg-gradient-to-r from-indigo-500 to-cyan-600 rounded-full mix-blend-multiply filter blur-xl opacity-50 animate-blob animation-delay-10000' />
+          </div>
+          <div className='flex flex-row w-screen justify-between pr-10 pl-10'>
+            {selectedExperiment == undefined ? <div /> : <CreateExperimentForm />}
+
+            <AdminExperimentsListWidget
+              experiments={data.experiments}
+              deleteExperiment={deleteExperiment}
+              addNewExperiment={addNewExperiment}
+              setSelectedExperiment={setSelectedExperiment}
+            />
+          </div>
+        </div>
+      </Header>
+    </div>
   )
 }
 
 const AdminExperimentsListWidget = ({
   experiments,
-  deleteExperiment
+  deleteExperiment,
+  addNewExperiment,
+  setSelectedExperiment
 }: {
   experiments: string[]
   deleteExperiment: (name: string) => void
+  addNewExperiment: (name: string) => void
+  setSelectedExperiment: (name: any) => void
 }): JSX.Element => {
   return (
-    <div className="flex flex-col items-center z-10">
-      <div className="">Configured experiments:</div>
-      <ul>
-        {experiments.map((name, idx) => (
-          <li key={idx} className="flex items-center gap-sm justify-center">
-            <Link href={`/admin/${name}`}>{name}</Link>
-            <button
-              onClick={() => {
-                fireConfirmationModal({
-                  title: `Delete ${name}?`,
-                  onConfirm: () => {
-                    deleteExperiment(name)
-                  }
-                }).catch(console.error)
-              }}
-            >
-              <FaTrash className="fill-red-500" />
-            </button>
-          </li>
-        ))}
-      </ul>
+    <div className="flex flex-col items-center z-10 self-end border-2 h-200 w-80 bg-black pr-10 pl-5 ">
+      <AddExperimentWidget
+        experiments={experiments}
+        addExperiment={addNewExperiment}
+      />
+      <div className="flex self-start mt-3 mb-2">Experiments:</div>
+      <div className='overflow-y-auto w-72'>
+        <ul>
+          {experiments.map((name, idx) => (
+            <li key={idx} className="flex items-center gap-sm justify-between pl-4 z-10">
+              {/*<div onClick={() => setSelectedExperiment(name)}>{name}</div>*/}
+              <Link href={`/admin/${name}`}>{name}</Link>
+              <DeleteButton deleteExperiment={deleteExperiment} name={name} />
+            </li>
+          ))}
+        </ul>
+      </div>
     </div>
   )
 }
@@ -133,9 +143,9 @@ const AddExperimentWidget = ({
   const [newName, setNewName] = useState('')
 
   return (
-    <div className="mt-md flex gap-sm items-center">
+    <div className="flex items-center z-10 mt-4">
       <input
-        className="text-black"
+        className="rounded outline-0 border-2 bg-gray-200 text-black"
         onChange={(e) => {
           setNewName(e.target.value)
         }}
@@ -147,10 +157,9 @@ const AddExperimentWidget = ({
           setNewName('')
         }}
         disabled={newName.length === 0 || experiments.includes(newName)}
-        className="flex items-center text-sm disabled:bg-gray-400 bg-blue-500 rounded-sm p-xxs"
+        className="flex items-center text-sm disabled:bg-gray-400 bg-blue-500 rounded-xl p-xxs ml-4"
       >
-        ADD
-        <FaPlus className="ml-xs" />
+        <FaPlus />
       </button>
     </div>
   )

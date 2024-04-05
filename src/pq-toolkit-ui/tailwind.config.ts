@@ -46,6 +46,9 @@ const config: Config = {
       animation: {
         blob: "blob 7s infinite",
       },
+      height: {
+        200: '48rem'
+      }
     },
   },
   plugins: []
