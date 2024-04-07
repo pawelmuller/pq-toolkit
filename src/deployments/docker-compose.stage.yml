@@ -3,7 +3,7 @@ version: '3'
 services:
   pq-toolkit-ui-stage:
     build:
-      context: ../
+      context: ../pq-toolkit-ui
       dockerfile: Dockerfile
       args:
         ENV: stage
