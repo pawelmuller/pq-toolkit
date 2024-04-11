@@ -25,7 +25,7 @@ def get_experiment_by_name(experiment_name: str) -> PqExperiment:
                         PqQuestion(question_id="q1",
                                    text="Select better quality"),
                         PqQuestion(question_id="q2", text="Select more warmth")
-                    ]
+                ]
             ),
             PqTestABX(
                 test_number=2,
@@ -104,9 +104,13 @@ def get_experiment_tests_results(experiment_name, result_name) -> PqTestResultsL
             testNumber=10,
             selections=[
                 PqSelection(
-                    questionId=20,
+                    questionId="20",
                     sampleId="sample"
                 )
             ]
         )
     ])
+
+
+def add_experiment_result(experiment_name: str, experiment_result_raw_json: dict):
+    pass
