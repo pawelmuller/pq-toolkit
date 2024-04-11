@@ -43,6 +43,11 @@ def upload_sample(experiment_name: str, file: UploadFile):
     return PqSuccessResponse(success=True)
 
 
+@router.get("/{experiment_name}/samples", response_model=list[str])
+def get_samples(experiment_name: str):
+    return crud.get_experiment_samples(experiment_name)
+
+
 @router.get("/{experiment_name}/samples/{filename}", response_model=UploadFile)
 def get_sample(experiment_name: str, filename: str):
     pass  # TODO: Binary file transfer
