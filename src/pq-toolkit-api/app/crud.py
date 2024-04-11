@@ -29,6 +29,7 @@ def get_experiment_by_name(experiment_name: str) -> PqExperiment:
             ),
             PqTestABX(
                 test_number=2,
+                xSampleId="s1",
                 samples=[
                     PqSample(sample_id="s1",
                              asset_path="test.wav"),
@@ -59,6 +60,7 @@ def get_experiment_by_name(experiment_name: str) -> PqExperiment:
                 test_number=4,
                 reference=PqSample(
                     sample_id="ref", asset_path="test.wav"),
+                question="What is your favouriose color",
                 anchors=[
                     PqSample(sample_id="a1",
                              asset_path="test.wav"),
