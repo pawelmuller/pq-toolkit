@@ -226,3 +226,7 @@ class PqSuccessResponse(BaseModel):
 
 class PqApiStatus(BaseModel):
     status: str = "HEALTHY"
+
+
+class PqExperimentName(BaseModel):
+    name: str
