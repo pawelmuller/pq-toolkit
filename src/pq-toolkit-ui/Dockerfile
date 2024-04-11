@@ -22,9 +22,7 @@ FROM base AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
-# This will do the trick, use the corresponding env file for each environment.
-ARG ENV
-COPY .env.$ENV .env.production
+
 RUN yarn build
 
 # 3. Production image, copy all the files and run next
@@ -32,6 +30,8 @@ FROM base AS runner
 WORKDIR /app
 
 ENV NODE_ENV=production
+ARG NEXT_PUBLIC_API_URL
+RUN echo "NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL" > .env.production
 
 COPY --from=builder /app/public ./public
 
