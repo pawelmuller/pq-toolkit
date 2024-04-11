@@ -9,7 +9,7 @@ def get_experiments() -> PqExperimentsList:
 
 
 def get_experiment_by_name(experiment_name: str) -> PqExperiment:
-    return PqExperiment(
+    ex = PqExperiment(
         name=experiment_name,
         description="Some test suite",
         tests=[
@@ -17,23 +17,23 @@ def get_experiment_by_name(experiment_name: str) -> PqExperiment:
                     test_number=1,
                     samples=[
                         PqSample(sample_id="s1",
-                                 asset_path="file_sample_5.mp3"),
+                                 asset_path="test.wav"),
                         PqSample(sample_id="s2",
-                                 asset_path="file_sample_700.mp3")
+                                 asset_path="test.wav")
                     ],
                 questions=[
                         PqQuestion(question_id="q1",
                                    text="Select better quality"),
                         PqQuestion(question_id="q2", text="Select more warmth")
-                ]
+                    ]
             ),
             PqTestABX(
                 test_number=2,
                 samples=[
                     PqSample(sample_id="s1",
-                             asset_path="file_sample_5.mp3"),
+                             asset_path="test.wav"),
                     PqSample(sample_id="s2",
-                             asset_path="file_sample_700.mp3")
+                             asset_path="test.wav")
                 ],
                 questions=[
                     PqQuestion(question_id="q1",
@@ -45,10 +45,10 @@ def get_experiment_by_name(experiment_name: str) -> PqExperiment:
                 test_number=3,
                 samples=[
                     PqSample(sample_id="s1",
-                             asset_path="file_sample_5.mp3"),
+                             asset_path="test.wav"),
                     PqSample(sample_id="s2",
-                             asset_path="file_sample_700.mp3"),
-                    PqSample(sample_id="s3", asset_path="sample-12s.mp3")
+                             asset_path="test.wav"),
+                    PqSample(sample_id="s3", asset_path="test.wav")
                 ],
                 axis=[
                     PqQuestion(question_id="a1", text="Quality"),
@@ -58,24 +58,26 @@ def get_experiment_by_name(experiment_name: str) -> PqExperiment:
             PqTestMUSHRA(
                 test_number=4,
                 reference=PqSample(
-                    sample_id="ref", asset_path="file_sample_5.mp3"),
+                    sample_id="ref", asset_path="test.wav"),
                 anchors=[
                     PqSample(sample_id="a1",
-                             asset_path="file_sample_700.mp3"),
+                             asset_path="test.wav"),
                     PqSample(sample_id="a2",
-                             asset_path="file_sample_5.mp3")
+                             asset_path="test.wav")
                 ],
                 samples=[
-                    PqSample(sample_id="s1", asset_path="sample-12s.mp3"),
-                    PqSample(sample_id="s2", asset_path="sample-15s.mp3"),
-                    PqSample(sample_id="s3", asset_path="sample-12s.mp3"),
-                    PqSample(sample_id="s4", asset_path="sample-15s.mp3"),
-                    PqSample(sample_id="s5", asset_path="sample-12s.mp3"),
-                    PqSample(sample_id="s6", asset_path="sample-15s.mp3")
+                    PqSample(sample_id="s1", asset_path="test.wav"),
+                    PqSample(sample_id="s2", asset_path="test.wav"),
+                    PqSample(sample_id="s3", asset_path="test.wav"),
+                    PqSample(sample_id="s4", asset_path="test.wav"),
+                    PqSample(sample_id="s5", asset_path="test.wav"),
+                    PqSample(sample_id="s6", asset_path="test.wav")
                 ]
             )
         ]
     )
+    PqExperiment.model_validate(ex)
+    return ex
 
 
 def remove_experiment_by_name(experiment_name: str):
@@ -114,3 +116,7 @@ def get_experiment_tests_results(experiment_name, result_name) -> PqTestResultsL
 
 def add_experiment_result(experiment_name: str, experiment_result_raw_json: dict):
     pass
+
+
+def get_experiment_samples(experiment_name: str) -> list[str]:
+    return ["test.wav"]
