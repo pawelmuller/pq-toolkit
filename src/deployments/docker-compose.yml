@@ -1,0 +1,69 @@
+version: '3'
+
+services:
+  # Database
+  pq-toolkit-db-dev:
+    image: postgres
+    restart: always
+    shm_size: 128m
+    environment:
+      POSTGRES_USER: $POSTGRES_USER
+      POSTGRES_PASSWORD: $POSTGRES_PASSWORD
+      POSTGRES_DB: $POSTGRES_DB
+    ports:
+      - 9999:5432
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -d $${POSTGRES_USER} -U $${POSTGRES_USER}"
+        ]
+      interval: 1s
+      timeout: 5s
+      retries: 10
+
+  # Database admin
+  pq-adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080
+
+  # FastAPI backend
+  pq-toolkit-api-dev:
+    build: ../pq-toolkit-api
+    depends_on:
+      pq-toolkit-db-dev:
+        condition: service_healthy
+    environment:
+      PROJECT_NAME: $PROJECT_NAME
+      POSTGRES_USER: $POSTGRES_USER
+      POSTGRES_PASSWORD: $POSTGRES_PASSWORD
+      POSTGRES_DB: $POSTGRES_DB
+      POSTGRES_SERVER: pq-toolkit-db-dev
+      FIRST_SUPERUSER: $FIRST_SUPERUSER
+      FIRST_SUPERUSER_PASSWORD: $FIRST_SUPERUSER_PASSWORD
+
+  # Frontend
+  pq-toolkit-ui-dev:
+    build:
+      context: ../pq-toolkit-ui
+      dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_API_URL: "htshts"
+    image: pq-toolkit-ui-dev
+    depends_on:
+      - pq-toolkit-api-dev
+    environment:
+      NEXT_PUBLIC_API_URL: "Dada"
+
+  # Gateway
+  pq-gateway:
+    build:
+      context: pq-gateway
+      dockerfile: Dockerfile
+    ports:
+      - 8000:8000
+    depends_on:
+      - pq-toolkit-api-dev
+      - pq-toolkit-ui-dev
