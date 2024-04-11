@@ -48,14 +48,16 @@ services:
   pq-toolkit-ui-dev:
     build:
       context: ../pq-toolkit-ui
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.dev
       args:
         NEXT_PUBLIC_API_URL: "htshts"
     image: pq-toolkit-ui-dev
+    volumes:
+      - ../pq-toolkit-ui/src:/app/src
     depends_on:
       - pq-toolkit-api-dev
     environment:
-      NEXT_PUBLIC_API_URL: "Dada"
+      NEXT_PUBLIC_API_URL: $PUBLIC_API_URL
 
   # Gateway
   pq-gateway:
