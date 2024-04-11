@@ -59,8 +59,9 @@ def get_results(experiment_name: str):
 
 
 @router.post("/{experiment_name}/results", response_model=PqResultsList)
-def get_results(experiment_name: str, result_json: Request):
-    crud.add_experiment_result(experiment_name, result_json.json())
+async def get_results(experiment_name: str, result_json: Request):
+    res = await result_json.json()
+    crud.add_experiment_result(experiment_name, res)
     return crud.get_experiments_results(experiment_name)
 
 
