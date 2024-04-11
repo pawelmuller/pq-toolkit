@@ -1,6 +1,49 @@
 version: '3'
 
 services:
+  # Database
+  pq-toolkit-db-dev:
+    image: postgres
+    restart: always
+    shm_size: 128m
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: example
+    # volumes:
+    #   - pgdata:/var/lib/postgresql/data
+    ports:
+      - 9999:5432
+    networks:
+      - pq-backend-network
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -d $${POSTGRES_USER} -U $${POSTGRES_USER}"
+        ]
+      interval: 1s
+      timeout: 5s
+      retries: 10
+
+  # Database admin
+  pq-adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080
+
+  # FastAPI backend
+  pq-toolkit-api-dev:
+    build: ../pq-toolkit-api
+    depends_on:
+      pq-toolkit-db-dev:
+        condition: service_healthy
+    env_file:
+      - .env
+    networks:
+      - pq-backend-network
+
+  # Frontend
   pq-toolkit-ui-dev:
     build:
       context: ../pq-toolkit-ui
@@ -9,10 +52,33 @@ services:
         ENV: dev
         DATA_PATH: "/pq-toolkit/data"
     image: pq-toolkit-ui-dev
+    depends_on:
+      - pq-toolkit-api-dev
     ports:
       - 80:3000
+    env_file:
+      - .env
+    networks:
+      - pq-backend-network
     volumes:
       - pq-toolkit-data:/pq-toolkit/data
 
+  # Gateway
+  pq-gateway:
+    image: nginx:latest
+    ports:
+      - 8000:8000
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - pq-toolkit-api-dev
+      - pq-toolkit-ui-dev
+    networks:
+      - pq-backend-network
+
 volumes:
   pq-toolkit-data:
+
+
+networks:
+  pq-backend-network:
