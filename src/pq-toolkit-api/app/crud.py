@@ -4,8 +4,10 @@ from sqlalchemy.orm import Session
 from io import BytesIO
 
 from fastapi import UploadFile
+from fastapi.responses import StreamingResponse
 from app.core.sample_manager import SampleManager
 from app.core.config import settings
+from app.utils import content_stream_from_bytes
 
 
 def get_experiments() -> PqExperimentsList:
@@ -29,7 +31,7 @@ def get_experiment_by_name(experiment_name: str) -> PqExperiment:
                         PqQuestion(question_id="q1",
                                    text="Select better quality"),
                         PqQuestion(question_id="q2", text="Select more warmth")
-                ]
+                    ]
             ),
             PqTestABX(
                 test_number=2,
@@ -98,10 +100,12 @@ def upload_experiment_config(experiment_name: str, json_file: UploadFile):
     pass
 
 
-def get_experiment_sample(experiment_name: str, sample_name: str) -> UploadFile:
+def get_experiment_sample(experiment_name: str, sample_name: str) -> StreamingResponse:
+    # TODO: Perhaps allow steaming in packets, rather than downloading the whole thind fom MinIO and streaming it to client
     manager = SampleManager.from_settings(settings)
-    bytes = manager.get_sample(experiment_name, sample_name)
-    return UploadFile(BytesIO(bytes), size=len(bytes), filename=sample_name)
+    sample_bytes = manager.get_sample(experiment_name, sample_name)
+    return StreamingResponse(content_stream_from_bytes
+                             (sample_bytes), media_type="audio/mpeg")
 
 
 def upload_experiment_sample(experiment_name: str, audio_file: UploadFile):
