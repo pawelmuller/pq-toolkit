@@ -10,8 +10,6 @@ services:
       POSTGRES_USER: $POSTGRES_USER
       POSTGRES_PASSWORD: $POSTGRES_PASSWORD
       POSTGRES_DB: $POSTGRES_DB
-    ports:
-      - 9999:5432
     healthcheck:
       test:
         [
@@ -43,6 +41,10 @@ services:
       POSTGRES_SERVER: pq-toolkit-db-dev
       FIRST_SUPERUSER: $FIRST_SUPERUSER
       FIRST_SUPERUSER_PASSWORD: $FIRST_SUPERUSER_PASSWORD
+      MINIO_ROOT_USER: $MINIO_ROOT_USER
+      MINIO_ROOT_PASSWORD: $MINIO_ROOT_PASSWORD
+      MINIO_ENDPOINT: $MINIO_ENDPOINT
+      MINIO_STORAGE_USE_HTTPS: $MINIO_STORAGE_USE_HTTPS
 
   # Frontend
   pq-toolkit-ui-dev:
@@ -58,6 +60,20 @@ services:
       - pq-toolkit-api-dev
     environment:
       NEXT_PUBLIC_API_URL: $PUBLIC_API_URL
+
+  # MinIO buckets
+  pq-sample-storage-minio-dev:
+    image: minio/minio
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    # volumes:
+    #   - minio_storage:/data
+    environment:
+      MINIO_ROOT_USER: $MINIO_ROOT_USER
+      MINIO_ROOT_PASSWORD: $MINIO_ROOT_PASSWORD
+      MINIO_STORAGE_USE_HTTPS: $MINIO_STORAGE_USE_HTTPS
+    command: server --console-address ":9001" /data
 
   # Gateway
   pq-gateway:
