@@ -85,7 +85,7 @@ const AdminPage = (props: any): JSX.Element => {
             <div className='absolute -top-24 -left-11 w-96 h-96 bg-gradient-to-r from-indigo-500 to-cyan-600 rounded-full mix-blend-multiply filter blur-xl opacity-50 animate-blob animation-delay-10000' />
           </div>
           <div className='flex flex-row w-screen justify-between pr-10 pl-10'>
-            {selectedExperiment == undefined ? <div /> : <CreateExperimentForm />}
+            {selectedExperiment == undefined ? <div /> : <CreateExperimentForm setSelectedExperiment={setSelectedExperiment} selectedExperiment={selectedExperiment} />}
 
             <AdminExperimentsListWidget
               experiments={data.experiments}
@@ -112,18 +112,18 @@ const AdminExperimentsListWidget = ({
   setSelectedExperiment: (name: any) => void
 }): JSX.Element => {
   return (
-    <div className="flex flex-col items-center z-10 self-end border-2 h-200 w-80 bg-black pr-10 pl-5 ">
+    <div className="flex flex-col items-center z-10 self-end border-2 h-200 w-80 bg-white pr-10 pl-5 rounded-lg z-10">
       <AddExperimentWidget
         experiments={experiments}
         addExperiment={addNewExperiment}
       />
-      <div className="flex self-start mt-3 mb-2">Experiments:</div>
+      <div className="flex self-start mt-3 mb-2 text-black">Experiments:</div>
       <div className='overflow-y-auto w-72'>
         <ul>
           {experiments.map((name, idx) => (
             <li key={idx} className="flex items-center gap-sm justify-between pl-4 z-10">
-              {/*<div onClick={() => setSelectedExperiment(name)}>{name}</div>*/}
-              <Link href={`/admin/${name}`}>{name}</Link>
+              {/* <div onClick={() => setSelectedExperiment(name)}>{name}</div> */}
+              {<Link href={`/admin/${name}`} className="text-black">{name}</Link>}
               <DeleteButton deleteExperiment={deleteExperiment} name={name} />
             </li>
           ))}

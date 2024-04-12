@@ -48,6 +48,10 @@ const config: Config = {
       },
       height: {
         200: '48rem'
+      },
+      width: {
+        300: '72rem',
+        400: '96rem'
       }
     },
   },
