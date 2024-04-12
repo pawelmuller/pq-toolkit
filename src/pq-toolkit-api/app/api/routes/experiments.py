@@ -1,10 +1,8 @@
 from typing import Any
 
-from fastapi import APIRouter, UploadFile, HTTPException, Request
+from fastapi import APIRouter, UploadFile, Request
 from app.schemas import *
 import app.crud as crud
-import logging
-
 router = APIRouter()
 
 
