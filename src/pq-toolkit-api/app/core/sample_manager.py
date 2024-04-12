@@ -25,23 +25,35 @@ class SampleManager:
             secret_key=settings.MINIO_ROOT_PASSWORD,
         )
 
+    def _object_name_from_experiment_and_sample(experiment_name: str, sample_name: str):
+        return f"{experiment_name}/{sample_name}"
+
     def _ensure_bucket_exists(self):
         if not self._client.bucket_exists(self._sample_bucket_name):
             self._client.make_bucket(self._sample_bucket_name)
 
-    def upload_sample(self, sample_name: str, sample_data: FileIO):
+    def upload_sample(self, experiment_name: str, sample_name: str, sample_data: FileIO):
+        object_name = self._object_name_from_experiment_and_sample(
+            experiment_name, sample_name)
         self._client.put_object(self._sample_bucket_name,
-                                sample_name, sample_data, length=-1, part_size=10*1024*1024)
+                                object_name, sample_data, length=-1, part_size=10*1024*1024)
 
-    def get_sample(self, sample_name: str):
+    def get_sample(self, experiment_name: str, sample_name: str):
         try:
+            object_name = self._object_name_from_experiment_and_sample(
+                experiment_name, sample_name)
             response: HTTPResponse = self._client.get_object(
-                self._sample_bucket_name, sample_name)
+                self._sample_bucket_name, object_name)
             data = response.read()
         finally:
             response.close()
             response.release_conn()
             return data
 
-    def remove_sample(self, sample_name: str):
-        self._client.remove_object(self._sample_bucket_name, sample_name)
+    def remove_sample(self, experiment_name: str, sample_name: str):
+        object_name = self._object_name_from_experiment_and_sample(
+            experiment_name, sample_name)
+        self._client.remove_object(self._sample_bucket_name, object_name)
+
+    def list_matching_samples(self, experiment_name: str):
+        return list(self._client.list_objects(prefix=experiment_name))
