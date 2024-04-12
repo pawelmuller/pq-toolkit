@@ -224,6 +224,10 @@ class PqSuccessResponse(BaseModel):
     success: bool
 
 
+class PqErrorResponse(BaseModel):
+    message: str
+
+
 class PqApiStatus(BaseModel):
     status: str = "HEALTHY"
 
