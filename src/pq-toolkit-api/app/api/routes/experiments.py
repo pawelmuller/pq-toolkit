@@ -1,10 +1,8 @@
 from typing import Any
 
-from fastapi import APIRouter, UploadFile, HTTPException, Request
+from fastapi import APIRouter, UploadFile, Request
 from app.schemas import *
 import app.crud as crud
-import logging
-
 router = APIRouter()
 
 
@@ -36,21 +34,26 @@ def delete_experiment(experiment_name: PqExperimentName):
     return crud.get_experiments()
 
 
-@router.post("/{experiment_name}/samples", response_model=PqSuccessResponse)
-def upload_sample(experiment_name: str, file: UploadFile):
-    # TODO: Binary file transfer
-    crud.upload_experiment_sample(experiment_name, file)
-    return PqSuccessResponse(success=True)
-
-
 @router.get("/{experiment_name}/samples", response_model=list[str])
 def get_samples(experiment_name: str):
     return crud.get_experiment_samples(experiment_name)
 
 
+@router.post("/{experiment_name}/samples", response_model=PqSuccessResponse)
+def upload_sample(experiment_name: str, file: UploadFile):
+    crud.upload_experiment_sample(experiment_name, file)
+    return PqSuccessResponse(success=True)
+
+
 @router.get("/{experiment_name}/samples/{filename}", response_model=UploadFile)
 def get_sample(experiment_name: str, filename: str):
-    pass  # TODO: Binary file transfer
+    return crud.get_experiment_sample(experiment_name, filename)
+
+
+@router.delete("/{experiment_name}/samples/{filename}", response_model=PqSuccessResponse)
+def delete_sample(experiment_name: str, filename: str):
+    crud.delete_experiment_sample(experiment_name, filename)
+    return PqSuccessResponse(success=True)
 
 
 @router.get("/{experiment_name}/results", response_model=PqResultsList)

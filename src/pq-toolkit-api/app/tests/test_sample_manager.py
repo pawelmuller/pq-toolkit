@@ -10,16 +10,32 @@ def example_byte_stream():
     return BytesIO(message.encode()), message
 
 
-def test_manager_init():
-    manager = SampleManager.from_settings(settings)
+@pytest.fixture
+def sample_manager_localhost():
+    return SampleManager(
+        endpoint="localhost",
+        port=settings.MINIO_PORT,
+        access_key=settings.MINIO_ROOT_USER,
+        secret_key=settings.MINIO_ROOT_PASSWORD,
+        sample_bucket_name="testbucket"
+    )
 
 
-def test_manager_complete(example_byte_stream: tuple):
+def test_manager_init(sample_manager_localhost: SampleManager):
+    manager = sample_manager_localhost
+
+
+def test_manager_complete(example_byte_stream: tuple[BytesIO, str], sample_manager_localhost: SampleManager):
     byte_stream_out, message = example_byte_stream
-    manager = SampleManager.from_settings(settings)
-    filename = "test.wav"
-    manager.upload_sample(filename, byte_stream_out)
+    manager = sample_manager_localhost
 
-    byte_stream_in = manager.get_sample(filename)
+    filename = "test.wav"
+    experiment_name = "test"
+    manager.upload_sample(experiment_name, filename, byte_stream_out)
+
+    machting_samples = manager.list_matching_samples(experiment_name)
+    assert filename in machting_samples
+
+    byte_stream_in = manager.get_sample(experiment_name, filename)
     assert byte_stream_in.decode() == message
-    manager.remove_sample(filename)
+    manager.remove_sample(experiment_name, filename)
