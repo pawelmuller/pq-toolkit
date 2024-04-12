@@ -68,5 +68,10 @@ class Settings(BaseSettings):
     FIRST_SUPERUSER_PASSWORD: str
     USERS_OPEN_REGISTRATION: bool = False
 
+    MINIO_ROOT_USER: str
+    MINIO_ROOT_PASSWORD: str
+    MINIO_ENDPOINT: str
+    MINIO_PORT: int = 9000
+
 
 settings = Settings()  # type: ignore
