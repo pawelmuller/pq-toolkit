@@ -1,4 +1,5 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
+from fastapi.responses import JSONResponse
 from fastapi.routing import APIRoute
 from starlette.middleware.cors import CORSMiddleware
 
@@ -6,6 +7,7 @@ from app.api.main_router import api_router
 from app.core.config import settings
 
 import logging
+from app.utils import PqException
 
 
 def custom_generate_unique_id(route: APIRoute) -> str:
@@ -34,3 +36,11 @@ if settings.BACKEND_CORS_ORIGINS:
     )
 
 app.include_router(api_router, prefix=settings.API_V1_STR)
+
+
+@app.exception_handler(PqException)
+async def pq_exception_handler(request: Request, exc: PqException):
+    return JSONResponse(
+        status_code=400,
+        content=exc.api_payload.model_dump(),
+    )
