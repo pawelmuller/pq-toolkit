@@ -1,8 +1,11 @@
 from typing import Any
 from app.schemas import *
 from sqlalchemy.orm import Session
+from io import BytesIO
 
 from fastapi import UploadFile
+from app.core.sample_manager import SampleManager
+from app.core.config import settings
 
 
 def get_experiments() -> PqExperimentsList:
@@ -26,7 +29,7 @@ def get_experiment_by_name(experiment_name: str) -> PqExperiment:
                         PqQuestion(question_id="q1",
                                    text="Select better quality"),
                         PqQuestion(question_id="q2", text="Select more warmth")
-                    ]
+                ]
             ),
             PqTestABX(
                 test_number=2,
@@ -95,8 +98,27 @@ def upload_experiment_config(experiment_name: str, json_file: UploadFile):
     pass
 
 
+def get_experiment_sample(experiment_name: str, sample_name: str) -> UploadFile:
+    manager = SampleManager.from_settings(settings)
+    bytes = manager.get_sample(experiment_name, sample_name)
+    return UploadFile(BytesIO(bytes), size=len(bytes), filename=sample_name)
+
+
 def upload_experiment_sample(experiment_name: str, audio_file: UploadFile):
-    pass
+    manager = SampleManager.from_settings(settings)
+    sample_name = audio_file.filename
+    sample_data = audio_file.file
+    manager.upload_sample(experiment_name, sample_name, sample_data)
+
+
+def delete_experiment_sample(experiment_name: str, sample_name: str):
+    manager = SampleManager.from_settings(settings)
+    manager.remove_sample(experiment_name, sample_name)
+
+
+def get_experiment_samples(experiment_name: str) -> list[str]:
+    manager = SampleManager.from_settings(settings)
+    return manager.list_matching_samples(experiment_name)
 
 
 def get_experiments_results(experiment_name: str) -> PqResultsList:
@@ -119,7 +141,3 @@ def get_experiment_tests_results(experiment_name, result_name) -> PqTestResultsL
 
 def add_experiment_result(experiment_name: str, experiment_result_raw_json: dict):
     pass
-
-
-def get_experiment_samples(experiment_name: str) -> list[str]:
-    return ["test.wav"]
