@@ -54,7 +54,8 @@ def get_sample(experiment_name: str, filename: str):
 
 @router.delete("/{experiment_name}/samples/{filename}", response_model=PqSuccessResponse)
 def delete_sample(experiment_name: str, filename: str):
-    return PqSuccessResponse()
+    crud.delete_experiment_sample(experiment_name, filename)
+    return PqSuccessResponse(success=True)
 
 
 @router.get("/{experiment_name}/results", response_model=PqResultsList)
