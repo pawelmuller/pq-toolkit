@@ -13,12 +13,14 @@ class Admin(Base):
     hashed_password = Column(String)
     is_active = Column(Boolean, default=True)
 
+
 class Sample(Base):
     __tablename__ = "sample_files"
 
     id = Column(Integer, primary_key=True)
     title = Column(String, index=True)
     file_path = Column(String)
+
 
 class Experiment(Base):
     __tablename__ = "experiment"
@@ -30,6 +32,7 @@ class Experiment(Base):
 
     tests = relationship("Test", back_populates="experiment")
 
+
 class Test(Base):
     __tablename__ = "test"
 
@@ -40,7 +43,6 @@ class Test(Base):
 
     experiment = relationship("Experiment", back_populates="tests")
     experiment_test_results = relationship("ExperimentTestResult", back_populates="test")
-
 
 
 class ExperimentTestResult(Base):
