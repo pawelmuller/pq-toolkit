@@ -42,9 +42,33 @@ const config: Config = {
             transform: "translate(0px, 0px) scale(1)"
           },
         },
+        typewriter: {
+          to: {
+            left: '100%',
+          },
+        },
+        blink: {
+          '0%': {
+            opacity: '0',
+          },
+          '0.1%': {
+            opacity: '1',
+          },
+          '50%': {
+            opacity: '1',
+          },
+          '50.1%': {
+            opacity: '0',
+          },
+          '100%': {
+            opacity: '0',
+          },
+        },
       },
       animation: {
         blob: "blob 7s infinite",
+        typewriter: 'typewriter 2s steps(34) forwards',
+        caret: 'typewriter 2s steps(34) forwards, blink 1s steps(34) infinite 2s',
       },
       height: {
         200: '48rem'
