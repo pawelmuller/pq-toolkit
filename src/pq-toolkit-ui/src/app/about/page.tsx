@@ -13,7 +13,7 @@ const About = (): JSX.Element => {
           About page of experiment UI for Perceptual Qualities Python Toolkit
         </h2>
       </div>
-      <div className="relative mb-md ml-28 mr-28 mt-8">
+      <div className="relative mb-md ml-20 mr-20 p-8 mt-2">
         <h1 className="relative text-sm md:text-lg font-semibold text-black">
           Welcome to the PQ-Toolkit Project, a dynamic and innovative platform designed to enhance the perceptual qualities of audio 
           through rigorous experimentation and evaluation. This toolkit is the brainchild of dedicated developers aiming to bridge the 
@@ -60,7 +60,7 @@ const About = (): JSX.Element => {
           your insights and contributions can help shape the future of audio quality assessment.
         </h3>
         <h3 className="relative text-sm md:text-lg font-semibold text-black mt-4">
-          Explore more about PQ-Toolkit and how you can contribute to this innovative project on <a className='text-blue-400 no-underline hover:text-pink-500 hover:text-underline transform hover:scale-105 duration-300 ease-in-out' href="https://www.w3schools.com">GitHub</a>
+          Explore more about PQ-Toolkit and how you can contribute to this innovative project on <a className='text-blue-400 no-underline hover:text-pink-500 hover:text-underline transform hover:scale-105 duration-300 ease-in-out' href="https://github.com/pawelmuller/pq-toolkit">GitHub</a>
         </h3>
         <h3 className="relative text-sm md:text-lg font-semibold text-black mt-4">
           Thank you for your interest in the PQ-Toolkit. Together, we can push the boundaries of audio quality research and development!
