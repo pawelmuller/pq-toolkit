@@ -1,4 +1,7 @@
+from sqlalchemy import Column, JSON
 from sqlmodel import SQLModel, Field, Relationship
+
+from app.schemas import PqTestTypes
 
 
 class Admin(SQLModel, table=True):
@@ -20,13 +23,14 @@ class Experiment(SQLModel, table=True):
     description: str
     end_text: str
 
-    tests = Relationship(back_populates="experiment")
+    tests: list["Test"] = Relationship(back_populates="experiment")
 
 
 class Test(SQLModel):
     id: int | None = Field(default=None, primary_key=True)
     number: int
-    # test_setup = Column(JSONB, index=True)
+    type: PqTestTypes
+    test_setup: dict = Field(sa_column=Column(JSON))
     experiment_id: int = Field(foreign_key="experiment.id")
 
     experiment: list["Experiment"] = Relationship(back_populates="tests")
@@ -35,7 +39,7 @@ class Test(SQLModel):
 
 class ExperimentTestResult(SQLModel):
     id: int | None = Field(default=None, primary_key=True)
-    # test_result = Column(JSONB, index=True)
+    test_result: dict = Field(sa_column=Column(JSON))
     test_id: int = Field(foreign_key="test.id")
 
     test: list["Test"] = Relationship(back_populates="experiment_test_results")

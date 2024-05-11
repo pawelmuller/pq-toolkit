@@ -1,6 +1,8 @@
 from typing import Any
+
+from app.models import Experiment
 from app.schemas import *
-from sqlalchemy.orm import Session
+from sqlmodel import Session, select
 from io import BytesIO
 
 from fastapi import UploadFile
@@ -10,94 +12,35 @@ from app.core.config import settings
 from app.utils import content_stream_from_bytes
 
 
-def get_experiments() -> PqExperimentsList:
+def get_experiments(session: Session) -> PqExperimentsList:
     return PqExperimentsList(experiments=["test"])
 
 
-def get_experiment_by_name(experiment_name: str) -> PqExperiment:
-    ex = PqExperiment(
-        name=experiment_name,
-        description="Some test suite",
-        tests=[
-            PqTestAB(
-                    test_number=1,
-                    samples=[
-                        PqSample(sample_id="s1",
-                                 asset_path="test.wav"),
-                        PqSample(sample_id="s2",
-                                 asset_path="test.wav")
-                    ],
-                questions=[
-                        PqQuestion(question_id="q1",
-                                   text="Select better quality"),
-                        PqQuestion(question_id="q2", text="Select more warmth")
-                    ]
-            ),
-            PqTestABX(
-                test_number=2,
-                xSampleId="s1",
-                samples=[
-                    PqSample(sample_id="s1",
-                             asset_path="test.wav"),
-                    PqSample(sample_id="s2",
-                             asset_path="test.wav")
-                ],
-                questions=[
-                    PqQuestion(question_id="q1",
-                               text="Select better quality"),
-                    PqQuestion(question_id="q2", text="Select more warmth")
-                ]
-            ),
-            PqTestAPE(
-                test_number=3,
-                samples=[
-                    PqSample(sample_id="s1",
-                             asset_path="test.wav"),
-                    PqSample(sample_id="s2",
-                             asset_path="test.wav"),
-                    PqSample(sample_id="s3", asset_path="test.wav")
-                ],
-                axis=[
-                    PqQuestion(question_id="a1", text="Quality"),
-                    PqQuestion(question_id="a2", text="Depth")
-                ]
-            ),
-            PqTestMUSHRA(
-                test_number=4,
-                reference=PqSample(
-                    sample_id="ref", asset_path="test.wav"),
-                question="What is your favouriose color",
-                anchors=[
-                    PqSample(sample_id="a1",
-                             asset_path="test.wav"),
-                    PqSample(sample_id="a2",
-                             asset_path="test.wav")
-                ],
-                samples=[
-                    PqSample(sample_id="s1", asset_path="test.wav"),
-                    PqSample(sample_id="s2", asset_path="test.wav"),
-                    PqSample(sample_id="s3", asset_path="test.wav"),
-                    PqSample(sample_id="s4", asset_path="test.wav"),
-                    PqSample(sample_id="s5", asset_path="test.wav"),
-                    PqSample(sample_id="s6", asset_path="test.wav")
-                ]
-            )
-        ]
-    )
-    PqExperiment.model_validate(ex)
-    return ex
+def get_experiment_by_name(session: Session, experiment_name: str) -> PqExperiment:
+    statement = select(Experiment).where(Experiment.name == experiment_name)
+    result = session.exec(statement).one()
+    return PqExperiment.model_validate(result)
 
 
-def remove_experiment_by_name(experiment_name: str):
-    pass
+def remove_experiment_by_name(session: Session, experiment_name: str):
+    statement = select(Experiment).where(Experiment.name == experiment_name)
+    result = session.exec(statement).one()
+    session.delete(result)
+    session.commit()
 
 
-def add_experiment(experiment_name: str):
-    pass
+def add_experiment(session: Session, experiment_name: str):
+    session.add(Experiment(name=experiment_name))
+    session.commit()
 
 
-def upload_experiment_config(experiment_name: str, json_file: UploadFile):
-    pass
+def upload_experiment_config(session: Session, experiment_name: str, json_file: UploadFile):
+    statement = select(Experiment).where(Experiment.name == experiment_name)
+    result = session.exec(statement).one()
+    json_data = json_file.file.read()
+    result.description = json_data["description"]
+
+    session.commit()
 
 
 def get_experiment_sample(experiment_name: str, sample_name: str) -> StreamingResponse:

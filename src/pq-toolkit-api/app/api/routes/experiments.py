@@ -1,36 +1,38 @@
 from typing import Any
 
 from fastapi import APIRouter, UploadFile, Request
+
+from app.api.deps import SessionDep
 from app.schemas import *
 import app.crud as crud
 router = APIRouter()
 
 
 @router.get("/", response_model=PqExperimentsList)
-def get_experiments():
-    return crud.get_experiments()
+def get_experiments(session: SessionDep):
+    return crud.get_experiments(session)
 
 
 @router.post("/", response_model=PqExperimentsList)
-def add_experiment(experiment_name: PqExperimentName):
-    crud.add_experiment(experiment_name.name)
+def add_experiment(session: SessionDep, experiment_name: PqExperimentName):
+    crud.add_experiment(session, experiment_name.name)
     return crud.get_experiments()
 
 
 @router.post("/{experiment_name}", response_model=PqSuccessResponse)
-def set_up_experiment(experiment_name: str, file: UploadFile):
-    crud.upload_experiment_config(experiment_name, file)
+def set_up_experiment(session: SessionDep, experiment_name: str, file: UploadFile):
+    crud.upload_experiment_config(session, experiment_name, file)
     return PqSuccessResponse(success=True)
 
 
 @router.get("/{experiment_name}", response_model=PqExperiment)
-def get_experiment(experiment_name: str):
-    return crud.get_experiment_by_name(experiment_name)
+def get_experiment(session: SessionDep, experiment_name: str):
+    return crud.get_experiment_by_name(session, experiment_name)
 
 
 @router.delete("/", response_model=PqExperimentsList)
-def delete_experiment(experiment_name: PqExperimentName):
-    crud.remove_experiment_by_name(experiment_name.name)
+def delete_experiment(session: SessionDep, experiment_name: PqExperimentName):
+    crud.remove_experiment_by_name(session, experiment_name.name)
     return crud.get_experiments()
 
 
