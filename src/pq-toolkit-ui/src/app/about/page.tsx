@@ -7,7 +7,7 @@ const About = (): JSX.Element => {
     <Header />
     <div className="relative flex flex-col h-full w-full items-center justify-center my-auto fadeInUp mt-14">
       <div className="relative text-center mb-md">
-        <h1 className="relative text-3xl md:text-6xl font-bold text-black mt-6 pb-1 pt-1 before:absolute before:inset-0 before:animate-typewriter before:bg-gray-100
+        <h1 className="relative text-3xl md:text-6xl font-bold text-black mt-6 pb-1.5 pt-1.5 before:absolute before:inset-0 before:animate-typewriter before:bg-gray-100
             after:absolute after:inset-0 after:w-[0.125em] after:animate-caret after:bg-black">About Perceptual Qualities Toolkit</h1>
         <h2 className="relative text-sm md:text-xl font-semibold text-black mt-sm">
           About page of experiment UI for Perceptual Qualities Python Toolkit
@@ -31,7 +31,9 @@ const About = (): JSX.Element => {
         </h5>
         <ol className="list-decimal list-inside relative text-sm md:text-lg font-semibold text-black mt-1">
             <li className='pl-4'>Python Plugin for Test Creation: A robust backend built with Python that allows users to set up and configure audio tests efficiently. 
-              It supports a range of test types such as simple question/rating, AB, ABX, and MUSHRA, catering to different research needs and scenarios.
+              It supports a range of test types such as simple question/rating, 
+              <a className='text-blue-400 no-underline hover:text-pink-500 hover:text-underline transform hover:scale-105 duration-300 ease-in-out' href="/about/ab"> AB</a>, 
+              ABX, APE and MUSHRA, catering to different research needs and scenarios.
             </li>
             <li className='pl-4 mt-2'>Web Application for Experimentation: A user-friendly frontend developed using modern technologies like TypeScript and React.js, 
               facilitating the real-time conducting of experiments. The application is designed for easy deployment and scalability, ensuring a smooth experience for both 
