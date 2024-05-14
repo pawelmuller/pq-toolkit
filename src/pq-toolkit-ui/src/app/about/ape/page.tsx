@@ -1,7 +1,7 @@
 'use client'
 import Header from '@/lib/components/basic/header'
 
-const About = (): JSX.Element => {
+const AboutAPE = (): JSX.Element => {
   return (
   <div className="min-h-screen bg-gray-100">
     <Header />
@@ -53,4 +53,4 @@ const About = (): JSX.Element => {
   )
 }
 
-export default About
+export default AboutAPE
