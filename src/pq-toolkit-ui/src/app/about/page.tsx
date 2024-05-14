@@ -34,8 +34,9 @@ const About = (): JSX.Element => {
               It supports a range of test types such as simple question/rating, 
               <a className='text-blue-400 no-underline hover:text-pink-500 hover:text-underline transform hover:scale-105 duration-300 ease-in-out' href="/about/ab"> AB</a>, 
               <a className='text-blue-400 no-underline hover:text-pink-500 hover:text-underline transform hover:scale-105 duration-300 ease-in-out' href="/about/abx"> ABX</a>, 
-              <a className='text-blue-400 no-underline hover:text-pink-500 hover:text-underline transform hover:scale-105 duration-300 ease-in-out' href="/about/ape"> APE </a> 
-              and MUSHRA, catering to different research needs and scenarios.
+              <a className='text-blue-400 no-underline hover:text-pink-500 hover:text-underline transform hover:scale-105 duration-300 ease-in-out' href="/about/ape"> APE </a> and 
+              <a className='text-blue-400 no-underline hover:text-pink-500 hover:text-underline transform hover:scale-105 duration-300 ease-in-out' href="/about/mushra"> MUSHRA</a>, 
+              catering to different research needs and scenarios.
             </li>
             <li className='pl-4 mt-2'>Web Application for Experimentation: A user-friendly frontend developed using modern technologies like TypeScript and React.js, 
               facilitating the real-time conducting of experiments. The application is designed for easy deployment and scalability, ensuring a smooth experience for both 
