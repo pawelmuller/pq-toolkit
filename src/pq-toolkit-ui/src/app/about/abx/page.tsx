@@ -34,17 +34,17 @@ const About = (): JSX.Element => {
           In audio testing, ABX testing is invaluable for:
         </h5>
         <ol className="list-disc list-inside relative text-sm md:text-lg font-semibold text-black mt-2">
-            <li className='pl-4'>Codec Evaluation: Comparing different audio codecs to determine which provides better sound quality.
+            <li className='pl-4'>Codec Comparison: Evaluating whether listeners can perceive differences between various audio codecs.
             </li>
-            <li className='pl-4 mt-2'>Effectiveness of Audio Processing: Assessing different audio processing techniques to find the one that enhances audio quality the most.
+            <li className='pl-4 mt-2'>Audio Processing: Determining the perceptual impact of different audio processing techniques.
             </li>
-            <li className='pl-4 mt-2'>User Preference Studies: Understanding user preferences for different audio settings or enhancements.
+            <li className='pl-4 mt-2'>Product Testing: Comparing the sound quality of different audio devices or software.
             </li>
         </ol>
         <h6 className="relative text-sm md:text-lg font-semibold text-black mt-4">
-        AB Testing is a powerful method for evaluating and comparing different variables. In audio testing, it provides valuable insights into user preferences and audio quality, 
-        guiding the development of better audio technologies. With tools like the PQ-Toolkit, conducting AB Testing becomes more accessible and efficient, enabling researchers and 
-        developers to make informed decisions based on solid data.
+          ABX testing is a rigorous and objective method for evaluating perceptual differences between samples. In audio testing, it provides 
+          critical insights into how different processing techniques, codecs, or devices are perceived by listeners. The PQ-Toolkit makes conducting 
+          ABX tests straightforward and efficient, enabling researchers and developers to gather precise, reliable data for improving audio quality.
         </h6>
       </div>
     </div>
