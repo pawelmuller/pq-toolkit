@@ -70,9 +70,11 @@ const config: Config = {
         typewriter: 'typewriter 2s steps(34) forwards',
         typewriterAB: 'typewriter 0.7s steps(10) forwards',
         typewriterABX: 'typewriter 0.7s steps(11) forwards',
+        typewriterMUSHRA: 'typewriter 0.8s steps(14) forwards',
         caret: 'typewriter 2s steps(34) forwards, blink 1s steps(34) infinite 2s',
         caretAB: 'typewriter 0.7s steps(10) forwards, blink 1s steps(10) infinite 0.7s',
         caretABX: 'typewriter 0.7s steps(11) forwards, blink 1s steps(11) infinite 0.7s',
+        caretMUSHRA: 'typewriter 0.8s steps(14) forwards, blink 1s steps(14) infinite 0.8s',
       },
       height: {
         200: '48rem'
