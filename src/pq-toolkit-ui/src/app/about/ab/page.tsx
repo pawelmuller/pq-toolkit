@@ -24,11 +24,11 @@ const About = (): JSX.Element => {
         </h3>
         <h4 className='relative text-xl md:text-3xl font-bold text-black mt-6'>Advantages of AB Testing</h4>
         <ol className="list-disc list-inside relative text-sm md:text-lg font-semibold text-black mt-2">
-            <li className='pl-4'>Simplicity: AB Testing is straightforward to set up and analyze, making it accessible even for those with minimal technical expertise.
+            <li className='pl-4'><a className="font-extrabold">Simplicity: </a>AB Testing is straightforward to set up and analyze, making it accessible even for those with minimal technical expertise.
             </li>
-            <li className='pl-4 mt-2'>Direct Comparison: It allows for a direct comparison between two variables, making it easy to see which one performs better.
+            <li className='pl-4 mt-2'><a className="font-extrabold">Direct Comparison: </a>It allows for a direct comparison between two variables, making it easy to see which one performs better.
             </li>
-            <li className='pl-4 mt-2'>Data-Driven Decisions: The results from AB Testing provide concrete data that can guide decision-making processes.
+            <li className='pl-4 mt-2'><a className="font-extrabold">Data-Driven Decisions: </a>The results from AB Testing provide concrete data that can guide decision-making processes.
             </li>
         </ol>
         <h5 className='relative text-xl md:text-3xl font-bold text-black mt-6'>Applications in Audio Testing</h5>
@@ -36,16 +36,16 @@ const About = (): JSX.Element => {
           In the realm of audio testing, AB Testing is particularly valuable for:
         </h5>
         <ol className="list-disc list-inside relative text-sm md:text-lg font-semibold text-black mt-2">
-            <li className='pl-4'>Codec Evaluation: Comparing different audio codecs to determine which provides better sound quality.
+            <li className='pl-4'><a className="font-extrabold">Codec Evaluation: </a>Comparing different audio codecs to determine which provides better sound quality.
             </li>
-            <li className='pl-4 mt-2'>Effectiveness of Audio Processing: Assessing different audio processing techniques to find the one that enhances audio quality the most.
+            <li className='pl-4 mt-2'><a className="font-extrabold">Effectiveness of Audio Processing: </a>Assessing different audio processing techniques to find the one that enhances audio quality the most.
             </li>
-            <li className='pl-4 mt-2'>User Preference Studies: Understanding user preferences for different audio settings or enhancements.
+            <li className='pl-4 mt-2'><a className="font-extrabold">User Preference Studies: </a>Understanding user preferences for different audio settings or enhancements.
             </li>
         </ol>
         <h6 className="relative text-sm md:text-lg font-semibold text-black mt-4">
         AB Testing is a powerful method for evaluating and comparing different variables. In audio testing, it provides valuable insights into user preferences and audio quality, 
-        guiding the development of better audio technologies. With tools like the PQ-Toolkit, conducting AB Testing becomes more accessible and efficient, enabling researchers and 
+        guiding the development of better audio technologies. With tools like the PQToolkit, conducting AB Testing becomes more accessible and efficient, enabling researchers and 
         developers to make informed decisions based on solid data.
         </h6>
       </div>

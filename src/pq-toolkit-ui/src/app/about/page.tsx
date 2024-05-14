@@ -15,13 +15,13 @@ const About = (): JSX.Element => {
       </div>
       <div className="relative mb-md ml-20 mr-20 p-8 mt-2">
         <h1 className="relative text-sm md:text-lg font-semibold text-black">
-          Welcome to the PQ-Toolkit Project, a dynamic and innovative platform designed to enhance the perceptual qualities of audio 
+          Welcome to the PQToolkit Project, a dynamic and innovative platform designed to enhance the perceptual qualities of audio 
           through rigorous experimentation and evaluation. This toolkit is the brainchild of dedicated developers aiming to bridge the 
           gap between theoretical audio quality assessments and practical, user-centric feedback.
         </h1>
         <h2 className='relative text-xl md:text-3xl font-bold text-black mt-6'>Our Mission</h2>
         <h3 className="relative text-sm md:text-lg font-semibold text-black mt-2">
-          The PQ-Toolkit is dedicated to improving how we understand and evaluate audio quality in various environments and applications. 
+          The PQToolkit is dedicated to improving how we understand and evaluate audio quality in various environments and applications. 
           By providing tools for conducting experiments and collecting user feedback, this project aids researchers and developers in refining 
           audio technologies to meet real-world demands.
         </h3>
@@ -33,8 +33,9 @@ const About = (): JSX.Element => {
             <li className='pl-4'>Python Plugin for Test Creation: A robust backend built with Python that allows users to set up and configure audio tests efficiently. 
               It supports a range of test types such as simple question/rating, 
               <a className='text-blue-400 no-underline hover:text-pink-500 hover:text-underline transform hover:scale-105 duration-300 ease-in-out' href="/about/ab"> AB</a>, 
-              <a className='text-blue-400 no-underline hover:text-pink-500 hover:text-underline transform hover:scale-105 duration-300 ease-in-out' href="/about/ab"> ABX</a>, 
-              APE and MUSHRA, catering to different research needs and scenarios.
+              <a className='text-blue-400 no-underline hover:text-pink-500 hover:text-underline transform hover:scale-105 duration-300 ease-in-out' href="/about/abx"> ABX</a>, 
+              <a className='text-blue-400 no-underline hover:text-pink-500 hover:text-underline transform hover:scale-105 duration-300 ease-in-out' href="/about/ape"> APE </a> 
+              and MUSHRA, catering to different research needs and scenarios.
             </li>
             <li className='pl-4 mt-2'>Web Application for Experimentation: A user-friendly frontend developed using modern technologies like TypeScript and React.js, 
               facilitating the real-time conducting of experiments. The application is designed for easy deployment and scalability, ensuring a smooth experience for both 
@@ -59,14 +60,14 @@ const About = (): JSX.Element => {
         </h3>
         <h6 className='relative text-xl md:text-3xl font-bold text-black mt-6'>Get Involved</h6>
         <h3 className="relative text-sm md:text-lg font-semibold text-black mt-2">
-          The PQ-Toolkit is an open-source project, and we welcome contributions from the community. Whether you're a developer, a researcher, or an audio enthusiast, 
+          The PQToolkit is an open-source project, and we welcome contributions from the community. Whether you're a developer, a researcher, or an audio enthusiast, 
           your insights and contributions can help shape the future of audio quality assessment.
         </h3>
         <h3 className="relative text-sm md:text-lg font-semibold text-black mt-4">
-          Explore more about PQ-Toolkit and how you can contribute to this innovative project on <a className='text-blue-400 no-underline hover:text-pink-500 hover:text-underline transform hover:scale-105 duration-300 ease-in-out' href="https://github.com/pawelmuller/pq-toolkit">GitHub</a>
+          Explore more about PQToolkit and how you can contribute to this innovative project on <a className='text-blue-400 no-underline hover:text-pink-500 hover:text-underline transform hover:scale-105 duration-300 ease-in-out' href="https://github.com/pawelmuller/pq-toolkit">GitHub</a>
         </h3>
         <h3 className="relative text-sm md:text-lg font-semibold text-black mt-4">
-          Thank you for your interest in the PQ-Toolkit. Together, we can push the boundaries of audio quality research and development!
+          Thank you for your interest in the PQToolkit. Together, we can push the boundaries of audio quality research and development!
         </h3>
       </div>
     </div>

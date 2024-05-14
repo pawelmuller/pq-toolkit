@@ -22,11 +22,11 @@ const About = (): JSX.Element => {
         </h3>
         <h4 className='relative text-xl md:text-3xl font-bold text-black mt-6'>Advantages of ABX Testing</h4>
         <ol className="list-disc list-inside relative text-sm md:text-lg font-semibold text-black mt-2">
-            <li className='pl-4'>High Sensitivity: ABX testing is highly sensitive to small differences between samples, making it effective for subtle perceptual studies.
+            <li className='pl-4'><a className="font-extrabold">High Sensitivity: </a>ABX testing is highly sensitive to small differences between samples, making it effective for subtle perceptual studies.
             </li>
-            <li className='pl-4 mt-2'>Reduced Bias: The random assignment of X helps reduce biases that might influence participants decisions.
+            <li className='pl-4 mt-2'><a className="font-extrabold">Reduced Bias: </a>The random assignment of X helps reduce biases that might influence participants decisions.
             </li>
-            <li className='pl-4 mt-2'>Objective Assessment: The method provides objective data on perceptual differences, aiding in precise evaluations.
+            <li className='pl-4 mt-2'><a className="font-extrabold">Objective Assessment: </a>The method provides objective data on perceptual differences, aiding in precise evaluations.
             </li>
         </ol>
         <h5 className='relative text-xl md:text-3xl font-bold text-black mt-6'>Applications in Audio Testing</h5>
@@ -34,16 +34,16 @@ const About = (): JSX.Element => {
           In audio testing, ABX testing is invaluable for:
         </h5>
         <ol className="list-disc list-inside relative text-sm md:text-lg font-semibold text-black mt-2">
-            <li className='pl-4'>Codec Comparison: Evaluating whether listeners can perceive differences between various audio codecs.
+            <li className='pl-4'><a className="font-extrabold">Codec Comparison: </a>Evaluating whether listeners can perceive differences between various audio codecs.
             </li>
-            <li className='pl-4 mt-2'>Audio Processing: Determining the perceptual impact of different audio processing techniques.
+            <li className='pl-4 mt-2'><a className="font-extrabold">Audio Processing: </a>Determining the perceptual impact of different audio processing techniques.
             </li>
-            <li className='pl-4 mt-2'>Product Testing: Comparing the sound quality of different audio devices or software.
+            <li className='pl-4 mt-2'><a className="font-extrabold">Product Testing: </a>Comparing the sound quality of different audio devices or software.
             </li>
         </ol>
         <h6 className="relative text-sm md:text-lg font-semibold text-black mt-4">
           ABX testing is a rigorous and objective method for evaluating perceptual differences between samples. In audio testing, it provides 
-          critical insights into how different processing techniques, codecs, or devices are perceived by listeners. The PQ-Toolkit makes conducting 
+          critical insights into how different processing techniques, codecs, or devices are perceived by listeners. The PQToolkit makes conducting 
           ABX tests straightforward and efficient, enabling researchers and developers to gather precise, reliable data for improving audio quality.
         </h6>
       </div>
