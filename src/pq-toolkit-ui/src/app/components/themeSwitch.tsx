@@ -24,7 +24,7 @@ export default function ThemeSwitch() {
   )
 
   if (resolvedTheme === 'dark') {
-    return <FaSun className="text-blue-400 no-underline hover:text-pink-500 hover:text-underline transform hover:scale-105 duration-300 ease-in-out h-5 w-5 md:h-8 md:w-8 mt-1" onClick={() => setTheme('light')} />
+    return <FaSun className="text-blue-500 no-underline hover:text-pink-500 dark:hover:text-pink-600 hover:text-underline transform hover:scale-105 duration-300 ease-in-out h-5 w-5 md:h-8 md:w-8 mt-1" onClick={() => setTheme('light')} />
   }
 
   if (resolvedTheme === 'light') {
