@@ -65,7 +65,7 @@ const About = (): JSX.Element => {
           your insights and contributions can help shape the future of audio quality assessment.
         </h3>
         <h3 className="relative text-sm md:text-lg font-semibold text-black mt-4">
-          Explore more about PQToolkit and how you can contribute to this innovative project on <a className='text-blue-400 no-underline hover:text-pink-500 hover:text-underline transform hover:scale-105 duration-300 ease-in-out' href="https://github.com/pawelmuller/pq-toolkit">GitHub</a>
+          Explore more about PQToolkit and how you can contribute to this innovative project on <a className='text-blue-400 no-underline hover:text-pink-500 hover:text-underline transform hover:scale-105 duration-300 ease-in-out' href="https://github.com/pawelmuller/pq-toolkit">GitHub</a>.
         </h3>
         <h3 className="relative text-sm md:text-lg font-semibold text-black mt-4">
           Thank you for your interest in the PQToolkit. Together, we can push the boundaries of audio quality research and development!

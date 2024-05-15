@@ -12,40 +12,38 @@ const AboutMushra = (): JSX.Element => {
       </div>
       <div className="relative mb-md ml-20 mr-20 p-8 mt-2">
         <h1 className="relative text-sm md:text-lg font-semibold text-black">
-        APE (Audio Perceptual Evaluation) Testing is a method designed to evaluate the perceptual quality of audio through structured and systematic listening tests. It helps 
-        in determining how different audio processing techniques or codecs affect the listening experience.
+        MUSHRA (MUltiple Stimuli with Hidden Reference and Anchor) Testing is a robust and detailed method for evaluating the perceptual quality of audio. It is designed to provide 
+        a comprehensive assessment by comparing multiple audio samples, including a known reference and an anchor with significantly lower quality.
         </h1>
-        <h2 className='relative text-xl md:text-3xl font-bold text-black mt-6'>What is APE Testing?</h2>
+        <h2 className='relative text-xl md:text-3xl font-bold text-black mt-6'>What is MUSHRA Testing?</h2>
         <h3 className="relative text-sm md:text-lg font-semibold text-black mt-2">
-        APE Testing involves a series of controlled experiments where participants listen to various audio samples and provide feedback on specific perceptual attributes such 
-        as clarity, distortion, depth and overall quality. This method is particularly useful for understanding subjective audio quality and identifying areas for improvement in audio 
-        processing algorithms.
+        MUSHRA Testing involves presenting participants with multiple audio samples of the same content but processed differently. Among these samples are a hidden reference 
+        (the original, unprocessed audio) and an anchor (a deliberately degraded version). Participants rate the quality of each sample relative to the reference.
         </h3>
-        <h4 className='relative text-xl md:text-3xl font-bold text-black mt-6'>Advantages of APE Testing</h4>
+        <h4 className='relative text-xl md:text-3xl font-bold text-black mt-6'>Advantages of MUSHRA Testing</h4>
         <ol className="list-disc list-inside relative text-sm md:text-lg font-semibold text-black mt-2">
-            <li className='pl-4'><a className="font-extrabold">Comprehensive Evaluation: </a>APE Testing provides a detailed understanding of how different processing techniques impact various perceptual attributes.
+            <li className='pl-4'><a className="font-extrabold">Detailed Quality Assessment: </a>MUSHRA provides detailed insights into the perceptual differences between audio samples.
             </li>
-            <li className='pl-4 mt-2'><a className="font-extrabold">Subjective Feedback: </a>It captures subjective user experiences, which are crucial for evaluating the real-world performance of audio technologies.
+            <li className='pl-4 mt-2'><a className="font-extrabold">Relative Comparisons: </a>By including a hidden reference and anchor, it allows for relative comparisons, enhancing the reliability of the results.
             </li>
-            <li className='pl-4 mt-2'><a className="font-extrabold">Improvement Insights: </a>The feedback gathered helps developers identify areas for improvement in audio processing algorithms.
+            <li className='pl-4 mt-2'><a className="font-extrabold">Comprehensive Evaluation: </a>It can assess a wide range of audio qualities and is suitable for high-quality audio codec evaluations.
             </li>
         </ol>
         <h5 className='relative text-xl md:text-3xl font-bold text-black mt-6'>Applications in Audio Testing</h5>
         <h5 className="relative text-sm md:text-lg font-semibold text-black mt-2">
-          APE Testing is widely used in:
+          MUSHRA Testing is particularly useful in:
         </h5>
         <ol className="list-disc list-inside relative text-sm md:text-lg font-semibold text-black mt-2">
-            <li className='pl-4'><a className="font-extrabold">Audio Codec Development: </a>Evaluating the perceptual impact of different audio codecs.
+            <li className='pl-4'><a className="font-extrabold">Audio Codec Evaluation: </a>Assessing the perceptual quality of different audio codecs under various conditions.
             </li>
-            <li className='pl-4 mt-2'><a className="font-extrabold">Audio Enhancement Algorithms: </a>Assessing the effectiveness of noise reduction, echo cancellation and other audio enhancement techniques.
+            <li className='pl-4 mt-2'><a className="font-extrabold">Audio Processing: </a>Evaluating the effectiveness of different audio processing algorithms, such as compression and noise reduction.
             </li>
-            <li className='pl-4 mt-2'><a className="font-extrabold">Consumer Electronics: </a>Testing the audio quality of headphones, speakers and other audio devices to ensure high user satisfaction.
+            <li className='pl-4 mt-2'><a className="font-extrabold">Product Development: </a>Testing audio equipment like headphones and speakers to ensure high fidelity and user satisfaction.
             </li>
         </ol>
         <h6 className="relative text-sm md:text-lg font-semibold text-black mt-4">
-          APE Testing is an essential method for evaluating the perceptual quality of audio. It provides valuable insights into how different audio processing techniques affect 
-          the listening experience, guiding improvements and innovations in audio technology. The PQToolkit makes conducting APE Testing accessible and efficient, enabling researchers and 
-          developers to gather detailed, subjective feedback to enhance audio quality.
+        MUSHRA Testing is a powerful method for evaluating the perceptual quality of audio. It provides detailed, reliable data on how different processing techniques and codecs affect audio quality. 
+        With the PQToolkit, conducting MUSHRA tests becomes efficient and straightforward, enabling researchers and developers to gather valuable insights for improving audio technologies.
         </h6>
       </div>
     </div>
