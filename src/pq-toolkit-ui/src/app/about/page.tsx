@@ -8,7 +8,9 @@ const About = (): JSX.Element => {
     <div className="relative flex flex-col h-full w-full items-center justify-center my-auto fadeInUp mt-14">
       <div className="relative text-center mb-md">
         <h1 className="relative text-3xl md:text-6xl font-bold mt-6 pb-1.5 pt-1.5 before:absolute before:inset-0 before:animate-typewriter before:bg-gray-100
-            dark:before:bg-stone-900 after:absolute after:inset-0 after:w-[0.125em] after:animate-caret after:bg-black dark:after:bg-neutral-200">About Perceptual Qualities Toolkit</h1>
+            dark:before:bg-stone-900 after:absolute after:inset-0 after:w-[0.125em] after:animate-caret after:bg-black dark:after:bg-neutral-200">
+            About Perceptual Qualities Toolkit
+        </h1>
         <h2 className="relative text-sm md:text-xl font-semibold mt-sm">
           About page of experiment UI for Perceptual Qualities Python Toolkit
         </h2>
