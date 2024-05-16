@@ -96,15 +96,24 @@ class SampleManager:
         except minio.error.S3Error as e:
             raise S3Error(e.code)
 
-    def get_sample(self, experiment_name: str, sample_name: str) -> bytes:
+    def get_sample(self, experiment_name: str, sample_name: str, chunk_size: int = 1024*1024):
+        object_name = self._object_name_from_experiment_and_sample(
+            experiment_name, sample_name)
+
+        if not self.check_sample_exists(experiment_name, sample_name):
+            raise SampleDoesNotExistError(object_name)
+
         try:
-            object_name = self._object_name_from_experiment_and_sample(
-                experiment_name, sample_name)
             response: HTTPResponse = self._client.get_object(
                 self._sample_bucket_name, object_name)
-            yield response
         except minio.error.S3Error as e:
-            raise SampleDoesNotExistError(object_name)
+            raise S3Error(e.code)
+
+        try:
+            data = response.read(chunk_size)
+            while data:
+                yield data
+                data = response.read(chunk_size)
         finally:
             response.close()
             response.release_conn()

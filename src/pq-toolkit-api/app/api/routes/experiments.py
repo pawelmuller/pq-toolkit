@@ -48,7 +48,7 @@ def upload_sample(sample_manager: SampleManagerDep, experiment_name: str, file: 
 
 
 @router.get("/{experiment_name}/samples/{filename}", response_model=UploadFile)
-def get_sample(sample_manager: SampleManagerDep, experiment_name: str, filename: str):
+async def get_sample(sample_manager: SampleManagerDep, experiment_name: str, filename: str):
     return crud.get_experiment_sample(sample_manager, experiment_name, filename)
 
 
