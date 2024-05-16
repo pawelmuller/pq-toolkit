@@ -8,12 +8,12 @@ const AboutMushra = (): JSX.Element => {
     <Header />
     <div className="relative flex flex-col h-full w-full items-center justify-center my-auto fadeInUp mt-10">
       <div className="relative text-center mb-md">
-        <h1 className="relative text-3xl md:text-6xl font-bold mt-6 pb-1.5 pt-1.5 before:absolute before:inset-0 before:animate-typewriterMUSHRA before:bg-gray-100
+        <h1 className="relative text-4xl md:text-6xl font-bold mt-1 md:mt-6 pb-1.5 pt-1.5 before:absolute before:inset-0 before:animate-typewriterMUSHRA before:bg-gray-100
             dark:before:bg-stone-900 after:absolute after:inset-0 after:w-[0.125em] after:animate-caretMUSHRA after:bg-black dark:after:bg-neutral-200">
             MUSHRA Testing
         </h1>
       </div>
-      <div className="relative mb-md ml-20 mr-20 p-8 mt-2">
+      <div className="relative mb-md ml-7 md:ml-20 mr-7 md:mr-20 p-1 md:p-8 mt-1 md:mt-2">
         <h1 className="relative text-sm md:text-lg font-semibold">
         MUSHRA (MUltiple Stimuli with Hidden Reference and Anchor) Testing is a robust and detailed method for evaluating the perceptual quality of audio. It is designed to provide 
         a comprehensive assessment by comparing multiple audio samples, including a known reference and an anchor with significantly lower quality.

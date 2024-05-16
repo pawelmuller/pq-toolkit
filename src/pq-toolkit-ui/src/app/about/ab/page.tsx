@@ -8,12 +8,12 @@ const AboutAB = (): JSX.Element => {
     <Header />
     <div className="relative flex flex-col h-full w-full items-center justify-center my-auto fadeInUp mt-10">
       <div className="relative text-center mb-md">
-        <h1 className="relative text-3xl md:text-6xl font-bold mt-6 pb-1.5 pt-1.5 before:absolute before:inset-0 before:animate-typewriterAB before:bg-gray-100
+        <h1 className="relative text-4xl md:text-6xl font-bold mt-1 md:mt-6 pb-1.5 pt-1.5 before:absolute before:inset-0 before:animate-typewriterAB before:bg-gray-100
             dark:before:bg-stone-900 after:absolute after:inset-0 after:w-[0.125em] after:animate-caretAB after:bg-black dark:after:bg-neutral-200">
             AB Testing
         </h1>
       </div>
-      <div className="relative mb-md ml-20 mr-20 p-8 mt-2">
+      <div className="relative mb-md ml-7 md:ml-20 mr-7 md:mr-20 p-1 md:p-8 mt-1 md:mt-2">
         <h1 className="relative text-sm md:text-lg font-semibold">
         AB Testing, also known as split testing or bucket testing, is a method of comparing two versions of a variable to determine which one performs better. 
         This type of testing is widely used in various fields such as marketing, web development, and user experience design, but it also plays a crucial role 
