@@ -102,12 +102,12 @@ class SampleManager:
                 experiment_name, sample_name)
             response: HTTPResponse = self._client.get_object(
                 self._sample_bucket_name, object_name)
-            data = response.read()
-            response.close()
-            response.release_conn()
-            return data
+            yield response
         except minio.error.S3Error as e:
             raise SampleDoesNotExistError(object_name)
+        finally:
+            response.close()
+            response.release_conn()
 
     def remove_sample(self, experiment_name: str, sample_name: str):
         object_name = self._object_name_from_experiment_and_sample(

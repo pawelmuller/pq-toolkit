@@ -9,7 +9,7 @@ from fastapi import UploadFile
 from fastapi.responses import StreamingResponse
 from app.core.sample_manager import SampleManager
 from app.core.config import settings
-from app.utils import content_stream_from_bytes
+from app.utils import sample_stream
 
 
 def get_experiments(session: Session) -> PqExperimentsList:
@@ -43,28 +43,22 @@ def upload_experiment_config(session: Session, experiment_name: str, json_file: 
     session.commit()
 
 
-def get_experiment_sample(experiment_name: str, sample_name: str) -> StreamingResponse:
-    # TODO: Perhaps allow steaming in packets, rather than downloading the whole thind fom MinIO and streaming it to client
-    manager = SampleManager.from_settings(settings)
-    sample_bytes = manager.get_sample(experiment_name, sample_name)
-    return StreamingResponse(content_stream_from_bytes
-                             (sample_bytes), media_type="audio/mpeg")
+def get_experiment_sample(manager: SampleManager, experiment_name: str, sample_name: str) -> StreamingResponse:
+    with manager.get_sample(experiment_name, sample_name) as sample:
+        return StreamingResponse(sample_stream(sample), media_type="audio/mpeg")
 
 
-def upload_experiment_sample(experiment_name: str, audio_file: UploadFile):
-    manager = SampleManager.from_settings(settings)
+def upload_experiment_sample(manager: SampleManager, experiment_name: str, audio_file: UploadFile):
     sample_name = audio_file.filename
     sample_data = audio_file.file
     manager.upload_sample(experiment_name, sample_name, sample_data)
 
 
-def delete_experiment_sample(experiment_name: str, sample_name: str):
-    manager = SampleManager.from_settings(settings)
+def delete_experiment_sample(manager: SampleManager, experiment_name: str, sample_name: str):
     manager.remove_sample(experiment_name, sample_name)
 
 
-def get_experiment_samples(experiment_name: str) -> list[str]:
-    manager = SampleManager.from_settings(settings)
+def get_experiment_samples(manager: SampleManager, experiment_name: str) -> list[str]:
     return manager.list_matching_samples(experiment_name)
 
 
