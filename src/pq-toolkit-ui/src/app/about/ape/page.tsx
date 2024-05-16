@@ -1,5 +1,6 @@
 'use client'
 import Header from '@/lib/components/basic/header'
+import ScrollToTopButton from '@/app/components/scrollToTopButton'
 
 const AboutAPE = (): JSX.Element => {
   return (
@@ -51,6 +52,7 @@ const AboutAPE = (): JSX.Element => {
         </h6>
       </div>
     </div>
+    <ScrollToTopButton />
   </div>
   )
 }
