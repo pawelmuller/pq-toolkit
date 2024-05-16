@@ -112,7 +112,7 @@ const AdminExperimentsListWidget = ({
   setSelectedExperiment: (name: any) => void
 }): JSX.Element => {
   return (
-    <div className="flex flex-col items-center z-10 self-end border-2 h-200 w-80 bg-white pr-10 pl-5 rounded-lg z-10">
+    <div className="flex flex-col items-center z-10 self-end border-2 h-200 w-80 bg-white pr-10 pl-5 rounded-lg">
       <AddExperimentWidget
         experiments={experiments}
         addExperiment={addNewExperiment}

@@ -28,18 +28,18 @@ body {
 }
 
 @keyframes fadeInUp {
-  from {
+  0% {
     opacity: 0;
     transform: translateY(20px);
   }
-  to {
+  100% {
     opacity: 1;
     transform: translateY(0);
   }
 }
 
 .fadeInUp {
-  animation: fadeInUp 1s ease-out;
+  animation: fadeInUp 2s ease-out;
 }
 
 @layer utilities {

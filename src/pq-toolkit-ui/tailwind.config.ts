@@ -14,6 +14,10 @@ const config: Config = {
       },
     },
     extend: {
+      transitionProperty: {
+        'height': 'height',
+        'spacing': 'margin, padding',
+      },
       spacing: {
         xxs: '6px',
         xs: '10px',
@@ -85,7 +89,14 @@ const config: Config = {
       }
     },
   },
-  plugins: [],
+  variants: {
+    extend: {
+      opacity: ['dark'],
+      scale: ['group-hover'],
+      rotate: ['group-hover'],
+    },
+  },
   darkMode: 'class',
+  plugins: [],
 }
 export default config
