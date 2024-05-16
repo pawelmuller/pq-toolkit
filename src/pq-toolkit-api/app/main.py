@@ -2,12 +2,14 @@ from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 from fastapi.routing import APIRoute
 from starlette.middleware.cors import CORSMiddleware
+from starlette.middleware.exceptions import ExceptionMiddleware
 
 from app.api.main_router import api_router
 from app.core.config import settings
 
 import logging
 from app.utils import PqException
+from app.core.sample_manager import SampleDoesNotExistError, IllegalNamingError, S3Error
 
 
 def custom_generate_unique_id(route: APIRoute) -> str:
@@ -35,12 +37,14 @@ if settings.BACKEND_CORS_ORIGINS:
         allow_headers=["*"],
     )
 
-app.include_router(api_router, prefix=settings.API_V1_STR)
 
-
-@app.exception_handler(PqException)
-async def pq_exception_handler(request: Request, exc: PqException):
+@app.exception_handler(SampleDoesNotExistError)
+async def pq_exception_handler(request: Request, exc: SampleDoesNotExistError):
     return JSONResponse(
         status_code=400,
         content=exc.api_payload.model_dump(),
     )
+
+
+app.add_middleware(ExceptionMiddleware, handlers=app.exception_handlers)
+app.include_router(api_router, prefix=settings.API_V1_STR)
