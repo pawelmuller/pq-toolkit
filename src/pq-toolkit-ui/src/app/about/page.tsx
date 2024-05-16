@@ -1,34 +1,8 @@
 'use client'
 import Header from '@/lib/components/basic/header'
-import { useEffect, useState } from 'react'
-import { FaArrowUp } from 'react-icons/fa'
+import ScrollToTopButton from '@/app/components/scrollToTopButton'
 
 const About = (): JSX.Element => {
-  
-  const [isVisible, setIsVisible] = useState(false)
-
-  const toggleVisibility = () => {
-    if (window.pageYOffset > 300) {
-      setIsVisible(true)
-    } else {
-      setIsVisible(false)
-    }
-  }
-
-  const scrollToTop = () => {
-    window.scrollTo({
-      top: 0,
-      behavior: 'smooth'
-    })
-  }
-
-  useEffect(() => {
-    window.addEventListener('scroll', toggleVisibility)
-    return () => {
-      window.removeEventListener('scroll', toggleVisibility)
-    }
-  }, [])
-
   return (
   <div className="min-h-screen bg-gray-100 dark:bg-stone-900 text-black dark:text-neutral-200">
     <Header />
@@ -101,16 +75,7 @@ const About = (): JSX.Element => {
         </h3>
       </div>
     </div>
-    {isVisible && (
-        <div className="fixed bottom-5 right-5">
-          <button
-            onClick={scrollToTop}
-            className="p-3 rounded-full bg-blue-400 dark:bg-blue-500 text-white hover:bg-pink-500 dark:hover:bg-pink-600 transition-all duration-300"
-          >
-            <FaArrowUp className="w-6 h-6" />
-          </button>
-        </div>
-    )}
+    <ScrollToTopButton />
   </div>
   )
 }
