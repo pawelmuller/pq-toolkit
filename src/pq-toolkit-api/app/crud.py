@@ -9,7 +9,6 @@ from fastapi import UploadFile
 from fastapi.responses import StreamingResponse
 from app.core.sample_manager import SampleManager
 from app.core.config import settings
-from app.utils import sample_stream
 
 
 def get_experiments(session: Session) -> PqExperimentsList:
@@ -44,8 +43,8 @@ def upload_experiment_config(session: Session, experiment_name: str, json_file: 
 
 
 def get_experiment_sample(manager: SampleManager, experiment_name: str, sample_name: str) -> StreamingResponse:
-    with manager.get_sample(experiment_name, sample_name) as sample:
-        return StreamingResponse(sample_stream(sample), media_type="audio/mpeg")
+    sample_generator = manager.get_sample(experiment_name, sample_name)
+    return StreamingResponse(sample_generator, media_type="audio/mpeg")
 
 
 def upload_experiment_sample(manager: SampleManager, experiment_name: str, audio_file: UploadFile):
