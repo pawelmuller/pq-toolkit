@@ -15,10 +15,10 @@ export default function ThemeSwitch() {
 
   if (!mounted) {
     return (
-      <div className="flex items-center justify-center h-6 w-6 md:w-9 md:h-9 rounded-full cursor-pointer">
-        <div className="relative w-5 h-5 md:w-8 md:h-8">
+      <div className="flex items-center justify-center h-8 w-8 md:w-9 md:h-9 rounded-full cursor-pointer">
+        <div className="relative w-7 h-7 md:w-9 md:h-9">
           <FaCog
-            className={`absolute h-6 w-6 md:h-8 md:w-8 transition-opacity duration-500 ease-in-out text-blue-400 dark:text-blue-500 transform ${hovered ? 'opacity-0 scale-0' : 'opacity-100 scale-100'}`}
+            className={`absolute h-7 w-7 md:h-9 md:w-9 transition-opacity duration-500 ease-in-out text-blue-400 dark:text-blue-500 transform ${hovered ? 'opacity-0 scale-0' : 'opacity-100 scale-100'}`}
           />
         </div>
     </div>
