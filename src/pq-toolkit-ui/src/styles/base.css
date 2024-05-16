@@ -39,7 +39,7 @@ body {
 }
 
 .fadeInUp {
-  animation: fadeInUp 2s ease-out;
+  animation: fadeInUp 1.5s ease-out;
 }
 
 @layer utilities {
