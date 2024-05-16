@@ -71,11 +71,11 @@ const config: Config = {
       },
       animation: {
         blob: "blob 7s infinite",
-        typewriter: 'typewriter 2s steps(34) forwards',
+        typewriter: 'typewriter 0.9s steps(15) forwards',
         typewriterAB: 'typewriter 0.7s steps(10) forwards',
         typewriterABX: 'typewriter 0.7s steps(11) forwards',
         typewriterMUSHRA: 'typewriter 0.8s steps(14) forwards',
-        caret: 'typewriter 2s steps(34) forwards, blink 1s steps(34) infinite 2s',
+        caret: 'typewriter 0.9s steps(15) forwards, blink 1s steps(15) infinite 0.9s',
         caretAB: 'typewriter 0.7s steps(10) forwards, blink 1s steps(10) infinite 0.7s',
         caretABX: 'typewriter 0.7s steps(11) forwards, blink 1s steps(11) infinite 0.7s',
         caretMUSHRA: 'typewriter 0.8s steps(14) forwards, blink 1s steps(14) infinite 0.8s',
