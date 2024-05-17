@@ -1,9 +1,6 @@
 from io import BytesIO
 from app.schemas import PqErrorResponse
-
-
-def content_stream_from_bytes(sample_bytes: bytes):
-    yield from BytesIO(sample_bytes)
+from urllib3.response import HTTPResponse
 
 
 class PqException(Exception):

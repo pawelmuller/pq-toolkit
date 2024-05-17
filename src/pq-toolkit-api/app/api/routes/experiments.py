@@ -2,7 +2,7 @@ from typing import Any
 
 from fastapi import APIRouter, UploadFile, Request
 
-from app.api.deps import SessionDep
+from app.api.deps import SessionDep, SampleManagerDep
 from app.schemas import *
 import app.crud as crud
 router = APIRouter()
@@ -37,24 +37,24 @@ def delete_experiment(session: SessionDep, experiment_name: PqExperimentName):
 
 
 @router.get("/{experiment_name}/samples", response_model=list[str])
-def get_samples(experiment_name: str):
-    return crud.get_experiment_samples(experiment_name)
+def get_samples(sample_manager: SampleManagerDep, experiment_name: str):
+    return crud.get_experiment_samples(sample_manager, experiment_name)
 
 
 @router.post("/{experiment_name}/samples", response_model=PqSuccessResponse)
-def upload_sample(experiment_name: str, file: UploadFile):
-    crud.upload_experiment_sample(experiment_name, file)
+def upload_sample(sample_manager: SampleManagerDep, experiment_name: str, file: UploadFile):
+    crud.upload_experiment_sample(sample_manager, experiment_name, file)
     return PqSuccessResponse(success=True)
 
 
 @router.get("/{experiment_name}/samples/{filename}", response_model=UploadFile)
-def get_sample(experiment_name: str, filename: str):
-    return crud.get_experiment_sample(experiment_name, filename)
+async def get_sample(sample_manager: SampleManagerDep, experiment_name: str, filename: str):
+    return crud.get_experiment_sample(sample_manager, experiment_name, filename)
 
 
 @router.delete("/{experiment_name}/samples/{filename}", response_model=PqSuccessResponse)
-def delete_sample(experiment_name: str, filename: str):
-    crud.delete_experiment_sample(experiment_name, filename)
+def delete_sample(sample_manager: SampleManagerDep, experiment_name: str, filename: str):
+    crud.delete_experiment_sample(sample_manager, experiment_name, filename)
     return PqSuccessResponse(success=True)
 
 
