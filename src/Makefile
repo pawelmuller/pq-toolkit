@@ -8,7 +8,7 @@ build-clean-dev: ## Build the development docker image without cache
 
 .PHONY: start-dev
 start-dev: ## Start the development docker container.
-	docker compose -f deployments/docker-compose.yml --env-file deployments/.env.dev up
+	docker compose -f deployments/docker-compose.yml --env-file deployments/.env.dev up -d
 
 .PHONY: stop-dev
 stop-dev: ## Stop the development docker container.
