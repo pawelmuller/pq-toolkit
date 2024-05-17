@@ -13,7 +13,8 @@ from app.utils import content_stream_from_bytes
 
 
 def get_experiments(session: Session) -> PqExperimentsList:
-    return PqExperimentsList(experiments=["test"])
+    experiments = session.exec(select(Experiment)).all()
+    return PqExperimentsList(experiments=[exp.name for exp in experiments])
 
 
 def get_experiment_by_name(session: Session, experiment_name: str) -> PqExperiment:
