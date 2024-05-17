@@ -43,3 +43,4 @@ wheel==0.41.2
 sqlmodel==0.0.18
 psycopg==3.1.19
 psycopg-binary==3.1.19
+tenacity==8.3.0

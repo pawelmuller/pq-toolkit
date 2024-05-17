@@ -4,7 +4,6 @@ services:
   # Database
   pq-toolkit-db-dev:
     image: postgres
-    restart: always
     shm_size: 128m
     environment:
       POSTGRES_USER: $POSTGRES_USER
@@ -19,6 +18,8 @@ services:
       interval: 1s
       timeout: 5s
       retries: 10
+    ports:
+      - 5432:5432
 
   # Database admin
   pq-adminer:
@@ -45,6 +46,7 @@ services:
       MINIO_ROOT_PASSWORD: $MINIO_ROOT_PASSWORD
       MINIO_ENDPOINT: $MINIO_ENDPOINT
       MINIO_STORAGE_USE_HTTPS: $MINIO_STORAGE_USE_HTTPS
+    command: sh -c "./prestart.sh && python3 main.py"
 
   # Frontend
   pq-toolkit-ui-dev:

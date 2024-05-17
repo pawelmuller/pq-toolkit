@@ -26,7 +26,7 @@ class Experiment(SQLModel, table=True):
     tests: list["Test"] = Relationship(back_populates="experiment")
 
 
-class Test(SQLModel):
+class Test(SQLModel, table=True):
     id: int | None = Field(default=None, primary_key=True)
     number: int
     type: PqTestTypes
@@ -37,7 +37,7 @@ class Test(SQLModel):
     experiment_test_results: list["ExperimentTestResult"] = Relationship(back_populates="test")
 
 
-class ExperimentTestResult(SQLModel):
+class ExperimentTestResult(SQLModel, table=True):
     id: int | None = Field(default=None, primary_key=True)
     test_result: dict = Field(sa_column=Column(JSON))
     test_id: int = Field(foreign_key="test.id")
