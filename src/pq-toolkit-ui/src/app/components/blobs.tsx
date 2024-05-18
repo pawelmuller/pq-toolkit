@@ -15,8 +15,8 @@ const Blobs = () => {
         <div className='absolute -top-10 -right-6 w-96 h-96 md:bg-none min-[640px]:bg-gradient-to-r from-pink-500 to-violet-500 rounded-full mix-blend-multiply dark:mix-blend-color-dodge filter blur-xl opacity-60 dark:opacity-40 animate-blob animation-delay-8000' />
         <div className='absolute top-16 right-32 w-80 h-80 md:bg-none min-[640px]:bg-gradient-to-r from-pink-500 to-pink-700 rounded-full mix-blend-multiply dark:mix-blend-color-dodge filter blur-xl opacity-50 animate-blob animation-delay-4000' />
 
-        <div className='absolute -top-16 -left-11 w-80 h-80 sm:bg-none bg-gradient-to-r from-indigo-500 to-cyan-600 rounded-full mix-blend-multiply dark:mix-blend-color-dodge filter blur-xl opacity-50 animate-blob animation-delay-2000' />
-        <div className='absolute -top-12 -right-6 w-96 h-96 sm:bg-none bg-gradient-to-r from-cyan-600 via-pink-700 to-violet-600 rounded-full mix-blend-multiply dark:mix-blend-color-dodge filter blur-xl opacity-60 dark:opacity-40 animate-blob animation-delay-4000' />
+        <div className='absolute -top-16 -left-11 w-80 h-80 sm:bg-none bg-gradient-to-r from-indigo-500 to-cyan-600 dark:to-pink-500 rounded-full mix-blend-multiply dark:mix-blend-color-dodge filter blur-xl opacity-50 animate-blob animation-delay-2000' />
+        <div className='absolute -top-12 -right-6 w-96 h-96 sm:bg-none bg-gradient-to-r from-cyan-600 dark:from-pink-500 via-pink-700 dark:via-pink-600 to-violet-600 dark:to-violet-500 rounded-full mix-blend-multiply dark:mix-blend-color-dodge filter blur-xl opacity-60 dark:opacity-40 animate-blob animation-delay-4000' />
     </div>
   )
 }
