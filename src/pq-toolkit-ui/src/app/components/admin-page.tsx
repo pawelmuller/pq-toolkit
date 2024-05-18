@@ -89,7 +89,7 @@ const AdminPage = (props: any): JSX.Element => {
           <div className="fadeInUp">
             <h1 className="relative text-5xl md:text-6xl font-bold">Perceptual Qualities Toolkit</h1>
             <h2 className="relative text-2xl md:text-3xl font-semibold mt-sm">
-              Admin page
+              Experiment Configurator
             </h2>
         </div>
       </div>
