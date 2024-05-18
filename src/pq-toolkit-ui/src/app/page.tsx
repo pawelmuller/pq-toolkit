@@ -62,8 +62,10 @@ const ExperimentsListWidget = (): JSX.Element => {
       <div className='font-bold text-xl md:text-2xl mb-10'>Configured Experiments</div>
       <ul className="space-y-2 w-full">
         {data.experiments.map((name, idx) => (
-          <li key={idx} className="text-center text-base font-semibold justify-center bg-blue-400 dark:bg-blue-500 hover:bg-pink-500 dark:hover:bg-pink-600 rounded-md p-2 transition-transform transform hover:scale-105 whitespace-normal break-words">
-            <Link href={`/${name}`}>{name}</Link>
+          <li key={idx} className="text-center text-base font-semibold justify-center rounded-md transition-transform transform hover:scale-105 whitespace-normal break-words">
+            <Link href={`/${name}`} className="block bg-blue-400 dark:bg-blue-500 hover:bg-pink-500 dark:hover:bg-pink-600 p-2 rounded-md">
+              {name}
+            </Link>
           </li>
         ))}
       </ul>
