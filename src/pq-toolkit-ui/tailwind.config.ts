@@ -18,6 +18,9 @@ const config: Config = {
         'height': 'height',
         'spacing': 'margin, padding',
       },
+      colors: {
+        'not-that-black': '#100e0d',
+      },
       spacing: {
         xxs: '6px',
         xs: '10px',

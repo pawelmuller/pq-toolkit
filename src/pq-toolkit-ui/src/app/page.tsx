@@ -11,18 +11,18 @@ const Home = (): JSX.Element => {
   return (
     <div className="min-h-screen bg-gray-100 dark:bg-stone-900">
       <Header />
-        <div className="flex flex-col h-full w-full items-center justify-center my-auto mt-40">
-          <div className="relative text-center mb-sm md:mb-md lg:mb-lg">
-            <Blobs />
-            <div className='fadeInUp'>
-              <h1 className="relative text-5xl md:text-6xl font-bold">Perceptual Qualities Toolkit</h1>
-              <h2 className="relative text-lg md:text-xl font-semibold mt-sm">
-                Home page of experiment UI for Perceptual Qualities Python Toolkit
-              </h2>
-            </div>
+      <div className="flex flex-col h-full w-full items-center justify-center my-auto mt-40">
+        <div className="relative text-center mb-sm md:mb-md lg:mb-lg">
+          <Blobs />
+          <div className='fadeInUp'>
+            <h1 className="relative text-5xl md:text-6xl font-bold">Perceptual Qualities Toolkit</h1>
+            <h2 className="relative text-lg md:text-xl font-semibold mt-sm">
+              Home page of experiment UI for Perceptual Qualities Python Toolkit
+            </h2>
           </div>
-          <ExperimentsListWidget />
         </div>
+        <ExperimentsListWidget />
+      </div>
     </div>
   )
 }
