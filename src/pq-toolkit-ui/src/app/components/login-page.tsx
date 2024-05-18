@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from "react"
 import Header from "@/lib/components/basic/header"
 import Blobs from "./blobs"
+
 const sendLoginRequest = async (password: string, setPassword: Function, refresh: Function, setErrorRequest: Function) => {
     fetch("/api/v1/login", {
         method: "POST",
@@ -46,7 +47,7 @@ const LoginPage = (props: any): JSX.Element => {
                 <div className="fadeInUp">
                     <h1 className="relative text-5xl md:text-6xl font-bold">Perceptual Qualities Toolkit</h1>
                     <h2 className="relative text-2xl md:text-3xl font-semibold mt-sm">
-                        Admin page
+                        Admin login page
                     </h2>
                 </div>
             </div>
