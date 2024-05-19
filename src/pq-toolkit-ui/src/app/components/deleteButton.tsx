@@ -8,11 +8,11 @@ const DeleteButton = (props: any): JSX.Element => {
     >
         {deleteConfirm ?
             <div className="flex flex-row">
-                <FaXmark size={26} className="fill-red-500 mr-2 cursor-pointer" onClick={() => setDeleteConfirm(false)} />
-                <FaCheck size={23} className="fill-green-500 cursor-pointer" onClick={() => props.deleteExperiment(props.name)} />
+                <FaXmark size={31} className="fill-red-500 mr-2 cursor-pointer" onClick={() => setDeleteConfirm(false)} />
+                <FaCheck size={27} className="fill-green-500 cursor-pointer" onClick={() => props.deleteExperiment(props.name)} />
             </div>
             :
-            <FaTrash size={25} className="fill-red-500 cursor-pointer" onClick={() => setDeleteConfirm(true)} />}
+            <FaTrash size={30} className="fill-red-500 cursor-pointer" onClick={() => setDeleteConfirm(true)} />}
 
 
     </div>
