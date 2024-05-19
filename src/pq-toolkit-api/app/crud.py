@@ -1,6 +1,6 @@
 from sqlalchemy.exc import NoResultFound, IntegrityError
 
-from app.models import Experiment, Test
+from app.models import Experiment, Test, ExperimentTestResult
 from app.schemas import *
 from sqlmodel import Session, select
 
@@ -25,9 +25,11 @@ class ExperimentNotConfigured(PqException):
         super().__init__(f"Experiment {experiment_name} not configured!")
 
 
+
 def transform_test(test: Test) -> dict:
     test_dict = {"test_number": test.number, "type": test.type}
-    test_dict.update(test.test_setup)
+    if test.test_setup:
+        test_dict.update(test.test_setup)
     return test_dict
 
 
@@ -113,19 +115,38 @@ def get_experiments_results(experiment_name: str) -> PqResultsList:
     return PqResultsList(results=["test"])
 
 
-def get_experiment_tests_results(experiment_name, result_name) -> PqTestResultsList:
-    return PqTestResultsList(results=[
-        PqTestABResult(
-            testNumber=10,
-            selections=[
-                PqSelection(
-                    questionId="20",
-                    sampleId="sample"
-                )
-            ]
+def get_experiment_tests_results(session: Session, experiment_name) -> PqTestResultsList:
+    experiment_query = select(Experiment).where(Experiment.name == experiment_name)
+    experiment = session.exec(experiment_query).one()
+    results_list = []
+    for test in experiment.tests:
+        for result in test.experiment_test_results:
+            result_data = {
+                "testNumber": test.number,
+                "results": result.test_result 
+            }
+            results_list.append(result_data)
+    return PqTestResultsList(results=results_list)
+
+# Assuming experiment_result_raw_json
+# {
+#   "test_results": [
+#       {"test_number": 1, "results": {"score": 85, "pass": True}},
+#       {"test_number": 2, "results": {"score": 75, "pass": True}}
+#   ]
+# }
+
+
+def add_experiment_result(session: Session, experiment_name: str, experiment_result_raw_json: dict):
+    experiment_query = select(Experiment).where(Experiment.name == experiment_name)
+    experiment = session.exec(experiment_query).one()
+    for test_result in experiment_result_raw_json.get("test_results", []):
+        test_number = test_result.get("test_number")
+        test_query = select(Test).where(Test.number == test_number, Test.experiment_id == experiment.id)
+        test = session.exec(test_query).one()
+        new_test_result = ExperimentTestResult(
+            test_id=test.id,
+            test_result=test_result.get("results")
         )
-    ])
-
-
-def add_experiment_result(experiment_name: str, experiment_result_raw_json: dict):
-    pass
+        session.add(new_test_result)
+        session.commit()
