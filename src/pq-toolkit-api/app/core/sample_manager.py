@@ -96,6 +96,16 @@ class SampleManager:
         except minio.error.S3Error as e:
             raise S3Error(e.code)
 
+    def _sample_data_generator(self, response: HTTPResponse, chunk_size: int):
+        try:
+            data = response.read(chunk_size)
+            while data:
+                yield data
+                data = response.read(chunk_size)
+        finally:
+            response.close()
+            response.release_conn()
+
     def get_sample(self, experiment_name: str, sample_name: str, chunk_size: int = 1024*1024):
         object_name = self._object_name_from_experiment_and_sample(
             experiment_name, sample_name)
@@ -109,14 +119,7 @@ class SampleManager:
         except minio.error.S3Error as e:
             raise S3Error(e.code)
 
-        try:
-            data = response.read(chunk_size)
-            while data:
-                yield data
-                data = response.read(chunk_size)
-        finally:
-            response.close()
-            response.release_conn()
+        return self._sample_data_generator(response, chunk_size)
 
     def remove_sample(self, experiment_name: str, sample_name: str):
         object_name = self._object_name_from_experiment_and_sample(
