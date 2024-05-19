@@ -46,6 +46,7 @@ services:
       MINIO_ROOT_PASSWORD: $MINIO_ROOT_PASSWORD
       MINIO_ENDPOINT: $MINIO_ENDPOINT
       MINIO_STORAGE_USE_HTTPS: $MINIO_STORAGE_USE_HTTPS
+      PQ_API_PORT: $PQ_API_PORT
     command: sh -c "./prestart.sh && python3 main.py"
 
   # Frontend
@@ -87,3 +88,9 @@ services:
     depends_on:
       - pq-toolkit-api-dev
       - pq-toolkit-ui-dev
+    environment:
+      PQ_API_SERVER: $PQ_API_SERVER
+      PQ_API_PORT: $PQ_API_PORT
+      PQ_UI_SERVER: $PQ_UI_SERVER
+      PQ_UI_PORT: $PQ_UI_PORT
+      GATEWAY_PORT: $GATEWAY_PORT

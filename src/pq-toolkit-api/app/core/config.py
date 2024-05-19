@@ -32,6 +32,7 @@ class Settings(BaseSettings):
 
     LOG_LEVEL: int = logging.WARN
     API_V1_STR: str = "/v1"
+    PQ_API_PORT: int = 8787
     DOMAIN: str = "localhost"
     ENVIRONMENT: Literal["local", "staging", "production"] = "local"
 
