@@ -18,7 +18,7 @@ def custom_generate_unique_id(route: APIRoute) -> str:
 
 app = FastAPI(
     title=settings.PROJECT_NAME,
-    openapi_url=f"{settings.API_V1_STR}/openapi.json",
+    root_path="/api/",
     generate_unique_id_function=custom_generate_unique_id,
 )
 
@@ -38,13 +38,11 @@ if settings.BACKEND_CORS_ORIGINS:
     )
 
 
-@app.exception_handler(SampleDoesNotExistError)
-async def pq_exception_handler(request: Request, exc: SampleDoesNotExistError):
+@app.exception_handler(PqException)
+async def pq_exception_handler(request: Request, exc: PqException):
     return JSONResponse(
-        status_code=400,
+        status_code=418,
         content=exc.api_payload.model_dump(),
     )
 
-
-app.add_middleware(ExceptionMiddleware, handlers=app.exception_handlers)
 app.include_router(api_router, prefix=settings.API_V1_STR)
