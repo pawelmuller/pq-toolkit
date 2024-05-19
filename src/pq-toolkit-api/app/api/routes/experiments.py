@@ -1,5 +1,3 @@
-from typing import Any
-
 from fastapi import APIRouter, UploadFile, Request
 
 from app.api.deps import SessionDep, SampleManagerDep
@@ -16,7 +14,7 @@ def get_experiments(session: SessionDep):
 @router.post("/", response_model=PqExperimentsList)
 def add_experiment(session: SessionDep, experiment_name: PqExperimentName):
     crud.add_experiment(session, experiment_name.name)
-    return crud.get_experiments()
+    return crud.get_experiments(session)
 
 
 @router.post("/{experiment_name}", response_model=PqSuccessResponse)
@@ -33,7 +31,7 @@ def get_experiment(session: SessionDep, experiment_name: str):
 @router.delete("/", response_model=PqExperimentsList)
 def delete_experiment(session: SessionDep, experiment_name: PqExperimentName):
     crud.remove_experiment_by_name(session, experiment_name.name)
-    return crud.get_experiments()
+    return crud.get_experiments(session)
 
 
 @router.get("/{experiment_name}/samples", response_model=list[str])

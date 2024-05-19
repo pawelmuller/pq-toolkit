@@ -1,14 +1,39 @@
-from typing import Any
+from sqlalchemy.exc import NoResultFound, IntegrityError
 
-from app.models import Experiment
+from app.models import Experiment, Test
 from app.schemas import *
 from sqlmodel import Session, select
-from io import BytesIO
 
 from fastapi import UploadFile
 from fastapi.responses import StreamingResponse
 from app.core.sample_manager import SampleManager
-from app.core.config import settings
+from app.utils import PqException
+
+
+class ExperimentNotFound(PqException):
+    def __init__(self, experiment_name: str) -> None:
+        super().__init__(f"Experiment {experiment_name} not found!")
+
+
+class ExperimentAlreadyExists(PqException):
+    def __init__(self, experiment_name: str) -> None:
+        super().__init__(f"Experiment {experiment_name} already exists!")
+
+
+class ExperimentNotConfigured(PqException):
+    def __init__(self, experiment_name: str) -> None:
+        super().__init__(f"Experiment {experiment_name} not configured!")
+
+
+def transform_test(test: Test) -> dict:
+    test_dict = {"test_number": test.number, "type": test.type}
+    test_dict.update(test.test_setup)
+    return test_dict
+
+
+def transform_experiment(experiment: Experiment) -> PqExperiment:
+    tests = [transform_test(test) for test in experiment.tests]
+    return PqExperiment.model_validate({"name": experiment.full_name, "description": experiment.description, "tests": tests})
 
 
 def get_experiments(session: Session) -> PqExperimentsList:
@@ -18,28 +43,50 @@ def get_experiments(session: Session) -> PqExperimentsList:
 
 def get_experiment_by_name(session: Session, experiment_name: str) -> PqExperiment:
     statement = select(Experiment).where(Experiment.name == experiment_name)
-    result = session.exec(statement).one()
-    return PqExperiment.model_validate(result)
+    try:
+        result = session.exec(statement).one()
+    except NoResultFound:
+        raise ExperimentNotFound(experiment_name)
+    if not result.configured:
+        raise ExperimentNotConfigured(experiment_name)
+    return transform_experiment(result)
 
 
 def remove_experiment_by_name(session: Session, experiment_name: str):
     statement = select(Experiment).where(Experiment.name == experiment_name)
-    result = session.exec(statement).one()
+    try:
+        result = session.exec(statement).one()
+    except NoResultFound:
+        raise ExperimentNotFound(experiment_name)
     session.delete(result)
     session.commit()
 
 
 def add_experiment(session: Session, experiment_name: str):
     session.add(Experiment(name=experiment_name))
-    session.commit()
+    try:
+        session.commit()
+    except IntegrityError:
+        raise ExperimentAlreadyExists(experiment_name)
+
+
+def transform_test_upload(test: PqTestBase):
+    test_dict = test.model_dump()
+    test_dict.pop("test_number")
+    test_dict.pop("type")
+    return Test(number=test.test_number, type=test.type, test_setup=test_dict)
 
 
 def upload_experiment_config(session: Session, experiment_name: str, json_file: UploadFile):
-    statement = select(Experiment).where(Experiment.name == experiment_name)
-    result = session.exec(statement).one()
     json_data = json_file.file.read()
-    result.description = json_data["description"]
-
+    experiment_upload = PqExperiment.model_validate(json_data)
+    statement = select(Experiment).where(Experiment.name == experiment_name)
+    experiment_db = session.exec(statement).one()
+    experiment_db.full_name = experiment_upload.name
+    experiment_db.description = experiment_upload.description
+    experiment_db.end_text = experiment_upload.end_text
+    tests = [transform_test_upload(test) for test in experiment_upload.tests]
+    experiment_db.tests = tests
     session.commit()
 
 
