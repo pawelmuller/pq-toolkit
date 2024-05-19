@@ -22,8 +22,7 @@ app = FastAPI(
     generate_unique_id_function=custom_generate_unique_id,
 )
 
-# TODO: Log level based on env variables
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=settings.LOG_LEVEL)
 
 # Set all CORS enabled origins
 if settings.BACKEND_CORS_ORIGINS:
@@ -41,7 +40,7 @@ if settings.BACKEND_CORS_ORIGINS:
 @app.exception_handler(PqException)
 async def pq_exception_handler(request: Request, exc: PqException):
     return JSONResponse(
-        status_code=418,
+        status_code=400,
         content=exc.api_payload.model_dump(),
     )
 

@@ -1,6 +1,7 @@
 import secrets
 import warnings
 from typing import Annotated, Any, Literal
+import logging
 
 from pydantic import (
     AnyUrl,
@@ -29,6 +30,7 @@ class Settings(BaseSettings):
         env_file=".env", env_ignore_empty=True, extra="ignore"
     )
 
+    LOG_LEVEL: int = logging.WARN
     API_V1_STR: str = "/v1"
     DOMAIN: str = "localhost"
     ENVIRONMENT: Literal["local", "staging", "production"] = "local"
