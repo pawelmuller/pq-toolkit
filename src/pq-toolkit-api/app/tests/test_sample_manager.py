@@ -1,4 +1,4 @@
-from app.core.sample_manager import SampleManager
+from app.core.sample_manager import SampleManager, SampleDoesNotExistError
 from app.core.config import settings
 from io import BytesIO
 import pytest
@@ -36,6 +36,13 @@ def test_manager_complete(example_byte_stream: tuple[BytesIO, str], sample_manag
     machting_samples = manager.list_matching_samples(experiment_name)
     assert filename in machting_samples
 
-    byte_stream_in = manager.get_sample(experiment_name, filename)
-    assert byte_stream_in.decode() == message
+    for data in manager.get_sample(experiment_name, filename):
+        assert data.decode() == message
+
     manager.remove_sample(experiment_name, filename)
+
+
+def test_manager_non_existent_file(sample_manager_localhost: SampleManager):
+    with pytest.raises(SampleDoesNotExistError):
+        for _ in sample_manager_localhost.get_sample("this", "does not exist"):
+            pass
