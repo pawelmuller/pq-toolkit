@@ -69,16 +69,18 @@ const AdminPage = (props: any): JSX.Element => {
   return (
     <div className="min-h-screen bg-gray-100 dark:bg-stone-900">
       <Header />
-      <div className='flex justify-end fadeInUp mr-10'>
-        <button className='text-black' onClick={() => {
-          fetch("/api/v1/logout", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-          }).then(async () => {
-            await props.refresh()
-          });
-        }}>
-          <TbLogout2 />
+      <div className='flex justify-end fadeInUp mr-4 md:mr-10 z-50'>
+        <button
+          className='flex items-center font-semibold max-md:text-sm max-md:px-2 max-md:py-1 bg-blue-400 dark:bg-blue-500 hover:bg-pink-500 dark:hover:bg-pink-600 text-white px-4 py-2 rounded-full shadow-lg transform transition-transform duration-300 ease-in-out hover:scale-105'
+          onClick={() => {
+            fetch("/api/v1/logout", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+            }).then(async () => {
+              await props.refresh()
+            });
+          }}>
+          <TbLogout2 className="mr-2" />
           Logout
         </button>
       </div>
