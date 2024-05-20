@@ -32,7 +32,7 @@ const CreateExperimentForm = (props: any): JSX.Element => {
         };
     };
     const [currentTest, setCurrentTest] = useState({ isEmpty: true })
-    return <div className="flex flex-col text-black bg-white border-2 w-400 z-10 rounded-lg p-4">
+    return <div className="flex flex-col text-black bg-white border-2 w-400 z-10 rounded-lg p-4 h-200">
         <div className="flex justify-between">
             <span className=" text-4xl">{props.selectedExperiment} experiment setup:</span>
             <FaXmark onClick={() => props.setSelectedExperiment(undefined)} className="cursor-pointer" size={30} />
@@ -73,20 +73,9 @@ const CreateExperimentForm = (props: any): JSX.Element => {
 }
 
 const MushraEditor = (props: any) => {
-    const [newQuestion, setNewQuestion] = useState('')
-    const [sampleFiles, setSampleFiles] = useState<string[]>([])
-    const readSampleFiles = (event: any) => {
-        const fileReader = new FileReader();
-        const { files } = event.target;
-        setSampleFiles([])
-        for (let i = 0; i < files.length; i++) {
-            props.currentTest.samples.forEach(sample => {
-                if (sample.assetPath === files.item(i).name) {
-                    setSampleFiles((oldSampleFiles) => [...oldSampleFiles, files.item(i).name])
-                }
-            });
-        }
-    };
+    const [sampleTest, setSampleTest] = useState<any[]>(props.currentTest.samples)
+    const [anchorsTest, setAnchorsTest] = useState<any[]>(props.currentTest.anchors)
+    const [referenceTest, setReferenceTest] = useState<any>(props.currentTest.reference)
 
     let fileRef = useRef();
     return (
@@ -94,14 +83,41 @@ const MushraEditor = (props: any) => {
             <div >Reference</div>
             <div className="flex flex-row justify-between">
                 <div className="flex flex-col">
-                    <div>Inserted samples</div>
-                    <div>Upload samples</div>
-                    <input ref={fileRef} multiple type="file" onChange={readSampleFiles} />
-                    {sampleFiles.map(sampleFile => <div>{sampleFile}</div>)}
+                    {props.fileList.map((file) => <div>
+                        <input type="radio" id={file} checked={referenceTest.assetPath === file ? true : false} name='reference' onChange={(e) => {
+                            if (e.target.checked) { setReferenceTest({ 'sampleId': 'ref', 'assetPath': file }) } else {
+                                setReferenceTest({})
+                            }
+                        }}></input>
+                        {file}
+                    </div>)}
                 </div>
             </div>
             <div>Anchors</div>
+            {props.fileList.map((file) => <div>
+                <input type="checkbox" id={file} checked={anchorsTest.filter(sample => [file].includes(sample.assetPath)).length > 0 ? true : false} name={file} onChange={(e) => {
+                    if (e.target.checked) { setAnchorsTest((oldarray) => [...oldarray, { 'sampleId': 'a0', 'assetPath': file }]) } else {
+                        let foundJSON = anchorsTest.find(item => { return item.assetPath === file })
+                        setAnchorsTest((oldarray) => oldarray.filter(sample => ![foundJSON.assetPath].includes(sample.assetPath)))
+                    }
+                }}></input>
+                {file}
+            </div>)}
             <div>Samples</div>
+            {props.fileList.map((file) => <div>
+                <input type="checkbox" id={file} checked={sampleTest.filter(sample => [file].includes(sample.assetPath)).length > 0 ? true : false} name={file} onChange={(e) => {
+                    if (e.target.checked) { setSampleTest((oldarray) => [...oldarray, { 'sampleId': 's0', 'assetPath': file }]) } else {
+                        let foundJSON = sampleTest.find(item => { return item.assetPath === file })
+                        setSampleTest((oldarray) => oldarray.filter(sample => ![foundJSON.assetPath].includes(sample.assetPath)))
+                    }
+                }}></input>
+                {file}
+            </div>)}
+            <div className="mt-auto ml-auto">Cancel  <div onClick={async () => {
+                props.setCurrentTest((oldTest) => ({ ...oldTest, 'samples': sampleTest }))
+                props.setCurrentTest((oldTest) => ({ ...oldTest, 'anchors': anchorsTest }))
+                props.setCurrentTest((oldTest) => ({ ...oldTest, 'reference': referenceTest }))
+            }}>Save</div></div>
         </div>
     )
 }
