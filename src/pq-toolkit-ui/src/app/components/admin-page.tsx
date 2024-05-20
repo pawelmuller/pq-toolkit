@@ -133,7 +133,9 @@ const AdminExperimentsListWidget = ({
         <ul className="space-y-2 w-full">
           {experiments.map((name, idx) => (
             <li key={idx} className="flex items-center gap-sm justify-between whitespace-normal break-words">
-              <Link href={`/admin/${name}`} className="font-semibold w-9/12 sm:w-10/12 bg-blue-400 dark:bg-blue-500 hover:bg-pink-500 dark:hover:bg-pink-600 p-2 rounded-md">{name}</Link>
+              <div onClick={() => setSelectedExperiment(name)}>{name}</div>
+              {/* <Link href={`/admin/${name}`} className="font-semibold w-9/12 sm:w-10/12 bg-blue-400 dark:bg-blue-500 hover:bg-pink-500 dark:hover:bg-pink-600 p-2 rounded-md">{name}</Link> */}
+
               <DeleteButton deleteExperiment={deleteExperiment} name={name} />
             </li>
           ))}
