@@ -14,6 +14,13 @@ const config: Config = {
       },
     },
     extend: {
+      transitionProperty: {
+        'height': 'height',
+        'spacing': 'margin, padding',
+      },
+      colors: {
+        'not-that-black': '#100e0d',
+      },
       spacing: {
         xxs: '6px',
         xs: '10px',
@@ -42,9 +49,39 @@ const config: Config = {
             transform: "translate(0px, 0px) scale(1)"
           },
         },
+        typewriter: {
+          to: {
+            left: '100%',
+          },
+        },
+        blink: {
+          '0%': {
+            opacity: '0',
+          },
+          '0.1%': {
+            opacity: '1',
+          },
+          '50%': {
+            opacity: '1',
+          },
+          '50.1%': {
+            opacity: '0',
+          },
+          '100%': {
+            opacity: '0',
+          },
+        },
       },
       animation: {
         blob: "blob 7s infinite",
+        typewriter: 'typewriter 0.9s steps(15) forwards',
+        typewriterAB: 'typewriter 0.7s steps(10) forwards',
+        typewriterABX: 'typewriter 0.7s steps(11) forwards',
+        typewriterMUSHRA: 'typewriter 0.8s steps(14) forwards',
+        caret: 'typewriter 0.9s steps(15) forwards, blink 1s steps(15) infinite 0.9s',
+        caretAB: 'typewriter 0.7s steps(10) forwards, blink 1s steps(10) infinite 0.7s',
+        caretABX: 'typewriter 0.7s steps(11) forwards, blink 1s steps(11) infinite 0.7s',
+        caretMUSHRA: 'typewriter 0.8s steps(14) forwards, blink 1s steps(14) infinite 0.8s',
       },
       height: {
         200: '48rem'
@@ -55,6 +92,14 @@ const config: Config = {
       }
     },
   },
-  plugins: []
+  variants: {
+    extend: {
+      opacity: ['dark'],
+      scale: ['group-hover'],
+      rotate: ['group-hover'],
+    },
+  },
+  darkMode: 'class',
+  plugins: [],
 }
 export default config
