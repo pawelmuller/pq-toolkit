@@ -92,6 +92,7 @@ const AdminPage = (props: any): JSX.Element => {
               deleteExperiment={deleteExperiment}
               addNewExperiment={addNewExperiment}
               setSelectedExperiment={setSelectedExperiment}
+              selectedExperiment={selectedExperiment}
             />
           </div>
         </div>
@@ -104,12 +105,14 @@ const AdminExperimentsListWidget = ({
   experiments,
   deleteExperiment,
   addNewExperiment,
-  setSelectedExperiment
+  setSelectedExperiment,
+  selectedExperiment
 }: {
   experiments: string[]
   deleteExperiment: (name: string) => void
   addNewExperiment: (name: string) => void
-  setSelectedExperiment: (name: any) => void
+  setSelectedExperiment: (name: string) => void
+  selectedExperiment: any
 }): JSX.Element => {
   return (
     <div className="flex flex-col items-center z-10 self-end border-2 h-200 w-80 bg-white pr-10 pl-5 rounded-lg z-10">
@@ -122,9 +125,9 @@ const AdminExperimentsListWidget = ({
         <ul>
           {experiments.map((name, idx) => (
             <li key={idx} className="flex items-center gap-sm justify-between pl-4 z-10">
-              {/* <div onClick={() => setSelectedExperiment(name)}>{name}</div> */}
-              {<Link href={`/admin/${name}`} className="text-black">{name}</Link>}
-              <DeleteButton deleteExperiment={deleteExperiment} name={name} />
+              <div className="text-black" onClick={() => setSelectedExperiment(name)}>{name}</div>
+              {/* {<Link href={`/admin/${name}`} className="text-black">{name}</Link>} */}
+              <DeleteButton deleteExperiment={deleteExperiment} name={name} selectedExperiment={selectedExperiment} setSelectedExperiment={setSelectedExperiment} />
             </li>
           ))}
         </ul>
