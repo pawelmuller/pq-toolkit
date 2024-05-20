@@ -1,47 +1,55 @@
 'use client'
+
 import Link from 'next/link'
-import { useContext } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { ExperimentContext } from './layout'
 import Loading from './loading'
 import InvalidConfigurationError from './invalid-configuration-error'
+import Header from "@/lib/components/basic/header"
+import Blobs from "../components/blobs"
 
-const ExperimentWelcomePage = ({
-  params
-}: {
-  params: { name: string }
-}): JSX.Element => {
-  const { name: experimentName } = params
-
-  return (
-    <main className="flex min-h-screen min-w-[480px] flex-col items-center justify-center">
-      <WelcomeContent name={experimentName} />
-    </main>
-  )
-}
-
-const WelcomeContent = async ({
-  name: experimentName
-}: {
-  name: string
-}): Promise<JSX.Element> => {
+const ExperimentWelcomePage = (props: { params: { name: string } }): JSX.Element => {
+  const { name: experimentName } = props.params
   const context = useContext(ExperimentContext)
   const data = context?.data
+  const [errorRequest, setErrorRequest] = useState(false)
 
-  if (context?.error === true) return <InvalidConfigurationError />
-  if (data == null) return <Loading />
+  useEffect(() => {
+    if (context?.error) {
+      setErrorRequest(true)
+    }
+  }, [context?.error])
 
   return (
-    <div className="bg-white rounded-md p-lg flex flex-col items-center text-black">
-      <div className="text-lg">
-        Welcome to experiment <b>{data.name}</b>
-      </div>
-      <div className="mt-sm">{data.description}</div>
-      <div className="mt-md">
-        <Link href={`/${experimentName}/1`}>
-          <button className="bg-blue-500 p-xs rounded-lg text-white font-bold">
-            Start
-          </button>
-        </Link>
+    <div className="min-h-screen bg-gray-100 dark:bg-stone-900">
+      <Header />
+      <div className="flex flex-col h-full w-full items-center justify-center my-auto mt-40">
+        <div className="relative text-center mb-sm">
+          <Blobs />
+        </div>
+        <div className="flex content-center bg-white dark:bg-stone-900 rounded-2xl justify-center fadeInUp z-10 p-3 mt-4 md:mt-8">
+          <div className="flex flex-col justify-center content-center">
+            {errorRequest ? (
+              <InvalidConfigurationError />
+            ) : data == null ? (
+              <Loading />
+            ) : (
+              <div className="bg-white rounded-md p-lg flex flex-col items-center text-black dark:text-white">
+                <div className="text-lg">
+                  Welcome to experiment <b>{data.name}</b>
+                </div>
+                <div className="mt-sm">{data.description}</div>
+                <div className="mt-md">
+                  <div className="bg-clip-text font-bold text-transparent bg-gradient-to-r from-cyan-500  to-pink-500 cursor-pointer" onClick={() => {
+                    window.location.href = `/${experimentName}/1`
+                  }}>
+                    Start
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
       </div>
     </div>
   )

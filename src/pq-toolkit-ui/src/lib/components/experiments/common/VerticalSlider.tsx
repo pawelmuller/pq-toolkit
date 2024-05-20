@@ -1,6 +1,33 @@
 'use client'
-import { Slider } from '@mui/material'
+import { Slider, styled } from '@mui/material'
 import React from 'react'
+
+// Custom styling for the slider with a blue to red gradient
+const CustomSlider = styled(Slider)({
+  '& .MuiSlider-rail': {
+    background: 'linear-gradient(to bottom, blue, red)',
+    opacity: 1,
+  },
+  '& .MuiSlider-track': {
+    background: 'linear-gradient(to bottom, blue, red)',
+  },
+  '& .MuiSlider-thumb': {
+    backgroundColor: '#fff',
+    border: '2px solid currentColor',
+    '&:hover, &.Mui-focusVisible, &.Mui-active': {
+      boxShadow: '0px 0px 0px 8px rgba(255, 0, 0, 0.16)',
+    },
+  },
+  '& .MuiSlider-vertical': {
+    width: '8px',
+  },
+  '& .MuiSlider-mark': {
+    backgroundColor: 'currentColor',
+    width: '4px',
+    height: '4px',
+    borderRadius: '50%',
+  },
+})
 
 const VerticalSlider = ({
   rating,
@@ -23,7 +50,7 @@ const VerticalSlider = ({
             />
           ))}
         </div>
-        <Slider
+        <CustomSlider
           orientation="vertical"
           min={0}
           max={100}

@@ -22,6 +22,8 @@ import {
   type MUSHRAResult,
   type APEResult
 } from '@/lib/schemas/experimentState'
+import Header from "@/lib/components/basic/header"
+import Blobs from "../../components/blobs"
 
 export const revalidate = 0
 
@@ -115,31 +117,50 @@ const TestPage = ({
   }
 
   return (
-    <div className="min-h-screen flex flex-col items-center">
-      <h1 className="text-xl font-semibold pt-md mt-auto">Test #{step}</h1>
-      <div className="mb-auto mt-md">
-        {getTestComponent()}
-        <div className="flex justify-center mt-md gap-sm">
-          {step > 1 && (
-            <Link href={(step - 1).toString()}>
-              <button className="bg-blue-500 rounded-md p-xs font-semibold text-white">
-                Previous
-              </button>
-            </Link>
-          )}
-          {step === tests.length ? (
-            <Link href="finish" onClick={saveResults}>
-              <button className="bg-blue-500 rounded-md p-xs font-semibold text-white">
-                Finish
-              </button>
-            </Link>
-          ) : (
-            <Link href={(step + 1).toString()}>
-              <button className="bg-blue-500 rounded-md p-xs font-semibold text-white">
-                Next
-              </button>
-            </Link>
-          )}
+    <div className="min-h-screen bg-gray-100 dark:bg-stone-900">
+      <Header />
+      <div className="flex flex-col h-full w-full items-center justify-center my-auto mt-40">
+        <div className="relative text-center mb-sm">
+          <Blobs />
+          <div className="fadeInUp">
+            <h1 className="relative text-5xl md:text-6xl font-bold">Perceptual Qualities Toolkit</h1>
+            <h2 className="relative text-2xl md:text-3xl font-semibold mt-sm">
+              Test #{step}
+            </h2>
+          </div>
+        </div>
+        <div className="flex content-center bg-white dark:bg-stone-900 rounded-2xl justify-center fadeInUp z-10 p-3 mt-4 md:mt-8">
+          <div className="flex flex-col justify-center content-center">
+            <div className="bg-white rounded-md p-lg flex flex-col items-center text-black dark:text-white">
+              <div className="flex flex-col gap-md">
+                <div className="flex flex-col gap-xs">
+                  {getTestComponent()}
+                </div>
+                <div className="flex justify-center mt-md gap-sm">
+                  {step > 1 && (
+                    <Link href={(step - 1).toString()}>
+                      <button className="bg-blue-500 rounded-md p-xs font-semibold text-white">
+                        Previous
+                      </button>
+                    </Link>
+                  )}
+                  {step === tests.length ? (
+                    <Link href="finish" onClick={saveResults}>
+                      <button className="bg-blue-500 rounded-md p-xs font-semibold text-white">
+                        Finish
+                      </button>
+                    </Link>
+                  ) : (
+                    <Link href={(step + 1).toString()}>
+                      <button className="bg-blue-500 rounded-md p-xs font-semibold text-white">
+                        Next
+                      </button>
+                    </Link>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
