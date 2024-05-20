@@ -159,8 +159,6 @@ const ApeEditor = (props: any) => {
 const AbxEditor = (props: any) => {
     const [newQuestion, setNewQuestion] = useState('')
     const [sampleTest, setSampleTest] = useState<any[]>(props.currentTest.samples)
-
-    let fileRef = useRef();
     return (
         <div className="w-full">
             <div >Samples</div>
@@ -194,30 +192,22 @@ const AbxEditor = (props: any) => {
 
 const AbEditor = (props: any) => {
     const [newQuestion, setNewQuestion] = useState('')
-    const [sampleFiles, setSampleFiles] = useState<string[]>([])
-    const readSampleFiles = (event: any) => {
-        const fileReader = new FileReader();
-        const { files } = event.target;
-        setSampleFiles([])
-        for (let i = 0; i < files.length; i++) {
-            props.currentTest.samples.forEach(sample => {
-                if (sample.assetPath === files.item(i).name) {
-                    setSampleFiles((oldSampleFiles) => [...oldSampleFiles, files.item(i).name])
-                }
-            });
-        }
-    };
-
-    let fileRef = useRef();
+    const [sampleTest, setSampleTest] = useState<any[]>(props.currentTest.samples)
     return (
         <div className="w-full">
             <div >Samples</div>
             <div className="flex flex-row justify-between">
                 <div className="flex flex-col">
                     <div>Inserted samples</div>
-                    <div>Upload samples</div>
-                    <input ref={fileRef} multiple type="file" onChange={readSampleFiles} />
-                    {sampleFiles.map(sampleFile => <div>{sampleFile}</div>)}
+                    {props.fileList.map((file) => <div>
+                        <input type="checkbox" id={file} checked={sampleTest.filter(sample => [file].includes(sample.assetPath)).length > 0 ? true : false} name={file} onChange={(e) => {
+                            if (e.target.checked) { setSampleTest((oldarray) => [...oldarray, { 'sampleId': 's0', 'assetPath': file }]) } else {
+                                let foundJSON = sampleTest.find(item => { return item.assetPath === file })
+                                setSampleTest((oldarray) => oldarray.filter(sample => ![foundJSON.assetPath].includes(sample.assetPath)))
+                            }
+                        }}></input>
+                        {file}
+                    </div>)}
                 </div>
             </div>
             <div>Questions</div>
@@ -227,6 +217,9 @@ const AbEditor = (props: any) => {
             <div>
                 {props.currentTest.questions.map((question) => <div>{question.text}</div>)}
             </div>
+            <div className="mt-auto ml-auto">Cancel  <div onClick={() => {
+                props.setCurrentTest((oldTest) => ({ ...oldTest, 'samples': sampleTest }))
+            }}>Save</div></div>
         </div>
     )
 }
