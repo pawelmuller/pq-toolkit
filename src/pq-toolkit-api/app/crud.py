@@ -3,7 +3,7 @@ from sqlalchemy.exc import NoResultFound, IntegrityError
 from app.models import Experiment, Test, ExperimentTestResult
 from app.schemas import *
 from sqlmodel import Session, select
-
+from typing import List
 from fastapi import UploadFile
 from fastapi.responses import StreamingResponse
 from app.core.sample_manager import SampleManager
@@ -152,8 +152,8 @@ def add_experiment_result(session: Session, experiment_name: str, experiment_res
     experiment_query = select(Experiment).where(Experiment.name == experiment_name)
     experiment = session.exec(experiment_query).one()
     for test_result in experiment_result_raw_json.get("test_results", []):
-        test_number = test_result.get("test_number")
-        test_query = select(Test).where(Test.number == test_number, Test.experiment_id == experiment.id)
+        test_number = int(test_result.get("test_number"))
+        test_query = select(Test).where(Test.id == test_number, Test.experiment_id == experiment.id)
         test = session.exec(test_query).one()
         new_test_result = ExperimentTestResult(
             test_id=test.id,
@@ -161,3 +161,60 @@ def add_experiment_result(session: Session, experiment_name: str, experiment_res
         )
         session.add(new_test_result)
         session.commit()
+
+
+
+def get_test_results_by_ids(session: Session, test_ids: List[int]) -> PqTestResultsList:
+    results_query = select(ExperimentTestResult).where(ExperimentTestResult.test_id.in_(test_ids))
+    db_results = session.exec(results_query).all()
+
+    test_results = []
+
+    for db_result in db_results:
+        test_type = db_result.test.type.value
+        test_result_data = db_result.test_result
+
+        if test_type == "AB":
+            result_model = PqTestABResult(test_number=db_result.test_id, **test_result_data)
+        elif test_type == "ABX":
+            result_model = PqTestABXResult(test_number=db_result.test_id, **test_result_data)
+        elif test_type == "MUSHRA":
+            result_model = PqTestMUSHRAResult(test_number=db_result.test_id, **test_result_data)
+        elif test_type == "APE":
+            result_model = PqTestAPEResult(test_number=db_result.test_id, **test_result_data)
+        else:
+            continue
+
+        test_results.append(result_model)
+
+    return PqTestResultsList(results=test_results)
+
+
+def add_test_results_from_dict(session: Session, results_data: dict):
+
+    results_list = results_data.get('results')
+    if not results_list:
+        raise ValueError("The provided dictionary does not contain a 'results' key or it is empty.")
+
+    new_results = []
+
+    for result_dict in results_list:
+        test_id = result_dict.get('test_id')
+        test_result_data = result_dict.get('test_result')
+        
+        if test_id is None or test_result_data is None:
+            raise ValueError(f"Missing required data in one of the result entries: {result_dict}")
+
+        new_result = ExperimentTestResult(test_id=test_id, test_result=test_result_data)
+
+        # Add to the session
+        session.add(new_result)
+        new_results.append(new_result)
+
+    try:
+        session.commit()
+    except Exception as e:
+        session.rollback()
+        raise Exception(f"Failed to add test results due to: {str(e)}")
+
+    return new_results
