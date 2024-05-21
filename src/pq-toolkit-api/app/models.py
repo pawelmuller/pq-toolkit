@@ -22,7 +22,7 @@ class Experiment(SQLModel, table=True):
     name: str = Field(index=True, unique=True)
     full_name: str | None = Field(default=None)
     description: str | None = Field(default=None)
-    end_text: str | None = Field(default=None)
+    end_text: str | None
     configured: bool = False
 
     tests: list["Test"] = Relationship(back_populates="experiment")
