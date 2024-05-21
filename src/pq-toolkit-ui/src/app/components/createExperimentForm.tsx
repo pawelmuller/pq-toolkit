@@ -4,7 +4,6 @@ import { FaArrowLeft, FaXmark } from "react-icons/fa6";
 import { FaArrowRight, FaPlus, FaSadTear } from "react-icons/fa";
 import { array } from "zod";
 
-
 const CreateExperimentForm = (props: any): JSX.Element => {
     const [setup, setSetup] = useState({
         name: 'test 1', tests: []
@@ -24,7 +23,6 @@ const CreateExperimentForm = (props: any): JSX.Element => {
     const readFile = (event: any) => {
         const fileReader = new FileReader();
         const { files } = event.target;
-
         fileReader.readAsText(files[0], "UTF-8");
         fileReader.onload = (e: any) => {
             const content = e.target.result;
@@ -39,7 +37,17 @@ const CreateExperimentForm = (props: any): JSX.Element => {
         </div>
         <div className="flex flex-row mt-10 h-full">
             <div className="flex flex-col border-r-2 h-full w-52">
-                {setup.tests.map(test => <div onClick={() => setCurrentTest(test)}>{test.testNumber}</div>)}
+                <div onClick={() => setSetup((oldSetup) => ({
+                    ...oldSetup, tests: [...oldSetup.tests, {
+                        testNumber: 1,
+                        type: "AB",
+                        samples: [
+                        ],
+                        questions: [
+                        ]
+                    }]
+                }))}>dodaj nowy test</div>
+                {setup.tests.map(test => <div onClick={() => setCurrentTest(test)}>{test.samples.some(sample => fileList.includes(sample.assetPath)) ? <div>{test.testNumber}</div> : <div>{test.testNumber}!</div>}</div>)}
 
                 <div className="mt-auto">Upload samples
                     <input ref={fileRef} multiple type="file" onChange={readSampleFiles} />
@@ -60,10 +68,10 @@ const CreateExperimentForm = (props: any): JSX.Element => {
                 </div>
                 {(() => {
                     switch (currentTest.type) {
-                        case "MUSHRA": return <MushraEditor currentTest={currentTest} setCurrentTest={setCurrentTest} fileList={fileList} setFileList={setFileList} />;
-                        case "AB": return <AbEditor currentTest={currentTest} setCurrentTest={setCurrentTest} fileList={fileList} setFileList={setFileList} />;
-                        case "ABX": return <AbxEditor currentTest={currentTest} setCurrentTest={setCurrentTest} fileList={fileList} setFileList={setFileList} />;
-                        case "APE": return <ApeEditor currentTest={currentTest} setCurrentTest={setCurrentTest} fileList={fileList} setFileList={setFileList} />;
+                        case "MUSHRA": return <MushraEditor currentTest={currentTest} setCurrentTest={setCurrentTest} fileList={fileList} setFileList={setFileList} setup={setup} setSetup={setSetup} />;
+                        case "AB": return <AbEditor currentTest={currentTest} setCurrentTest={setCurrentTest} fileList={fileList} setFileList={setFileList} setup={setup} setSetup={setSetup} />;
+                        case "ABX": return <AbxEditor currentTest={currentTest} setCurrentTest={setCurrentTest} fileList={fileList} setFileList={setFileList} setup={setup} setSetup={setSetup} />;
+                        case "APE": return <ApeEditor currentTest={currentTest} setCurrentTest={setCurrentTest} fileList={fileList} setFileList={setFileList} setup={setup} setSetup={setSetup} />;
                     }
                 })()}
             </div>}
@@ -117,6 +125,7 @@ const MushraEditor = (props: any) => {
                 props.setCurrentTest((oldTest) => ({ ...oldTest, 'samples': sampleTest }))
                 props.setCurrentTest((oldTest) => ({ ...oldTest, 'anchors': anchorsTest }))
                 props.setCurrentTest((oldTest) => ({ ...oldTest, 'reference': referenceTest }))
+                props.setSetup((oldSetup) => ({ ...oldSetup, tests: oldSetup.tests.map(test => test.testNumber === props.currentTest.testNumber ? props.currentTest : test) }))
             }}>Save</div></div>
         </div>
     )
@@ -151,6 +160,7 @@ const ApeEditor = (props: any) => {
             </div>
             <div className="mt-auto ml-auto">Cancel  <div onClick={() => {
                 props.setCurrentTest((oldTest) => ({ ...oldTest, 'samples': sampleTest }))
+                props.setSetup((oldSetup) => ({ ...oldSetup, tests: oldSetup.tests.map(test => test.testNumber === props.currentTest.testNumber ? props.currentTest : test) }))
             }}>Save</div></div>
         </div>
     )
@@ -185,6 +195,7 @@ const AbxEditor = (props: any) => {
             </div>
             <div className="mt-auto ml-auto">Cancel  <div onClick={() => {
                 props.setCurrentTest((oldTest) => ({ ...oldTest, 'samples': sampleTest }))
+                props.setSetup((oldSetup) => ({ ...oldSetup, tests: oldSetup.tests.map(test => test.testNumber === props.currentTest.testNumber ? props.currentTest : test) }))
             }}>Save</div></div>
         </div>
     )
@@ -219,6 +230,7 @@ const AbEditor = (props: any) => {
             </div>
             <div className="mt-auto ml-auto">Cancel  <div onClick={() => {
                 props.setCurrentTest((oldTest) => ({ ...oldTest, 'samples': sampleTest }))
+                props.setSetup((oldSetup) => ({ ...oldSetup, tests: oldSetup.tests.map(test => test.testNumber === props.currentTest.testNumber ? props.currentTest : test) }))
             }}>Save</div></div>
         </div>
     )
