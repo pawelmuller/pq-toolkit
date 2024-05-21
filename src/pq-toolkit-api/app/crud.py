@@ -25,6 +25,10 @@ class ExperimentNotConfigured(PqException):
         super().__init__(f"Experiment {experiment_name} not configured!")
 
 
+class ExperimentAlreadyConfigured(PqException):
+    def __init__(self, experiment_name: str) -> None:
+        super().__init__(f"Experiment {experiment_name} already configured!")
+
 
 def transform_test(test: Test) -> dict:
     test_dict = {"test_number": test.number, "type": test.type}
@@ -35,7 +39,7 @@ def transform_test(test: Test) -> dict:
 
 def transform_experiment(experiment: Experiment) -> PqExperiment:
     tests = [transform_test(test) for test in experiment.tests]
-    return PqExperiment.model_validate({"name": experiment.full_name, "description": experiment.description, "tests": tests})
+    return PqExperiment.model_validate({"name": experiment.full_name, "description": experiment.description, "endText": experiment.end_text, "tests": tests})
 
 
 def get_experiments(session: Session) -> PqExperimentsList:
@@ -60,6 +64,11 @@ def remove_experiment_by_name(session: Session, experiment_name: str):
         result = session.exec(statement).one()
     except NoResultFound:
         raise ExperimentNotFound(experiment_name)
+    # Possibly refactor to use cascade delete built into db
+    for test in result.tests:
+        for test_result in test.experiment_test_results:
+            session.delete(test_result)
+        session.delete(test)
     session.delete(result)
     session.commit()
 
@@ -72,7 +81,7 @@ def add_experiment(session: Session, experiment_name: str):
         raise ExperimentAlreadyExists(experiment_name)
 
 
-def transform_test_upload(test: PqTestBase):
+def transform_test_upload(test: PqTestBase, experiment_id: int) -> Test:
     test_dict = test.model_dump()
     test_dict.pop("test_number")
     test_dict.pop("type")
@@ -80,15 +89,17 @@ def transform_test_upload(test: PqTestBase):
 
 
 def upload_experiment_config(session: Session, experiment_name: str, json_file: UploadFile):
-    json_data = json_file.file.read()
-    experiment_upload = PqExperiment.model_validate(json_data)
+    experiment_upload = PqExperiment.model_validate_json(json_file.file.read())
     statement = select(Experiment).where(Experiment.name == experiment_name)
     experiment_db = session.exec(statement).one()
+    if experiment_db.configured:
+        raise ExperimentAlreadyConfigured(experiment_name)
     experiment_db.full_name = experiment_upload.name
     experiment_db.description = experiment_upload.description
     experiment_db.end_text = experiment_upload.end_text
-    tests = [transform_test_upload(test) for test in experiment_upload.tests]
+    tests = [transform_test_upload(test, experiment_db.id) for test in experiment_upload.tests]
     experiment_db.tests = tests
+    experiment_db.configured = True
     session.commit()
 
 
@@ -123,7 +134,7 @@ def get_experiment_tests_results(session: Session, experiment_name) -> PqTestRes
         for result in test.experiment_test_results:
             result_data = {
                 "testNumber": test.number,
-                "results": result.test_result 
+                "results": result.test_result
             }
             results_list.append(result_data)
     return PqTestResultsList(results=results_list)

@@ -188,6 +188,7 @@ class PqExperiment(BaseModel):
     uid: UUID4 | str = uuid.uuid4()
     name: str
     description: str
+    end_text: str | None = Field(alias="endText", default=None)
     tests: list[PqTestMUSHRA | PqTestAPE | PqTestABX | PqTestAB]
 
     @field_validator("tests", mode="before")  # noqa
