@@ -78,10 +78,10 @@ const CreateExperimentForm = (props: any): JSX.Element => {
                 <div>
                     Type of Experiment
                     <div>
-                        <input type="radio" value="MUSHRA" name="type" checked={currentTest.type === "MUSHRA"} onClick={(e) => setCurrentTest({ ...currentTest, type: e.target.value })} />MUSHRA
-                        <input type="radio" value="AB" name="type" checked={currentTest.type === "AB"} onClick={(e) => setCurrentTest({ ...currentTest, type: e.target.value })} />AB
-                        <input type="radio" value="ABX" name="type" checked={currentTest.type === "ABX"} onClick={(e) => setCurrentTest({ ...currentTest, type: e.target.value })} />ABX
-                        <input type="radio" value="APE" name="type" checked={currentTest.type === "APE"} onClick={(e) => setCurrentTest({ ...currentTest, type: e.target.value })} />APE
+                        <input type="radio" value="MUSHRA" name="type" checked={currentTest.type === "MUSHRA"} onClick={(e) => setCurrentTest({ ...currentTest, type: e.target.value, anchors: [], reference: {} })} />MUSHRA
+                        <input type="radio" value="AB" name="type" checked={currentTest.type === "AB"} onClick={(e) => setCurrentTest({ ...currentTest, type: e.target.value, questions: [] })} />AB
+                        <input type="radio" value="ABX" name="type" checked={currentTest.type === "ABX"} onClick={(e) => setCurrentTest({ ...currentTest, type: e.target.value, questions: [] })} />ABX
+                        <input type="radio" value="APE" name="type" checked={currentTest.type === "APE"} onClick={(e) => setCurrentTest({ ...currentTest, type: e.target.value, axis: [] })} />APE
                     </div>
                 </div>
                 {(() => {
