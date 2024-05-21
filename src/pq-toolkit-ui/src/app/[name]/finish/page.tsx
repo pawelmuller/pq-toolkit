@@ -34,7 +34,7 @@ const FinishPage = ({ params }: { params: { name: string } }): JSX.Element => {
                 'Thank you for participating in this test. Your results have been submitted.'}
             </div>
             <Link href={`/`}>
-              <button className="bg-blue-500 rounded-md p-xs font-semibold text-white">
+              <button className="bg-blue-500 rounded-md p-2 font-semibold text-white hover:bg-pink-500 dark:hover:bg-pink-600">
                 Go back to homepage
               </button>
             </Link>

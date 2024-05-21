@@ -2,14 +2,14 @@
 import { Slider, styled } from '@mui/material'
 import React from 'react'
 
-// Custom styling for the slider with a blue to red gradient
+// Custom styling for the slider with a blue to red gradient through purple
 const CustomSlider = styled(Slider)({
   '& .MuiSlider-rail': {
-    background: 'linear-gradient(to bottom, blue, red)',
+    background: 'linear-gradient(to bottom, blue, purple, red)',
     opacity: 1,
   },
   '& .MuiSlider-track': {
-    background: 'linear-gradient(to bottom, blue, red)',
+    background: 'linear-gradient(to bottom, blue, purple, red)',
   },
   '& .MuiSlider-thumb': {
     backgroundColor: '#fff',

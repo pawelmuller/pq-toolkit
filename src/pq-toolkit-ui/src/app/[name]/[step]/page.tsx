@@ -139,20 +139,20 @@ const TestPage = ({
                 <div className="flex justify-center mt-md gap-sm">
                   {step > 1 && (
                     <Link href={(step - 1).toString()}>
-                      <button className="bg-blue-500 rounded-md p-xs font-semibold text-white">
+                      <button className="bg-blue-500 rounded-md p-2 font-semibold text-white hover:bg-pink-500 dark:hover:bg-pink-600">
                         Previous
                       </button>
                     </Link>
                   )}
                   {step === tests.length ? (
                     <Link href="finish" onClick={saveResults}>
-                      <button className="bg-blue-500 rounded-md p-xs font-semibold text-white">
+                      <button className="bg-blue-500 rounded-md p-2 font-semibold text-white hover:bg-pink-500 dark:hover:bg-pink-600">
                         Finish
                       </button>
                     </Link>
                   ) : (
                     <Link href={(step + 1).toString()}>
-                      <button className="bg-blue-500 rounded-md p-xs font-semibold text-white">
+                      <button className="bg-blue-500 rounded-md p-2 font-semibold text-white hover:bg-pink-500 dark:hover:bg-pink-600">
                         Next
                       </button>
                     </Link>

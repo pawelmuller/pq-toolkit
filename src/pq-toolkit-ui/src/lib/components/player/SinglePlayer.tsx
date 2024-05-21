@@ -1,7 +1,9 @@
 'use client'
 import { useEffect, useRef, useState } from 'react'
 import { Howl } from 'howler'
-import { PauseButton, PlayButton, StopButton } from './ControlButtons'
+import { IconButton, Slider, Typography, Box } from '@mui/material'
+import PlayArrowIcon from '@mui/icons-material/PlayArrow'
+import PauseIcon from '@mui/icons-material/Pause'
 import { formatTime } from './utils/playerUtils'
 
 const SinglePlayer = ({
@@ -71,41 +73,37 @@ const SinglePlayer = ({
     }
   }, [status])
 
+  const togglePlayPause = () => {
+    if (status === 'playing') {
+      setStatus('paused')
+    } else {
+      setStatus('playing')
+    }
+  }
+
   return (
-    <div className="flex flex-col items-center min-w-[16rem]">
-      <div className="text-md font-semibold">{name}</div>
-      <input
-        type="range"
-        min="0"
+    <Box display="flex" flexDirection="column" alignItems="center" minWidth="16rem" sx={{ bgcolor: 'blue.100', p: 2, borderRadius: 1 }}>
+      <Typography variant="h6">{name}</Typography>
+      <Slider
+        min={0}
         max={length}
         value={progress}
-        onChange={(e) => {
-          playerRef.current.seek(parseInt(e.target.value))
-          setProgress(parseInt(e.target.value))
+        onChange={(e, value) => {
+          playerRef.current.seek(value as number)
+          setProgress(value as number)
         }}
-        className="w-full appearance-none bg-blue-100 rounded-full"
+        sx={{ width: '100%', color: 'blue' }}
       />
-      <div className="w-full flex justify-end text-sm font-light">
-        {formatTime(progress)}/{formatTime(length)}
-      </div>
-      <div className="flex gap-sm justify-center">
-        <PlayButton
-          onClick={() => {
-            setStatus('playing')
-          }}
-        />
-        <PauseButton
-          onClick={() => {
-            setStatus('paused')
-          }}
-        />
-        <StopButton
-          onClick={() => {
-            setStatus('stopped')
-          }}
-        />
-      </div>
-    </div>
+      <Box display="flex" justifyContent="space-between" width="100%" fontSize="0.875rem">
+        <Typography variant="body2">{formatTime(progress)}</Typography>
+        <Typography variant="body2">{formatTime(length)}</Typography>
+      </Box>
+      <Box display="flex" gap={1} justifyContent="center">
+        <IconButton onClick={togglePlayPause} sx={{ color: 'blue' }}>
+          {status === 'playing' ? <PauseIcon /> : <PlayArrowIcon />}
+        </IconButton>
+      </Box>
+    </Box>
   )
 }
 
