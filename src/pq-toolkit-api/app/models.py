@@ -43,5 +43,6 @@ class ExperimentTestResult(SQLModel, table=True):
     id: int | None = Field(default=None, primary_key=True)
     test_result: dict = Field(sa_column=Column(JSON))
     test_id: int = Field(foreign_key="test.id")
+    experiment_use: str
 
     test: list["Test"] = Relationship(back_populates="experiment_test_results")
