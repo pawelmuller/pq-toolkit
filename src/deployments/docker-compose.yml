@@ -48,6 +48,8 @@ services:
       MINIO_STORAGE_USE_HTTPS: $MINIO_STORAGE_USE_HTTPS
       PQ_API_PORT: $PQ_API_PORT
     command: sh -c "./prestart.sh && python3 main.py"
+    volumes:
+      - ../pq-toolkit-api/app:/app/app
 
   # Frontend
   pq-toolkit-ui-dev:
