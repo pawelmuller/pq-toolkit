@@ -56,18 +56,17 @@ def delete_sample(sample_manager: SampleManagerDep, experiment_name: str, filena
     return PqSuccessResponse(success=True)
 
 
-@router.get("/{experiment_name}/results", response_model=PqResultsList)
-def get_results(experiment_name: str):
-    return crud.get_experiments_results(experiment_name)
+@router.get("/{experiment_name}/results", response_model=PqTestResultsList)
+def get_results(session: SessionDep, experiment_name: str):
+    return crud.get_experiments_results(session, experiment_name)
 
 
 @router.post("/{experiment_name}/results", response_model=PqResultsList)
 async def get_results(session: SessionDep, experiment_name: str, result_json: Request):
     res = await result_json.json()
-    crud.add_experiment_result(session, experiment_name, res)
-    return crud.get_experiments_results(experiment_name)
+    return crud.add_experiment_result(session, experiment_name, res)
 
 
 @router.get("/{experiment_name}/results/{result_name}", response_model=PqTestResultsList)
-def get_test_results(session: SessionDep, experiment_name: str):
-    return crud.get_experiment_tests_results(session, experiment_name)
+def get_test_results(session: SessionDep, experiment_name: str, result_name: str):
+    return crud.get_experiment_tests_results(session, experiment_name, result_name)

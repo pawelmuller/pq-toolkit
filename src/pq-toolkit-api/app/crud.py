@@ -3,12 +3,12 @@ from sqlalchemy.exc import NoResultFound, IntegrityError
 from app.models import Experiment, Test, ExperimentTestResult
 from app.schemas import *
 from sqlmodel import Session, select
-from typing import List
+from typing import List, Dict, Any
 from fastapi import UploadFile
 from fastapi.responses import StreamingResponse
 from app.core.sample_manager import SampleManager
 from app.utils import PqException
-
+from random import randint
 
 class ExperimentNotFound(PqException):
     def __init__(self, experiment_name: str) -> None:
@@ -122,92 +122,49 @@ def get_experiment_samples(manager: SampleManager, experiment_name: str) -> list
     return manager.list_matching_samples(experiment_name)
 
 
-def get_experiments_results(experiment_name: str) -> PqResultsList:
-    return PqResultsList(results=["test"])
-
-
-def get_experiment_tests_results(session: Session, experiment_name) -> PqTestResultsList:
-    experiment_query = select(Experiment).where(Experiment.name == experiment_name)
-    experiment = session.exec(experiment_query).one()
-    results_list = []
-    for test in experiment.tests:
-        for result in test.experiment_test_results:
-            result_data = {
-                "testNumber": test.number,
-                "results": result.test_result
-            }
-            results_list.append(result_data)
-    return PqTestResultsList(results=results_list)
-
-# Assuming experiment_result_raw_json
-# {
-#   "test_results": [
-#       {"test_number": 1, "results": {"score": 85, "pass": True}},
-#       {"test_number": 2, "results": {"score": 75, "pass": True}}
-#   ]
-# }
-
-
 def add_experiment_result(session: Session, experiment_name: str, experiment_result_raw_json: dict):
     experiment_query = select(Experiment).where(Experiment.name == experiment_name)
-    experiment = session.exec(experiment_query).one()
-    for test_result in experiment_result_raw_json.get("test_results", []):
-        test_number = int(test_result.get("test_number"))
-        test_query = select(Test).where(Test.id == test_number, Test.experiment_id == experiment.id)
-        test = session.exec(test_query).one()
-        new_test_result = ExperimentTestResult(
-            test_id=test.id,
-            test_result=test_result.get("results")
-        )
-        session.add(new_test_result)
-        session.commit()
+    try:
+        experiment = session.exec(experiment_query).one()
+    except NoResultFound:
+        raise ValueError(f"Experiment named {experiment_name} not found")
+
+    test_query = select(Test).where(Test.experiment_id == experiment.id)
+    tests = session.exec(test_query).all()
+
+    if not tests:
+        raise ValueError("No tests found for the experiment")
+    test_mapping = [(test.number, test.id) for test in tests]
 
 
-
-def get_test_results_by_ids(session: Session, test_ids: List[int]) -> PqTestResultsList:
-    results_query = select(ExperimentTestResult).where(ExperimentTestResult.test_id.in_(test_ids))
-    db_results = session.exec(results_query).all()
-
-    test_results = []
-
-    for db_result in db_results:
-        test_type = db_result.test.type.value
-        test_result_data = db_result.test_result
-
-        if test_type == "AB":
-            result_model = PqTestABResult(test_number=db_result.test_id, **test_result_data)
-        elif test_type == "ABX":
-            result_model = PqTestABXResult(test_number=db_result.test_id, **test_result_data)
-        elif test_type == "MUSHRA":
-            result_model = PqTestMUSHRAResult(test_number=db_result.test_id, **test_result_data)
-        elif test_type == "APE":
-            result_model = PqTestAPEResult(test_number=db_result.test_id, **test_result_data)
-        else:
-            continue
-
-        test_results.append(result_model)
-
-    return PqTestResultsList(results=test_results)
+    try:
+        added_results = add_test_results(session, experiment_result_raw_json, test_mapping)
+        return {"message": "Test results successfully added", "results": added_results}
+    except Exception as e:
+        raise Exception(f"Failed to add experiment results due to: {str(e)}")
 
 
-def add_test_results_from_dict(session: Session, results_data: dict):
-
+def add_test_results(session: Session, results_data: Dict[str, Any], test_mapping: List[tuple]):
     results_list = results_data.get('results')
     if not results_list:
         raise ValueError("The provided dictionary does not contain a 'results' key or it is empty.")
 
+    test_number_to_id = {number: test_id for number, test_id in test_mapping}
     new_results = []
 
     for result_dict in results_list:
-        test_id = result_dict.get('test_id')
-        test_result_data = result_dict.get('test_result')
-        
-        if test_id is None or test_result_data is None:
-            raise ValueError(f"Missing required data in one of the result entries: {result_dict}")
+        test_number = result_dict.get('testNumber')
+        test_id = test_number_to_id.get(test_number)
 
-        new_result = ExperimentTestResult(test_id=test_id, test_result=test_result_data)
+        if test_id is None:
+            raise ValueError(f"No test ID found for test number {test_number}")
 
-        # Add to the session
+        new_result = ExperimentTestResult(
+            test_id=test_id,
+            test_result=result_dict,
+            experiment_use=str(randint)
+        )
+
         session.add(new_result)
         new_results.append(new_result)
 
@@ -218,3 +175,54 @@ def add_test_results_from_dict(session: Session, results_data: dict):
         raise Exception(f"Failed to add test results due to: {str(e)}")
 
     return new_results
+
+def get_experiments_results(session: Session, experiment_name: str) -> PqTestResultsList:
+    experiment_query = select(Experiment).where(Experiment.name == experiment_name)
+    experiment = session.exec(experiment_query).one()
+    test_query = select(Test).where(Test.experiment_id == experiment.id)
+    tests = session.exec(test_query).all()
+    test_ids = [test.id for test in tests]
+
+    return get_test_results_by_ids(session, test_ids)
+
+
+def get_experiment_tests_results(session: Session, experiment_name, result_name) -> PqTestResultsList:
+    experiment_query = select(Experiment).where(Experiment.name == experiment_name)
+    experiment = session.exec(experiment_query).one()
+    test_query = select(Test).where(Test.experiment_id == experiment.id)
+    tests = session.exec(test_query).all()
+    test_ids = [test.id for test in tests]
+
+    return get_test_results_by_ids(session, test_ids, result_name)
+
+
+def get_test_results_by_ids(session: Session, test_ids: List[int], result_name=None) -> PqTestResultsList:
+    if not result_name:
+        results_query = select(ExperimentTestResult).where(ExperimentTestResult.test_id.in_(test_ids))
+    else:
+        results_query = select(ExperimentTestResult).where(ExperimentTestResult.test_id.in_(test_ids) and ExperimentTestResult.experiment_use == result_name)
+    db_results = session.exec(results_query).all()
+
+    test_results = []
+
+    for db_result in db_results:
+        
+        test_type = str(db_result.test.type.value)
+        test_result_data = db_result.test_result
+
+        if test_type == "AB":
+            result_model = PqTestABResult(**test_result_data)
+        elif test_type == "ABX":
+            result_model = PqTestABXResult(**test_result_data)
+        elif test_type == "MUSHRA":
+            result_model = PqTestMUSHRAResult(**test_result_data)
+        elif test_type == "APE":
+            result_model = PqTestAPEResult(**test_result_data)
+        else:
+            continue
+
+        test_results.append(result_model)
+
+    return PqTestResultsList(results=test_results)
+
+
