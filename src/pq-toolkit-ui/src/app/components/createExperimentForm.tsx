@@ -12,7 +12,6 @@ const CreateExperimentForm = (props: any): JSX.Element => {
     const readSampleFiles = (event: any) => {
         const fileReader = new FileReader();
         const { files } = event.target;
-        setFileList([])
         for (let i = 0; i < files.length; i++) {
             setFileList((oldSampleFiles) => [...oldSampleFiles, files.item(i).name])
         }
@@ -29,6 +28,24 @@ const CreateExperimentForm = (props: any): JSX.Element => {
             setSetup(JSON.parse(content))
         };
     };
+
+    const areAllFilesProvided = (test: JSON, fileList: string[]) => {
+        if (test.hasOwnProperty('reference')) {
+            if (!fileList.includes(test.reference.assetPath)) {
+                return false
+            }
+        }
+        if (test.hasOwnProperty('anchors')) {
+            if (!test.anchors.every(sample => fileList.includes(sample.assetPath))) {
+                return false
+            }
+        }
+        if (!test.samples.every(sample => fileList.includes(sample.assetPath))) {
+            return false
+        }
+        return true
+    }
+
     const [currentTest, setCurrentTest] = useState({ isEmpty: true })
     return <div className="flex flex-col text-black bg-white border-2 w-400 z-10 rounded-lg p-4 h-200">
         <div className="flex justify-between">
@@ -47,7 +64,8 @@ const CreateExperimentForm = (props: any): JSX.Element => {
                         ]
                     }]
                 }))}>dodaj nowy test</div>
-                {setup.tests.map(test => <div onClick={() => setCurrentTest(test)}>{test.samples.some(sample => fileList.includes(sample.assetPath)) ? <div>{test.testNumber}</div> : <div>{test.testNumber}!</div>}</div>)}
+                {setup.tests.map(test => <div onClick={() => setCurrentTest(test)}>{
+                    areAllFilesProvided(test, fileList) ? <div>{test.testNumber}</div> : <div>{test.testNumber}!</div>}</div>)}
 
                 <div className="mt-auto">Upload samples
                     <input ref={fileRef} multiple type="file" onChange={readSampleFiles} />
