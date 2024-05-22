@@ -27,10 +27,26 @@ body {
     rgb(var(--background-start-rgb));
 }
 
+.dropzone.drag-over {
+  background-color: #e0f7fa;
+  border-color: #00acc1;
+}
+
 @keyframes fadeInUp {
   0% {
     opacity: 0;
-    transform: translateY(20px);
+    transform: translateY(10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInDown {
+  0% {
+    opacity: 0;
+    transform: translateY(-7px);
   }
   100% {
     opacity: 1;
@@ -40,6 +56,14 @@ body {
 
 .fadeInUp {
   animation: fadeInUp 1.2s ease-out;
+}
+
+.fadeInDown {
+  animation: fadeInDown 0.6s ease-out;
+}
+
+.fadeInUpFast {
+  animation: fadeInUp 0.4s ease-out;
 }
 
 @layer utilities {

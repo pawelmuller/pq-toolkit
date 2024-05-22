@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { adminExperimentsListSchema } from '../admin/models'
 import Link from 'next/link'
-import { FaCheck, FaPlus, FaTrash } from 'react-icons/fa'
+import { FaCheck, FaPlus, FaTrash, FaMinus, FaExpand } from 'react-icons/fa'
 import useSWR from 'swr'
 import Loading from '../[name]/loading'
 import { validateApiData } from '@/core/apiHandlers/clientApiHandler'
@@ -13,7 +13,6 @@ import CreateExperimentForm from './createExperimentForm'
 import Blobs from './blobs'
 import { TbLogout2 } from "react-icons/tb";
 
-
 const AdminPage = (props: any): JSX.Element => {
   const {
     data: apiData,
@@ -22,6 +21,8 @@ const AdminPage = (props: any): JSX.Element => {
     mutate
   } = useSWR(`/api/v1/experiments`)
   const [selectedExperiment, setSelectedExperiment] = useState(undefined)
+  const [isListVisible, setIsListVisible] = useState(true)
+
   if (isLoading) return <Loading />
   if (error != null)
     return (
@@ -94,14 +95,27 @@ const AdminPage = (props: any): JSX.Element => {
             </h2>
           </div>
         </div>
-        <div className='flex flex-col w-full items-center fadeInUp'>
+        <div className='flex flex-col-reverse 2xl:flex-row w-11/12 justify-center items-center fadeInUp pl-10 pr-10 space-x-0 space-y-reverse space-y-3 2xl:space-x-3 2xl:space-y-0 mb-10'>
+          {isListVisible ? (
+            <AdminExperimentsListWidget
+              experiments={data.experiments}
+              deleteExperiment={deleteExperiment}
+              addNewExperiment={addNewExperiment}
+              setSelectedExperiment={setSelectedExperiment}
+              setIsListVisible={setIsListVisible}
+            />
+          ) : (
+            <div className="flex flex-col fadeInUpFast items-center 2xl:absolute 2xl:mr-96 2xl:ml-[23rem] 2xl:mb-96 2xl:mt-96 2xl:-top-5">
+              <button
+                className="flex items-center text-sm bg-blue-400 dark:bg-blue-500 hover:bg-pink-500 dark:hover:bg-pink-600 transform hover:scale-110 duration-300 ease-in-out rounded-xl p-xxs text-white"
+                onClick={() => setIsListVisible(true)}
+              >
+                <FaExpand className="mr-2" />
+                <span className='font-semibold text-xs sm:text-sm'>Expand List</span>
+              </button>
+            </div>
+          )}
           {selectedExperiment == undefined ? <div /> : <CreateExperimentForm setSelectedExperiment={setSelectedExperiment} selectedExperiment={selectedExperiment} />}
-          <AdminExperimentsListWidget
-            experiments={data.experiments}
-            deleteExperiment={deleteExperiment}
-            addNewExperiment={addNewExperiment}
-            setSelectedExperiment={setSelectedExperiment}
-          />
         </div>
       </div>
     </div>
@@ -113,29 +127,38 @@ const AdminExperimentsListWidget = ({
   deleteExperiment,
   addNewExperiment,
   setSelectedExperiment,
-  selectedExperiment
+  selectedExperiment,
+  setIsListVisible
 }: {
   experiments: string[]
   deleteExperiment: (name: string) => void
   addNewExperiment: (name: string) => void
   setSelectedExperiment: (name: string) => void
   selectedExperiment: any
+  setIsListVisible: (visible: boolean) => void
 }): JSX.Element => {
   return (
-    <div className="flex flex-col items-center z-10 w-full max-w-2xl text-white bg-white/10 dark:bg-gray-800/10 backdrop-blur-md rounded-3xl p-8 shadow-2xl">
+    <div className="flex flex-col fadeInUpFast items-center z-10 w-full max-w-4xl 2xl:max-w-md text-black dark:text-white bg-gray-50 dark:bg-stone-800 rounded-3xl p-8 shadow-2xl relative">
+      <button
+        className="absolute top-4 right-4 flex items-center text-sm bg-blue-400 dark:bg-blue-500 hover:bg-pink-500 dark:hover:bg-pink-600 transform hover:scale-110 duration-300 ease-in-out rounded-xl p-xxs text-white"
+        onClick={() => setIsListVisible(false)}
+      >
+        <FaMinus className="mr-2" />
+        <span className='font-semibold text-xs sm:text-sm'>Minimize</span>
+      </button>
       <div className="flex text-lg md:text-xl font-semibold">Add Experiment</div>
       <AddExperimentWidget
         experiments={experiments}
         addExperiment={addNewExperiment}
       />
       <div className="flex self-start mt-3 mb-2 text-sm md:text-base font-semibold text-black dark:text-white">Experiments:</div>
-      <div className='overflow-y-auto w-full'>
+      <div className='w-full'>
         <ul className="space-y-2 w-full">
           {experiments.map((name, idx) => (
             <li key={idx} className="flex items-center gap-sm justify-between whitespace-normal break-words">
-              <div onClick={() => setSelectedExperiment(name)}>{name}</div>
-              {/* <Link href={`/admin/${name}`} className="font-semibold w-9/12 sm:w-10/12 bg-blue-400 dark:bg-blue-500 hover:bg-pink-500 dark:hover:bg-pink-600 p-2 rounded-md">{name}</Link> */}
-
+              <div className='font-semibold text-white w-9/12 sm:w-[85%] lg:w-[90%] 2xl:w-10/12 bg-blue-400 dark:bg-blue-500 hover:bg-pink-500 dark:hover:bg-pink-600 transform hover:scale-105 duration-300 ease-in-out p-2 rounded-md cursor-pointer' onClick={() => setSelectedExperiment(name)}>
+                {name}
+              </div>
               <DeleteButton deleteExperiment={deleteExperiment} name={name} />
             </li>
           ))}
@@ -157,7 +180,7 @@ const AddExperimentWidget = ({
   return (
     <div className="flex items-center z-10 mt-4 w-full">
       <input
-        className="rounded outline-0 border-2 bg-gray-200 dark:bg-gray-300 dark:border-gray-300 text-black w-full"
+        className="rounded outline-0 border-2 bg-gray-100 border-gray-300 dark:bg-gray-700 dark:border-gray-600 dark:text-white text-black w-full"
         onChange={(e) => {
           setNewName(e.target.value)
         }}
@@ -169,7 +192,7 @@ const AddExperimentWidget = ({
           setNewName('')
         }}
         disabled={newName.length === 0 || experiments.includes(newName)}
-        className="flex items-center text-sm disabled:bg-gray-400 dark:disabled:bg-gray-400 bg-blue-400 dark:bg-blue-500 hover:bg-pink-500 dark:hover:bg-pink-600 transform hover:scale-105 duration-300 ease-in-out rounded-xl p-xxs ml-4 text-white"
+        className="flex items-center text-sm disabled:bg-gray-400 dark:disabled:bg-gray-700 dark:disabled:text-gray-400 bg-blue-400 dark:bg-blue-500 hover:bg-pink-500 dark:hover:bg-pink-600 transform hover:scale-110 duration-300 disabled:transform-none ease-in-out rounded-xl p-xxs ml-4 text-white"
       >
         <FaPlus />
       </button>
