@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 
 // export the POST function
-export async function POST(request: Request) {
+export async function POST(request: Request):Promise<Response> {
   // create a new URL object from the request URL (https://developer.mozilla.org/en-US/docs/Web/API/URL/URL)
   const requestUrl = new URL(request.url);
 

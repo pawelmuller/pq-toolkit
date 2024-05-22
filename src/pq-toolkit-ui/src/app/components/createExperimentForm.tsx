@@ -210,7 +210,7 @@ const MushraEditor = (props: propsEditor) => {
             {props.fileList.map((file) => <div>
                 <input type="checkbox" id={file} checked={anchorsTest.filter(sample => [file].includes(sample.assetPath)).length > 0 ? true : false} name={file} onChange={(e) => {
                     if (e.target.checked) { setAnchorsTest((oldarray) => [...oldarray, { 'sampleId': 'a0', 'assetPath': file }]) } else {
-                        let foundJSON = anchorsTest.find(item => { return item.assetPath === file })
+                        const foundJSON = anchorsTest.find(item => { return item.assetPath === file })
                         if (foundJSON !== undefined) setAnchorsTest((oldarray) => oldarray.filter(sample => ![foundJSON.assetPath].includes(sample.assetPath)))
                     }
                 }}></input>
@@ -220,7 +220,7 @@ const MushraEditor = (props: propsEditor) => {
             {props.fileList.map((file) => <div>
                 <input type="checkbox" id={file} checked={sampleTest.filter(sample => [file].includes(sample.assetPath)).length > 0 ? true : false} name={file} onChange={(e) => {
                     if (e.target.checked) { setSampleTest((oldarray) => [...oldarray, { 'sampleId': 's0', 'assetPath': file }]) } else {
-                        let foundJSON = sampleTest.find(item => { return item.assetPath === file })
+                        const foundJSON = sampleTest.find(item => { return item.assetPath === file })
                         if (foundJSON !== undefined) setSampleTest((oldarray) => oldarray.filter(sample => ![foundJSON.assetPath].includes(sample.assetPath)))
                     }
                 }}></input>

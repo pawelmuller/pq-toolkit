@@ -1,12 +1,9 @@
 import { useState } from 'react'
 import { adminExperimentsListSchema } from '../admin/models'
-import Link from 'next/link'
-import { FaCheck, FaPlus, FaTrash } from 'react-icons/fa'
+import { FaPlus } from 'react-icons/fa'
 import useSWR from 'swr'
 import Loading from '../[name]/loading'
 import { validateApiData } from '@/core/apiHandlers/clientApiHandler'
-import { fireConfirmationModal } from '@/lib/components/modals/confirmationModals'
-import verifyAuth from "@/lib/authentication/is-auth";
 import Header from '@/lib/components/basic/header'
 import DeleteButton from './deleteButton'
 import CreateExperimentForm from './createExperimentForm'
@@ -48,22 +45,21 @@ const AdminPage = (props: any): JSX.Element => {
     fetch('/api/v1/experiments', {
       method: 'DELETE',
       body: JSON.stringify({ name })
-    })
+    }).catch((err) => { console.error(err) })
       .then(async () => {
         await mutate()
-      })
-      .catch(console.error)
+      }).catch((err) => { console.error(err) })
   }
 
   const addNewExperiment = (name: string): void => {
     fetch('/api/v1/experiments', {
       method: 'POST',
       body: JSON.stringify({ name })
-    })
+    }).catch((err) => { console.error(err) })
       .then(async () => {
         await mutate()
       })
-      .catch(console.error)
+      .catch((err) => { console.error(err) })
   }
 
   return (
@@ -76,9 +72,11 @@ const AdminPage = (props: any): JSX.Element => {
             fetch("/api/v1/logout", {
               method: "POST",
               headers: { "Content-Type": "application/json" },
-            }).then(async () => {
-              await props.refresh()
-            });
+            })
+              .catch((err) => { console.error(err) })
+              .then(async () => {
+                await props.refresh()
+              }).catch((err) => { console.error(err) });
           }}>
           <TbLogout2 className="mr-2" />
           Logout
@@ -95,7 +93,7 @@ const AdminPage = (props: any): JSX.Element => {
           </div>
         </div>
         <div className='flex flex-col w-full items-center fadeInUp'>
-          {selectedExperiment == undefined ? <div /> : <CreateExperimentForm setSelectedExperiment={setSelectedExperiment} selectedExperiment={selectedExperiment} />}
+          {selectedExperiment === undefined ? <div /> : <CreateExperimentForm setSelectedExperiment={setSelectedExperiment} selectedExperiment={selectedExperiment} />}
           <AdminExperimentsListWidget
             experiments={data.experiments}
             deleteExperiment={deleteExperiment}
@@ -112,14 +110,12 @@ const AdminExperimentsListWidget = ({
   experiments,
   deleteExperiment,
   addNewExperiment,
-  setSelectedExperiment,
-  selectedExperiment
+  setSelectedExperiment
 }: {
   experiments: string[]
   deleteExperiment: (name: string) => void
   addNewExperiment: (name: string) => void
-  setSelectedExperiment: (name: string) => void
-  selectedExperiment: any
+  setSelectedExperiment: (name: any) => void
 }): JSX.Element => {
   return (
     <div className="flex flex-col items-center z-10 w-full max-w-2xl text-white bg-white/10 dark:bg-gray-800/10 backdrop-blur-md rounded-3xl p-8 shadow-2xl">
@@ -133,7 +129,7 @@ const AdminExperimentsListWidget = ({
         <ul className="space-y-2 w-full">
           {experiments.map((name, idx) => (
             <li key={idx} className="flex items-center gap-sm justify-between whitespace-normal break-words">
-              <div onClick={() => setSelectedExperiment(name)}>{name}</div>
+              <div onClick={() => { setSelectedExperiment(name) }}>{name}</div>
               {/* <Link href={`/admin/${name}`} className="font-semibold w-9/12 sm:w-10/12 bg-blue-400 dark:bg-blue-500 hover:bg-pink-500 dark:hover:bg-pink-600 p-2 rounded-md">{name}</Link> */}
 
               <DeleteButton deleteExperiment={deleteExperiment} name={name} />

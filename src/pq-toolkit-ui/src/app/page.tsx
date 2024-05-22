@@ -27,13 +27,14 @@ const Home = (): JSX.Element => {
   )
 }
 
+
 const ExperimentsListWidget = (): JSX.Element => {
-  const { data: apiData, error, isLoading } = useSWR(`/api/v1/experiments`)
+  const { data: apiData, error, isLoading } = useSWR(`/api/v1/experiments/`)
 
   if (isLoading)
     return (
       <div className='fadeInUp'>
-        <Loading/>
+        <Loading />
       </div>
     )
   if (error != null)
