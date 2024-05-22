@@ -47,6 +47,16 @@ type propsEditor = {
 }
 
 const CreateExperimentForm = (props: any): JSX.Element => {
+    useEffect(() => {
+        setSetup({
+            uid: "",
+            name: "",
+            description: "",
+            endText: "",
+            tests: []
+        })
+        console.log('zmiana')
+    }, [props.selectedExperiment]);
     const [setup, setSetup] = useState<ExperimentSetup>({
         uid: "",
         name: "",
