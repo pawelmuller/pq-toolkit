@@ -3,33 +3,141 @@ import Header from "@/lib/components/basic/header"
 import { FaArrowLeft, FaXmark } from "react-icons/fa6";
 import { FaArrowRight, FaPlus, FaSadTear, FaInfoCircle } from "react-icons/fa";
 import { array } from "zod";
+import { validateTestSchema } from "@/lib/schemas/utils";
+import { validateApiData } from "@/core/apiHandlers/clientApiHandler";
+import {
+    ExperimentSetupSchema
+} from '@/lib/schemas/experimentSetup'
 
+type questionType = {
+    questionId: string
+    text: string
+}
+
+type fileType = {
+    sampleId: string
+    assetPath: string
+}
+
+type Test = {
+    testNumber: number
+    type: string
+    samples: fileType[]
+    questions?: questionType[]
+    axis?: questionType[]
+    anchors?: fileType[]
+    reference?: fileType
+}
+
+type ExperimentSetup = {
+    uid: string
+    name: string
+    description: string
+    endText: string
+    tests: Test[]
+}
+
+type propsEditor = {
+    currentTest: Test
+    setCurrentTest: Function
+    fileList: string[]
+    setFileList: Function
+    setup: ExperimentSetup
+    setSetup: Function
+}
 
 const CreateExperimentForm = (props: any): JSX.Element => {
-    const [setup, setSetup] = useState({
-        name: 'test 1', tests: []
+    useEffect(() => {
+        setSetup({
+            uid: "",
+            name: "",
+            description: "",
+            endText: "",
+            tests: []
+        })
+        console.log('zmiana')
+    }, [props.selectedExperiment]);
+    const [setup, setSetup] = useState<ExperimentSetup>({
+        uid: "",
+        name: "",
+        description: "",
+        endText: "",
+        tests: []
     })
+    
     const [fileList, setFileList] = useState<string[]>([])
+
     const readSampleFiles = (event: any) => {
         const { files } = event.target;
-        setFileList([])
         for (let i = 0; i < files.length; i++) {
             setFileList((oldSampleFiles) => [...oldSampleFiles, files.item(i).name])
         }
         setFileList((oldSampleFiles) => { return oldSampleFiles.filter((value, index, array) => { return array.indexOf(value) === index }) })
     };
-    let fileRef = useRef();
+
+    let fileRef = useRef(null);
 
     const readFile = (event: any) => {
         const fileReader = new FileReader();
         const { files } = event.target;
-
         fileReader.readAsText(files[0], "UTF-8");
         fileReader.onload = (e: any) => {
             const content = e.target.result;
-            setSetup(JSON.parse(content))
+            try {
+                const uploadedData: ExperimentSetup = JSON.parse(content)
+                const { data, validationError } = validateApiData(uploadedData, ExperimentSetupSchema)
+                const testValidationErrors: string[] = []
+                if (validationError !== null) {
+                    console.log('zly setup')
+                }
+                if (data !== null) {
+                    data.tests.forEach(test => {
+                        const validationResult = validateTestSchema(test)
+                        if (validationResult.validationError != null)
+                            testValidationErrors.push(validationResult.validationError)
+                        else test = validationResult.data
+                    });
+                    if (testValidationErrors.length <= 0) {
+                        setSetup(uploadedData)
+                    } else {
+                        console.log('zly setup')
+                    }
+                }
+            } catch (error) {
+                console.log('zly setup')
+            }
         };
     };
+
+    const areAllFilesProvided = (test: Test, fileList: string[]) => {
+        if (test.hasOwnProperty('reference')) {
+            if (test.reference !== undefined) {
+                if (!fileList.includes(test.reference.assetPath)) {
+                    return false
+                }
+            }
+        }
+        if (test.hasOwnProperty('anchors')) {
+            if (test.anchors !== undefined) {
+                if (!test.anchors.every(sample => fileList.includes(sample.assetPath))) {
+                    return false
+                }
+            }
+        }
+        if (!test.samples.every(sample => fileList.includes(sample.assetPath))) {
+            return false
+        }
+        return true
+    }
+
+    const [currentTest, setCurrentTest] = useState<Test>({
+        testNumber: -1,
+        type: "AB",
+        samples: [],
+        questions: [],
+        axis: [],
+        anchors: []
+    })
 
     const [showInfo, setShowInfo] = useState(false);
 
@@ -79,12 +187,27 @@ const CreateExperimentForm = (props: any): JSX.Element => {
         };
     };
     
-    const [currentTest, setCurrentTest] = useState({ isEmpty: true })
     return (
         <div className="flex flex-col self-center fadeInUpFast 2xl:self-start text-black dark:text-white bg-gray-50 dark:bg-stone-800 rounded-3xl shadow-lg 2xl:shadow-2xl w-full max-w-4xl z-10 p-6 overflow-hidden">
             <div className="flex justify-between items-center mb-6 w-full whitespace-normal break-words">
                 <span className="text-lg lg:text-xl font-semibold w-11/12">'{props.selectedExperiment}' Experiment Setup:</span>
                 <FaXmark onClick={() => props.setSelectedExperiment(undefined)} className="cursor-pointer self-start text-blue-400 dark:text-blue-500 hover:text-pink-500 dark:hover:text-pink-600 transform hover:scale-110 duration-300 ease-in-out" size={40} />
+            </div>
+            <div className="flex flex-row mt-10 h-full">
+                <div className="flex flex-col border-r-2 h-full w-52">
+                    <div onClick={() => setSetup((oldSetup) => ({
+                        ...oldSetup, tests: [...oldSetup.tests, {
+                            testNumber: 1,
+                            type: "AB",
+                            samples: [
+                            ],
+                            questions: [
+                            ]
+                        }]
+                    }))}>dodaj nowy test</div>
+                    {setup.tests.map(test => <div onClick={() => setCurrentTest(test)}>{
+                        areAllFilesProvided(test, fileList) ? <div>{test.testNumber}</div> : <div>{test.testNumber}!</div>}</div>)}
+                </div>
             </div>
             <div className="flex flex-col md:flex-row h-full space-y-6 md:space-y-0 md:space-x-6">
                 <div className="flex flex-col border-r-0 border-b-2 md:border-r-2 md:border-b-0 h-full w-full md:w-2/3 p-4">
@@ -97,7 +220,6 @@ const CreateExperimentForm = (props: any): JSX.Element => {
                     </div>
                     <div className="mt-auto">
                         <h4 className="text-sm lg:text-base font-semibold mb-2">Upload Samples</h4>
-
                         <div className="flex items-center justify-center w-full mb-4">
                             <label htmlFor="dropzone-file-samples" 
                                 onDragOver={handleDragOver}
@@ -141,7 +263,7 @@ const CreateExperimentForm = (props: any): JSX.Element => {
                         {/* <input ref={fileRef} type="file" onChange={readFile} /> */}
                     </div>
                 </div>
-                {currentTest.isEmpty ? <div /> : (
+                {currentTest.testNumber === -1 ? <div /> : (
                     <div className="flex flex-col w-full p-4 whitespace-normal break-words md:w-2/3 bg-gray-100 dark:bg-gray-700 shadow-lg rounded-lg text-gray-700 dark:text-gray-300">
                         <div>
                             <h1 className="text-base lg:text-lg font-bold mb-4 text-center text-blue-400 dark:text-blue-500">Test '{currentTest.testNumber}' Configuration</h1>
@@ -156,31 +278,31 @@ const CreateExperimentForm = (props: any): JSX.Element => {
                                 <div className="mb-4 p-2 text-sm rounded-3xl bg-gray-200 dark:bg-gray-600 text-gray-700 dark:text-gray-300 fadeInDown">
                                     Choose the type of experiment you would like to configure.
                                 </div>
-                             )}
+                            )}
                             <div className="grid sm:flex md:grid lg:flex justify-normal sm:justify-evenly md:justify-normal lg:justify-evenly mb-4">
                                 <label className="flex items-center relative cursor-pointer mr-2">
-                                    <input type="radio" value="MUSHRA" name="type" checked={currentTest.type === "MUSHRA"} onChange={(e) => setCurrentTest({ ...currentTest, type: e.target.value })} className="hidden" />
+                                    <input type="radio" value="MUSHRA" name="type" checked={currentTest.type === "MUSHRA"} onChange={(e) => setCurrentTest({ ...currentTest, type: (e.target as HTMLTextAreaElement).value, anchors: [], reference: { sampleId: "", assetPath: "" } })} className="hidden" />
                                     <span className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${currentTest.type === "MUSHRA" ? "bg-pink-500 border-pink-500 dark:bg-pink-600 dark:border-pink-600" : "bg-gray-200 border-gray-400"} transition-transform transform hover:scale-110 duration-100 ease-in-out`}>
                                         <span className={`w-2 h-2 rounded-full ${currentTest.type === "MUSHRA" ? "bg-white dark:bg-gray-100" : ""}`}></span>
                                     </span>
                                     <span className="ml-2">MUSHRA</span>
                                 </label>
                                 <label className="flex items-center relative cursor-pointer mr-2">
-                                    <input type="radio" value="AB" name="type" checked={currentTest.type === "AB"} onChange={(e) => setCurrentTest({ ...currentTest, type: e.target.value })} className="hidden" />
+                                    <input type="radio" value="AB" name="type" checked={currentTest.type === "AB"} onChange={(e) => setCurrentTest({ ...currentTest, type: (e.target as HTMLTextAreaElement).value, questions: [] })} className="hidden" />
                                     <span className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${currentTest.type === "AB" ? "bg-pink-500 border-pink-500 dark:bg-pink-600 dark:border-pink-600" : "bg-gray-200 border-gray-400"} transition-transform transform hover:scale-110 duration-100 ease-in-out`}>
                                         <span className={`w-2 h-2 rounded-full ${currentTest.type === "AB" ? "bg-white dark:bg-gray-100" : ""}`}></span>
                                     </span>
                                     <span className="ml-2">AB</span>
                                 </label>
                                 <label className="flex items-center relative cursor-pointer mr-2">
-                                    <input type="radio" value="ABX" name="type" checked={currentTest.type === "ABX"} onChange={(e) => setCurrentTest({ ...currentTest, type: e.target.value })} className="hidden" />
+                                    <input type="radio" value="ABX" name="type" checked={currentTest.type === "ABX"} onChange={(e) => setCurrentTest({ ...currentTest, type: (e.target as HTMLTextAreaElement).value, questions: [] })} className="hidden" />
                                     <span className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${currentTest.type === "ABX" ? "bg-pink-500 border-pink-500 dark:bg-pink-600 dark:border-pink-600" : "bg-gray-200 border-gray-400"} transition-transform transform hover:scale-110 duration-100 ease-in-out`}>
                                         <span className={`w-2 h-2 rounded-full ${currentTest.type === "ABX" ? "bg-white dark:bg-gray-100" : ""}`}></span>
                                     </span>
                                     <span className="ml-2">ABX</span>
                                 </label>
                                 <label className="flex items-center relative cursor-pointer mr-2">
-                                    <input type="radio" value="APE" name="type" checked={currentTest.type === "APE"} onChange={(e) => setCurrentTest({ ...currentTest, type: e.target.value })} className="hidden" />
+                                    <input type="radio" value="APE" name="type" checked={currentTest.type === "APE"} onChange={(e) => setCurrentTest({ ...currentTest, type: (e.target as HTMLTextAreaElement).value, axis: [] })} className="hidden" />
                                     <span className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${currentTest.type === "APE" ? "bg-pink-500 border-pink-500 dark:bg-pink-600 dark:border-pink-600" : "bg-gray-200 border-gray-400"} transition-transform transform hover:scale-110 duration-100 ease-in-out`}>
                                         <span className={`w-2 h-2 rounded-full ${currentTest.type === "APE" ? "bg-white dark:bg-gray-100" : ""}`}></span>
                                     </span>
@@ -191,13 +313,13 @@ const CreateExperimentForm = (props: any): JSX.Element => {
                         {(() => {
                             switch (currentTest.type) {
                                 case "MUSHRA":
-                                    return <MushraEditor currentTest={currentTest} setCurrentTest={setCurrentTest} fileList={fileList} setFileList={setFileList} />;
+                                    return <MushraEditor currentTest={currentTest} setCurrentTest={setCurrentTest} fileList={fileList} setFileList={setFileList} setup={setup} setSetup={setSetup} />;
                                 case "AB":
-                                    return <AbEditor currentTest={currentTest} setCurrentTest={setCurrentTest} fileList={fileList} setFileList={setFileList} />;
+                                    return <AbEditor currentTest={currentTest} setCurrentTest={setCurrentTest} fileList={fileList} setFileList={setFileList} setup={setup} setSetup={setSetup} />;
                                 case "ABX":
-                                    return <AbxEditor currentTest={currentTest} setCurrentTest={setCurrentTest} fileList={fileList} setFileList={setFileList} />;
+                                    return <AbxEditor currentTest={currentTest} setCurrentTest={setCurrentTest} fileList={fileList} setFileList={setFileList} setup={setup} setSetup={setSetup} />;
                                 case "APE":
-                                    return <ApeEditor currentTest={currentTest} setCurrentTest={setCurrentTest} fileList={fileList} setFileList={setFileList} />;
+                                    return <ApeEditor currentTest={currentTest} setCurrentTest={setCurrentTest} fileList={fileList} setFileList={setFileList} setup={setup} setSetup={setSetup} />;
                                 default:
                                     return null;
                             }
@@ -209,12 +331,10 @@ const CreateExperimentForm = (props: any): JSX.Element => {
     )
 }
 
-const MushraEditor = (props: any) => {
-    const [sampleTest, setSampleTest] = useState<any[]>(props.currentTest.samples)
-    const [anchorsTest, setAnchorsTest] = useState<any[]>(props.currentTest.anchors)
-    const [referenceTest, setReferenceTest] = useState<any>(props.currentTest.reference)
-
-    let fileRef = useRef();
+const MushraEditor = (props: propsEditor) => {
+    const [sampleTest, setSampleTest] = useState<fileType[]>(props.currentTest.samples)
+    const [anchorsTest, setAnchorsTest] = useState<fileType[]>(props.currentTest.anchors === undefined ? [] : props.currentTest.anchors)
+    const [referenceTest, setReferenceTest] = useState<fileType>(props.currentTest.reference === undefined ? { sampleId: "", assetPath: "" } : props.currentTest.reference)
     return (
         <div className="w-full">
             <div >Reference</div>
@@ -223,7 +343,7 @@ const MushraEditor = (props: any) => {
                     {props.fileList.map((file) => <div>
                         <input type="radio" id={file} checked={referenceTest.assetPath === file ? true : false} name='reference' onChange={(e) => {
                             if (e.target.checked) { setReferenceTest({ 'sampleId': 'ref', 'assetPath': file }) } else {
-                                setReferenceTest({})
+                                setReferenceTest({ sampleId: "", assetPath: "" })
                             }
                         }}></input>
                         {file}
@@ -235,7 +355,7 @@ const MushraEditor = (props: any) => {
                 <input type="checkbox" id={file} checked={anchorsTest.filter(sample => [file].includes(sample.assetPath)).length > 0 ? true : false} name={file} onChange={(e) => {
                     if (e.target.checked) { setAnchorsTest((oldarray) => [...oldarray, { 'sampleId': 'a0', 'assetPath': file }]) } else {
                         let foundJSON = anchorsTest.find(item => { return item.assetPath === file })
-                        setAnchorsTest((oldarray) => oldarray.filter(sample => ![foundJSON.assetPath].includes(sample.assetPath)))
+                        if (foundJSON !== undefined) setAnchorsTest((oldarray) => oldarray.filter(sample => ![foundJSON.assetPath].includes(sample.assetPath)))
                     }
                 }}></input>
                 {file}
@@ -245,21 +365,24 @@ const MushraEditor = (props: any) => {
                 <input type="checkbox" id={file} checked={sampleTest.filter(sample => [file].includes(sample.assetPath)).length > 0 ? true : false} name={file} onChange={(e) => {
                     if (e.target.checked) { setSampleTest((oldarray) => [...oldarray, { 'sampleId': 's0', 'assetPath': file }]) } else {
                         let foundJSON = sampleTest.find(item => { return item.assetPath === file })
-                        setSampleTest((oldarray) => oldarray.filter(sample => ![foundJSON.assetPath].includes(sample.assetPath)))
+                        if (foundJSON !== undefined) setSampleTest((oldarray) => oldarray.filter(sample => ![foundJSON.assetPath].includes(sample.assetPath)))
                     }
                 }}></input>
                 {file}
             </div>)}
             <div className="mt-auto ml-auto">Cancel  <div onClick={() => {
-                props.setCurrentTest((oldTest) => ({ ...oldTest, 'samples': sampleTest }))
-                props.setCurrentTest((oldTest) => ({ ...oldTest, 'anchors': anchorsTest }))
-                props.setCurrentTest((oldTest) => ({ ...oldTest, 'reference': referenceTest }))
+                props.setCurrentTest((oldTest: Test) => {
+                    delete oldTest.questions
+                    delete oldTest.axis
+                    return ({ ...oldTest, 'samples': sampleTest, 'anchors': anchorsTest, 'reference': referenceTest })
+                })
+                props.setSetup((oldSetup: ExperimentSetup) => ({ ...oldSetup, tests: oldSetup.tests.map(test => test.testNumber === props.currentTest.testNumber ? props.currentTest : test) }))
             }}>Save</div></div>
         </div>
     )
 }
 
-const ApeEditor = (props: any) => {
+const ApeEditor = (props: propsEditor) => {
     const [newQuestion, setNewQuestion] = useState('')
     const [sampleTest, setSampleTest] = useState<any[]>(props.currentTest.samples)
     return (
@@ -280,20 +403,28 @@ const ApeEditor = (props: any) => {
                 </div>
             </div>
             <div>Axis</div>
-            <div><input className="bg-gray-500" value={newQuestion} onChange={(e) => setNewQuestion(e.target.value)}></input><FaPlus onClick={() =>
-                props.setCurrentTest({ ...props.currentTest, axis: [...props.currentTest.axis, { questionId: 'q3', text: newQuestion }] })
+            <div><input className="bg-gray-500" value={newQuestion} onChange={(e) => setNewQuestion(e.target.value)}></input><FaPlus onClick={() => {
+                if (props.currentTest.axis) props.setCurrentTest({ ...props.currentTest, axis: [...props.currentTest.axis, { questionId: 'q3', text: newQuestion }] })
+                else props.setCurrentTest({ ...props.currentTest, axis: [{ questionId: 'q3', text: newQuestion }] })
+            }
             } /></div>
             <div>
-                {props.currentTest.axis.map((question) => <div>{question.text}</div>)}
+                {props.currentTest.axis !== undefined ? props.currentTest.axis.map((question) => <div>{question.text}</div>) : <></>}
             </div>
             <div className="mt-auto ml-auto">Cancel  <div onClick={() => {
-                props.setCurrentTest((oldTest) => ({ ...oldTest, 'samples': sampleTest }))
+                props.setCurrentTest((oldTest: Test) => {
+                    delete oldTest.anchors
+                    delete oldTest.questions
+                    delete oldTest.reference
+                    return ({ ...oldTest, 'samples': sampleTest })
+                })
+                props.setSetup((oldSetup: ExperimentSetup) => ({ ...oldSetup, tests: oldSetup.tests.map(test => test.testNumber === props.currentTest.testNumber ? props.currentTest : test) }))
             }}>Save</div></div>
         </div>
     )
 }
 
-const AbxEditor = (props: any) => {
+const AbxEditor = (props: propsEditor) => {
     const [newQuestion, setNewQuestion] = useState('')
     const [sampleTest, setSampleTest] = useState<any[]>(props.currentTest.samples)
     return (
@@ -314,20 +445,28 @@ const AbxEditor = (props: any) => {
                 </div>
             </div>
             <div>Questions</div>
-            <div><input className="bg-gray-500" value={newQuestion} onChange={(e) => setNewQuestion(e.target.value)}></input><FaPlus onClick={() =>
-                props.setCurrentTest({ ...props.currentTest, questions: [...props.currentTest.questions, { questionId: 'q3', text: newQuestion }] })
+            <div><input className="bg-gray-500" value={newQuestion} onChange={(e) => setNewQuestion(e.target.value)}></input><FaPlus onClick={() => {
+                if (props.currentTest.questions) props.setCurrentTest({ ...props.currentTest, questions: [...props.currentTest.questions, { questionId: 'q3', text: newQuestion }] })
+                else props.setCurrentTest({ ...props.currentTest, questions: [{ questionId: 'q3', text: newQuestion }] })
+            }
             } /></div>
             <div>
-                {'questions' in props.currentTest ? (props.currentTest.questions.map((question) => <div>{question.text}</div>)) : <></>}
+                {props.currentTest.questions !== undefined ? (props.currentTest.questions.map((question) => <div>{question.text}</div>)) : <></>}
             </div>
             <div className="mt-auto ml-auto">Cancel  <div onClick={() => {
-                props.setCurrentTest((oldTest) => ({ ...oldTest, 'samples': sampleTest }))
+                props.setCurrentTest((oldTest: Test) => {
+                    delete oldTest.anchors
+                    delete oldTest.axis
+                    delete oldTest.reference
+                    return ({ ...oldTest, 'samples': sampleTest })
+                })
+                props.setSetup((oldSetup: ExperimentSetup) => ({ ...oldSetup, tests: oldSetup.tests.map(test => test.testNumber === props.currentTest.testNumber ? props.currentTest : test) }))
             }}>Save</div></div>
         </div>
     )
 }
 
-const AbEditor = (props: any) => {
+const AbEditor = (props: propsEditor) => {
     const [newQuestion, setNewQuestion] = useState('')
     const [sampleTest, setSampleTest] = useState<any[]>(props.currentTest.samples)
     return (
@@ -348,14 +487,22 @@ const AbEditor = (props: any) => {
                 </div>
             </div>
             <h4 className="font-semibold text-sm lg:text-base mb-2">Questions</h4>
-            <div><input className="bg-gray-500" value={newQuestion} onChange={(e) => setNewQuestion(e.target.value)}></input><FaPlus onClick={() =>
-                props.setCurrentTest({ ...props.currentTest, questions: [...props.currentTest.questions, { questionId: 'q3', text: newQuestion }] })
+            <div><input className="bg-gray-500" value={newQuestion} onChange={(e) => setNewQuestion(e.target.value)}></input><FaPlus onClick={() => {
+                if (props.currentTest.questions) props.setCurrentTest({ ...props.currentTest, questions: [...props.currentTest.questions, { questionId: 'q3', text: newQuestion }] })
+                else props.setCurrentTest({ ...props.currentTest, questions: [{ questionId: 'q3', text: newQuestion }] })
+            }
             } /></div>
             <div>
-                {props.currentTest.questions.map((question) => <div>{question.text}</div>)}
+                {props.currentTest.questions !== undefined ? (props.currentTest.questions.map((question) => <div>{question.text}</div>)) : <></>}
             </div>
             <div className="mt-auto ml-auto">Cancel  <div onClick={() => {
-                props.setCurrentTest((oldTest) => ({ ...oldTest, 'samples': sampleTest }))
+                props.setCurrentTest((oldTest: Test) => {
+                    delete oldTest.anchors
+                    delete oldTest.axis
+                    delete oldTest.reference
+                    return ({ ...oldTest, 'samples': sampleTest })
+                })
+                props.setSetup((oldSetup: ExperimentSetup) => ({ ...oldSetup, tests: oldSetup.tests.map(test => test.testNumber === props.currentTest.testNumber ? props.currentTest : test) }))
             }}>Save</div></div>
         </div>
     )
