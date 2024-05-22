@@ -3,6 +3,11 @@ import Header from "@/lib/components/basic/header"
 import { FaArrowLeft, FaXmark } from "react-icons/fa6";
 import { FaArrowRight, FaPlus, FaSadTear } from "react-icons/fa";
 import { array } from "zod";
+import { validateTestSchema } from "@/lib/schemas/utils";
+import { validateApiData } from "@/core/apiHandlers/clientApiHandler";
+import {
+    ExperimentSetupSchema
+} from '@/lib/schemas/experimentSetup'
 
 type questionType = {
     questionId: string
@@ -66,7 +71,29 @@ const CreateExperimentForm = (props: any): JSX.Element => {
         fileReader.readAsText(files[0], "UTF-8");
         fileReader.onload = (e: any) => {
             const content = e.target.result;
-            setSetup(JSON.parse(content))
+            try {
+                const uploadedData: ExperimentSetup = JSON.parse(content)
+                const { data, validationError } = validateApiData(uploadedData, ExperimentSetupSchema)
+                const testValidationErrors: string[] = []
+                if (validationError !== null) {
+                    console.log('zly setup')
+                }
+                if (data !== null) {
+                    data.tests.forEach(test => {
+                        const validationResult = validateTestSchema(test)
+                        if (validationResult.validationError != null)
+                            testValidationErrors.push(validationResult.validationError)
+                        else test = validationResult.data
+                    });
+                    if (testValidationErrors.length <= 0) {
+                        setSetup(uploadedData)
+                    } else {
+                        console.log('zly setup')
+                    }
+                }
+            } catch (error) {
+                console.log('zly setup')
+            }
         };
     };
 
