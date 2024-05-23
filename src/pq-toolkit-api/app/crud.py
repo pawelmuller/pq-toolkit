@@ -2,13 +2,14 @@ from sqlalchemy.exc import NoResultFound, IntegrityError
 
 from app.models import Experiment, Test, ExperimentTestResult
 from app.schemas import *
+from typing import Any
 from sqlmodel import Session, select
-from typing import List, Dict, Any
 from fastapi import UploadFile
 from fastapi.responses import StreamingResponse
 from app.core.sample_manager import SampleManager
 from app.utils import PqException
 from random import randint
+
 
 class ExperimentNotFound(PqException):
     def __init__(self, experiment_name: str) -> None:
@@ -127,15 +128,11 @@ def add_experiment_result(session: Session, experiment_name: str, experiment_res
     try:
         experiment = session.exec(experiment_query).one()
     except NoResultFound:
-        raise ValueError(f"Experiment named {experiment_name} not found")
+        raise ExperimentNotFound(experiment_name)
 
-    test_query = select(Test).where(Test.experiment_id == experiment.id)
-    tests = session.exec(test_query).all()
-
-    if not tests:
+    if len(experiment.tests) == 0:
         raise ValueError("No tests found for the experiment")
-    test_mapping = [(test.number, test.id) for test in tests]
-
+    test_mapping = [(test.number, test.id) for test in experiment.tests]
 
     try:
         added_results = add_test_results(session, experiment_result_raw_json, test_mapping)
@@ -144,7 +141,7 @@ def add_experiment_result(session: Session, experiment_name: str, experiment_res
         raise Exception(f"Failed to add experiment results due to: {str(e)}")
 
 
-def add_test_results(session: Session, results_data: Dict[str, Any], test_mapping: List[tuple]):
+def add_test_results(session: Session, results_data: dict[str, Any], test_mapping: list[tuple]):
     results_list = results_data.get('results')
     if not results_list:
         raise ValueError("The provided dictionary does not contain a 'results' key or it is empty.")
@@ -176,27 +173,26 @@ def add_test_results(session: Session, results_data: Dict[str, Any], test_mappin
 
     return new_results
 
+
 def get_experiments_results(session: Session, experiment_name: str) -> PqTestResultsList:
     experiment_query = select(Experiment).where(Experiment.name == experiment_name)
-    experiment = session.exec(experiment_query).one()
-    test_query = select(Test).where(Test.experiment_id == experiment.id)
-    tests = session.exec(test_query).all()
-    test_ids = [test.id for test in tests]
-
-    return get_test_results_by_ids(session, test_ids)
+    try:
+        experiment = session.exec(experiment_query).one()
+    except NoResultFound:
+        raise ExperimentNotFound(experiment_name)
+    return get_test_results_by_ids(session, [test.id for test in experiment.tests])
 
 
 def get_experiment_tests_results(session: Session, experiment_name, result_name) -> PqTestResultsList:
     experiment_query = select(Experiment).where(Experiment.name == experiment_name)
-    experiment = session.exec(experiment_query).one()
-    test_query = select(Test).where(Test.experiment_id == experiment.id)
-    tests = session.exec(test_query).all()
-    test_ids = [test.id for test in tests]
+    try:
+        experiment = session.exec(experiment_query).one()
+    except NoResultFound:
+        raise ExperimentNotFound(experiment_name)
+    return get_test_results_by_ids(session, [test.id for test in experiment.tests], result_name)
 
-    return get_test_results_by_ids(session, test_ids, result_name)
 
-
-def get_test_results_by_ids(session: Session, test_ids: List[int], result_name=None) -> PqTestResultsList:
+def get_test_results_by_ids(session: Session, test_ids: list[int], result_name=None) -> PqTestResultsList:
     if not result_name:
         results_query = select(ExperimentTestResult).where(ExperimentTestResult.test_id.in_(test_ids))
     else:
@@ -206,7 +202,6 @@ def get_test_results_by_ids(session: Session, test_ids: List[int], result_name=N
     test_results = []
 
     for db_result in db_results:
-        
         test_type = str(db_result.test.type.value)
         test_result_data = db_result.test_result
 
