@@ -336,7 +336,6 @@ const MushraEditor = (props: propsEditor) => {
     return (
         <div className="w-full">
             <h4 className="font-semibold text-sm lg:text-base mb-1 mt-3">Reference</h4>
-
             <div className="flex flex-row justify-between mb-4">
                 <div className="flex flex-col space-y-1 whitespace-normal break-words w-11/12">
                     {props.fileList.map((file) => (
@@ -381,7 +380,7 @@ const MushraEditor = (props: propsEditor) => {
                                     } else {
                                         let foundJSON = anchorsTest.find(item => { return item.assetPath === file })
                                         if (foundJSON !== undefined) {
-                                            setAnchorsTest((oldarray) => oldarray.filter(sample => ![foundJSON.assetPath].includes(sample.assetPath)));
+                                            setAnchorsTest((oldarray) => oldarray.filter(sample => ![foundJSON.assetPath].includes(sample.assetPath)))
                                         }
                                     }
                                 }} 
@@ -417,7 +416,7 @@ const MushraEditor = (props: propsEditor) => {
                                     } else {
                                         let foundJSON = sampleTest.find(item => { return item.assetPath === file })
                                         if (foundJSON !== undefined) {
-                                            setSampleTest((oldarray) => oldarray.filter(sample => ![foundJSON.assetPath].includes(sample.assetPath)));
+                                            setSampleTest((oldarray) => oldarray.filter(sample => ![foundJSON.assetPath].includes(sample.assetPath)))
                                         }
                                     }
                                 }} 
@@ -454,19 +453,40 @@ const ApeEditor = (props: propsEditor) => {
     const [sampleTest, setSampleTest] = useState<any[]>(props.currentTest.samples)
     return (
         <div className="w-full">
-            <div >Samples</div>
-            <div className="flex flex-row justify-between">
-                <div className="flex flex-col">
-                    <h4 className="font-semibold text-sm lg:text-base mb-2">Inserted samples</h4>
-                    {props.fileList.map((file) => <div>
-                        <input type="checkbox" id={file} checked={sampleTest.filter(sample => [file].includes(sample.assetPath)).length > 0 ? true : false} name={file} onChange={(e) => {
-                            if (e.target.checked) { setSampleTest((oldarray) => [...oldarray, { 'sampleId': 's0', 'assetPath': file }]) } else {
-                                let foundJSON = sampleTest.find(item => { return item.assetPath === file })
-                                setSampleTest((oldarray) => oldarray.filter(sample => ![foundJSON.assetPath].includes(sample.assetPath)))
-                            }
-                        }}></input>
-                        {file}
-                    </div>)}
+            <h4 className="font-semibold text-sm lg:text-base mb-1 mt-3">Samples</h4>
+            <div className="flex flex-row justify-between mb-4">
+                <div className="flex flex-col space-y-1 whitespace-normal break-words w-11/12">
+                    {props.fileList.map((file) => (
+                        <label className="flex items-center relative cursor-pointer mr-2 break-words w-full">
+                            <input 
+                                type="checkbox" 
+                                id={file} 
+                                checked={sampleTest.filter(sample => [file].includes(sample.assetPath)).length > 0 ? true : false}
+                                name={file} 
+                                onChange={(e) => {
+                                    if (e.target.checked) { 
+                                        setSampleTest((oldarray) => [...oldarray, { 'sampleId': 's0', 'assetPath': file }]) 
+                                    } else {
+                                        let foundJSON = sampleTest.find(item => { return item.assetPath === file })
+                                        if (foundJSON !== undefined) {
+                                            setSampleTest((oldarray) => oldarray.filter(sample => ![foundJSON.assetPath].includes(sample.assetPath)))
+                                        }
+                                    }
+                                }} 
+                                className="hidden" 
+                            />
+                            <span className="w-4 h-4 flex items-center justify-center">
+                                <span className={`w-4 h-4 rounded border-2 flex items-center justify-center ${sampleTest.some(sample => sample.assetPath === file) ? "bg-pink-500 border-pink-500 dark:bg-pink-600 dark:border-pink-600" : "bg-gray-200 border-gray-400"} transition-transform transform hover:scale-110 duration-100 ease-in-out`}>
+                                    {sampleTest.some(sample => sample.assetPath === file) && (
+                                        <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="4" d="M5 13l4 4L19 7"></path>
+                                        </svg>
+                                    )}
+                                </span>
+                            </span>
+                            <span className="ml-2 break-words w-full">{file}</span>
+                        </label>
+                    ))}
                 </div>
             </div>
             <div>Axis</div>
@@ -496,19 +516,40 @@ const AbxEditor = (props: propsEditor) => {
     const [sampleTest, setSampleTest] = useState<any[]>(props.currentTest.samples)
     return (
         <div className="w-full">
-            <div >Samples</div>
-            <div className="flex flex-row justify-between">
-                <div className="flex flex-col">
-                    <h4 className="font-semibold text-sm lg:text-base mb-2">Inserted samples</h4>
-                    {props.fileList.map((file) => <div>
-                        <input type="checkbox" id={file} checked={sampleTest.filter(sample => [file].includes(sample.assetPath)).length > 0 ? true : false} name={file} onChange={(e) => {
-                            if (e.target.checked) { setSampleTest((oldarray) => [...oldarray, { 'sampleId': 's0', 'assetPath': file }]) } else {
-                                let foundJSON = sampleTest.find(item => { return item.assetPath === file })
-                                setSampleTest((oldarray) => oldarray.filter(sample => ![foundJSON.assetPath].includes(sample.assetPath)))
-                            }
-                        }}></input>
-                        {file}
-                    </div>)}
+            <h4 className="font-semibold text-sm lg:text-base mb-1 mt-3">Samples</h4>
+            <div className="flex flex-row justify-between mb-4">
+                <div className="flex flex-col space-y-1 whitespace-normal break-words w-11/12">
+                    {props.fileList.map((file) => (
+                        <label className="flex items-center relative cursor-pointer mr-2 break-words w-full">
+                            <input 
+                                type="checkbox" 
+                                id={file} 
+                                checked={sampleTest.filter(sample => [file].includes(sample.assetPath)).length > 0 ? true : false}
+                                name={file} 
+                                onChange={(e) => {
+                                    if (e.target.checked) { 
+                                        setSampleTest((oldarray) => [...oldarray, { 'sampleId': 's0', 'assetPath': file }]) 
+                                    } else {
+                                        let foundJSON = sampleTest.find(item => { return item.assetPath === file })
+                                        if (foundJSON !== undefined) {
+                                            setSampleTest((oldarray) => oldarray.filter(sample => ![foundJSON.assetPath].includes(sample.assetPath)))
+                                        }
+                                    }
+                                }} 
+                                className="hidden" 
+                            />
+                            <span className="w-4 h-4 flex items-center justify-center">
+                                <span className={`w-4 h-4 rounded border-2 flex items-center justify-center ${sampleTest.some(sample => sample.assetPath === file) ? "bg-pink-500 border-pink-500 dark:bg-pink-600 dark:border-pink-600" : "bg-gray-200 border-gray-400"} transition-transform transform hover:scale-110 duration-100 ease-in-out`}>
+                                    {sampleTest.some(sample => sample.assetPath === file) && (
+                                        <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="4" d="M5 13l4 4L19 7"></path>
+                                        </svg>
+                                    )}
+                                </span>
+                            </span>
+                            <span className="ml-2 break-words w-full">{file}</span>
+                        </label>
+                    ))}
                 </div>
             </div>
             <div>Questions</div>
@@ -538,19 +579,40 @@ const AbEditor = (props: propsEditor) => {
     const [sampleTest, setSampleTest] = useState<any[]>(props.currentTest.samples)
     return (
         <div className="w-full">
-            <div >Samples</div>
-            <div className="flex flex-row justify-between">
-                <div className="flex flex-col">
-                    <h4 className="font-semibold text-sm lg:text-base mb-2">Inserted samples</h4>
-                    {props.fileList.map((file) => <div>
-                        <input type="checkbox" id={file} checked={sampleTest.filter(sample => [file].includes(sample.assetPath)).length > 0 ? true : false} name={file} onChange={(e) => {
-                            if (e.target.checked) { setSampleTest((oldarray) => [...oldarray, { 'sampleId': 's0', 'assetPath': file }]) } else {
-                                let foundJSON = sampleTest.find(item => { return item.assetPath === file })
-                                setSampleTest((oldarray) => oldarray.filter(sample => ![foundJSON.assetPath].includes(sample.assetPath)))
-                            }
-                        }}></input>
-                        {file}
-                    </div>)}
+            <h4 className="font-semibold text-sm lg:text-base mb-1 mt-3">Samples</h4>
+            <div className="flex flex-row justify-between mb-4">
+                <div className="flex flex-col space-y-1 whitespace-normal break-words w-11/12">
+                    {props.fileList.map((file) => (
+                        <label className="flex items-center relative cursor-pointer mr-2 break-words w-full">
+                            <input 
+                                type="checkbox" 
+                                id={file} 
+                                checked={sampleTest.filter(sample => [file].includes(sample.assetPath)).length > 0 ? true : false}
+                                name={file} 
+                                onChange={(e) => {
+                                    if (e.target.checked) { 
+                                        setSampleTest((oldarray) => [...oldarray, { 'sampleId': 's0', 'assetPath': file }]) 
+                                    } else {
+                                        let foundJSON = sampleTest.find(item => { return item.assetPath === file })
+                                        if (foundJSON) {
+                                            setSampleTest((oldarray) => oldarray.filter(sample => ![foundJSON.assetPath].includes(sample.assetPath)))
+                                        }
+                                    }
+                                }} 
+                                className="hidden" 
+                            />
+                            <span className="w-4 h-4 flex items-center justify-center">
+                                <span className={`w-4 h-4 rounded border-2 flex items-center justify-center ${sampleTest.some(sample => sample.assetPath === file) ? "bg-pink-500 border-pink-500 dark:bg-pink-600 dark:border-pink-600" : "bg-gray-200 border-gray-400"} transition-transform transform hover:scale-110 duration-100 ease-in-out`}>
+                                    {sampleTest.some(sample => sample.assetPath === file) && (
+                                        <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="4" d="M5 13l4 4L19 7"></path>
+                                        </svg>
+                                    )}
+                                </span>
+                            </span>
+                            <span className="ml-2 break-words w-full">{file}</span>
+                        </label>
+                    ))}
                 </div>
             </div>
             <h4 className="font-semibold text-sm lg:text-base mb-2">Questions</h4>
