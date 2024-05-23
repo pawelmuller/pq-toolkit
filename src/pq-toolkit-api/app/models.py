@@ -35,7 +35,7 @@ class Test(SQLModel, table=True):
     test_setup: dict = Field(sa_column=Column(JSON))
     experiment_id: int = Field(foreign_key="experiment.id")
 
-    experiment: list["Experiment"] = Relationship(back_populates="tests")
+    experiment: Experiment = Relationship(back_populates="tests")
     experiment_test_results: list["ExperimentTestResult"] = Relationship(back_populates="test")
 
 
@@ -45,4 +45,4 @@ class ExperimentTestResult(SQLModel, table=True):
     test_id: int = Field(foreign_key="test.id")
     experiment_use: str
 
-    test: list["Test"] = Relationship(back_populates="experiment_test_results")
+    test: Test = Relationship(back_populates="experiment_test_results")
