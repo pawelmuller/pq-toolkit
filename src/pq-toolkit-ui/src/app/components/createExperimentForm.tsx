@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState, useRef } from "react"
 import Header from "@/lib/components/basic/header"
 import { FaArrowLeft, FaXmark } from "react-icons/fa6";
-import { FaArrowRight, FaPlus, FaSadTear, FaInfoCircle } from "react-icons/fa";
+import { FaArrowRight, FaPlus, FaSadTear, FaInfoCircle, FaPlusCircle } from "react-icons/fa";
 import { array } from "zod";
 import { validateTestSchema } from "@/lib/schemas/utils";
 import { validateApiData } from "@/core/apiHandlers/clientApiHandler";
@@ -193,29 +193,27 @@ const CreateExperimentForm = (props: any): JSX.Element => {
                 <span className="text-lg lg:text-xl font-semibold w-11/12">'{props.selectedExperiment}' Experiment Setup:</span>
                 <FaXmark onClick={() => props.setSelectedExperiment(undefined)} className="cursor-pointer self-start text-blue-400 dark:text-blue-500 hover:text-pink-500 dark:hover:text-pink-600 transform hover:scale-110 duration-300 ease-in-out" size={40} />
             </div>
-            <div className="flex flex-row mt-10 h-full">
-                <div className="flex flex-col border-r-2 h-full w-52">
-                    <div onClick={() => setSetup((oldSetup) => ({
-                        ...oldSetup, tests: [...oldSetup.tests, {
-                            testNumber: 1,
-                            type: "AB",
-                            samples: [
-                            ],
-                            questions: [
-                            ]
-                        }]
-                    }))}>dodaj nowy test</div>
-                    {setup.tests.map(test => <div onClick={() => setCurrentTest(test)}>{
-                        areAllFilesProvided(test, fileList) ? <div>{test.testNumber}</div> : <div>{test.testNumber}!</div>}</div>)}
-                </div>
-            </div>
             <div className="flex flex-col md:flex-row h-full space-y-6 md:space-y-0 md:space-x-6">
                 <div className="flex flex-col border-r-0 border-b-2 md:border-r-2 md:border-b-0 h-full w-full md:w-2/3 p-4">
-                    <h3 className="text-sm lg:text-base font-semibold mb-2">Tests</h3>
+                    <h3 className="text-sm lg:text-base font-semibold -mb-5">Tests</h3>
                     <div className="flex flex-col space-y-2 mb-4">
+                        <button className="flex items-center self-end bg-blue-400 dark:bg-blue-500 hover:bg-pink-500 dark:hover:bg-pink-600 text-white text-sm font-medium py-1 lg:py-2 px-1 lg:px-2 rounded-full shadow-lg transform transition-all duration-300 hover:scale-110" onClick={() => setSetup((oldSetup) => ({
+                            ...oldSetup, tests: [...oldSetup.tests, {
+                                testNumber: oldSetup.tests.length + 1,
+                                type: "AB",
+                                samples: [
+                                ],
+                                questions: [
+                                ]
+                            }]
+                        }))}
+                        >
+                            <FaPlus />
+                        </button>
                         {setup.tests.length === 0 ? (
-                            <h3 className="text-sm font-medium text-pink-500 dark:text-pink-600">No tests available. Please upload the Experiment Setup first.</h3>) : (
-                            setup.tests.map(test => <div  className="cursor-pointer p-2 text-white font-semibold bg-blue-400 dark:bg-blue-500 hover:bg-pink-500 dark:hover:bg-pink-600 transform hover:scale-105 duration-300 ease-in-out rounded-md" onClick={() => setCurrentTest(test)}>{test.testNumber}</div>)
+                            <h3 className="text-sm font-medium text-pink-500 dark:text-pink-600">No tests available. Please upload the Experiment Setup or add new test.</h3>) : (
+                            setup.tests.map(test => <div className="cursor-pointer p-2 text-white font-semibold bg-blue-400 dark:bg-blue-500 hover:bg-pink-500 dark:hover:bg-pink-600 transform hover:scale-105 duration-300 ease-in-out rounded-md" onClick={() => setCurrentTest(test)}>{
+                                areAllFilesProvided(test, fileList) ? <div>{test.testNumber}</div> : <div>{test.testNumber}!</div>}</div>)
                         )}
                     </div>
                     <div className="mt-auto">
@@ -266,7 +264,7 @@ const CreateExperimentForm = (props: any): JSX.Element => {
                 {currentTest.testNumber === -1 ? <div /> : (
                     <div className="flex flex-col w-full p-4 whitespace-normal break-words md:w-2/3 bg-gray-100 dark:bg-gray-700 shadow-lg rounded-lg text-gray-700 dark:text-gray-300">
                         <div>
-                            <h1 className="text-base lg:text-lg font-bold mb-4 text-center text-blue-400 dark:text-blue-500">Test '{currentTest.testNumber}' Configuration</h1>
+                            <h1 className="text-base lg:text-lg font-bold mb-4 text-center text-blue-400 dark:text-blue-500">Test #{currentTest.testNumber} Configuration</h1>
                             <h4 className="text-sm lg:text-base font-semibold mb-2 flex items-center">
                                 Type of Experiment
                                 <FaInfoCircle
@@ -276,33 +274,33 @@ const CreateExperimentForm = (props: any): JSX.Element => {
                             </h4>
                             {showInfo && (
                                 <div className="mb-4 p-2 text-sm rounded-3xl bg-gray-200 dark:bg-gray-600 text-gray-700 dark:text-gray-300 fadeInDown">
-                                    Choose the type of experiment you would like to configure.
+                                    Choose the type of experiment you would like to configure for the given test.
                                 </div>
                             )}
                             <div className="grid sm:flex md:grid lg:flex justify-normal sm:justify-evenly md:justify-normal lg:justify-evenly mb-4">
                                 <label className="flex items-center relative cursor-pointer mr-2">
-                                    <input type="radio" value="MUSHRA" name="type" checked={currentTest.type === "MUSHRA"} onChange={(e) => setCurrentTest({ ...currentTest, type: (e.target as HTMLTextAreaElement).value, anchors: [], reference: { sampleId: "", assetPath: "" } })} className="hidden" />
+                                    <input type="radio" value="MUSHRA" name="type" checked={currentTest.type === "MUSHRA"} onClick={(e) => setCurrentTest({ ...currentTest, type: (e.target as HTMLTextAreaElement).value, anchors: [], reference: { sampleId: "", assetPath: "" } })} className="hidden" />
                                     <span className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${currentTest.type === "MUSHRA" ? "bg-pink-500 border-pink-500 dark:bg-pink-600 dark:border-pink-600" : "bg-gray-200 border-gray-400"} transition-transform transform hover:scale-110 duration-100 ease-in-out`}>
                                         <span className={`w-2 h-2 rounded-full ${currentTest.type === "MUSHRA" ? "bg-white dark:bg-gray-100" : ""}`}></span>
                                     </span>
                                     <span className="ml-2">MUSHRA</span>
                                 </label>
                                 <label className="flex items-center relative cursor-pointer mr-2">
-                                    <input type="radio" value="AB" name="type" checked={currentTest.type === "AB"} onChange={(e) => setCurrentTest({ ...currentTest, type: (e.target as HTMLTextAreaElement).value, questions: [] })} className="hidden" />
+                                    <input type="radio" value="AB" name="type" checked={currentTest.type === "AB"} onClick={(e) => setCurrentTest({ ...currentTest, type: (e.target as HTMLTextAreaElement).value, questions: [] })} className="hidden" />
                                     <span className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${currentTest.type === "AB" ? "bg-pink-500 border-pink-500 dark:bg-pink-600 dark:border-pink-600" : "bg-gray-200 border-gray-400"} transition-transform transform hover:scale-110 duration-100 ease-in-out`}>
                                         <span className={`w-2 h-2 rounded-full ${currentTest.type === "AB" ? "bg-white dark:bg-gray-100" : ""}`}></span>
                                     </span>
                                     <span className="ml-2">AB</span>
                                 </label>
                                 <label className="flex items-center relative cursor-pointer mr-2">
-                                    <input type="radio" value="ABX" name="type" checked={currentTest.type === "ABX"} onChange={(e) => setCurrentTest({ ...currentTest, type: (e.target as HTMLTextAreaElement).value, questions: [] })} className="hidden" />
+                                    <input type="radio" value="ABX" name="type" checked={currentTest.type === "ABX"} onClick={(e) => setCurrentTest({ ...currentTest, type: (e.target as HTMLTextAreaElement).value, questions: [] })} className="hidden" />
                                     <span className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${currentTest.type === "ABX" ? "bg-pink-500 border-pink-500 dark:bg-pink-600 dark:border-pink-600" : "bg-gray-200 border-gray-400"} transition-transform transform hover:scale-110 duration-100 ease-in-out`}>
                                         <span className={`w-2 h-2 rounded-full ${currentTest.type === "ABX" ? "bg-white dark:bg-gray-100" : ""}`}></span>
                                     </span>
                                     <span className="ml-2">ABX</span>
                                 </label>
                                 <label className="flex items-center relative cursor-pointer mr-2">
-                                    <input type="radio" value="APE" name="type" checked={currentTest.type === "APE"} onChange={(e) => setCurrentTest({ ...currentTest, type: (e.target as HTMLTextAreaElement).value, axis: [] })} className="hidden" />
+                                    <input type="radio" value="APE" name="type" checked={currentTest.type === "APE"} onClick={(e) => setCurrentTest({ ...currentTest, type: (e.target as HTMLTextAreaElement).value, axis: [] })} className="hidden" />
                                     <span className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${currentTest.type === "APE" ? "bg-pink-500 border-pink-500 dark:bg-pink-600 dark:border-pink-600" : "bg-gray-200 border-gray-400"} transition-transform transform hover:scale-110 duration-100 ease-in-out`}>
                                         <span className={`w-2 h-2 rounded-full ${currentTest.type === "APE" ? "bg-white dark:bg-gray-100" : ""}`}></span>
                                     </span>
@@ -337,8 +335,8 @@ const MushraEditor = (props: propsEditor) => {
     const [referenceTest, setReferenceTest] = useState<fileType>(props.currentTest.reference === undefined ? { sampleId: "", assetPath: "" } : props.currentTest.reference)
     return (
         <div className="w-full">
-            <div >Reference</div>
-            <div className="flex flex-row justify-between">
+            <h4 className="font-semibold text-sm lg:text-base mb-1">Reference</h4>
+            <div className="flex flex-row justify-between mb-4">
                 <div className="flex flex-col">
                     {props.fileList.map((file) => <div>
                         <input type="radio" id={file} checked={referenceTest.assetPath === file ? true : false} name='reference' onChange={(e) => {
@@ -350,27 +348,35 @@ const MushraEditor = (props: propsEditor) => {
                     </div>)}
                 </div>
             </div>
-            <div>Anchors</div>
-            {props.fileList.map((file) => <div>
-                <input type="checkbox" id={file} checked={anchorsTest.filter(sample => [file].includes(sample.assetPath)).length > 0 ? true : false} name={file} onChange={(e) => {
-                    if (e.target.checked) { setAnchorsTest((oldarray) => [...oldarray, { 'sampleId': 'a0', 'assetPath': file }]) } else {
-                        let foundJSON = anchorsTest.find(item => { return item.assetPath === file })
-                        if (foundJSON !== undefined) setAnchorsTest((oldarray) => oldarray.filter(sample => ![foundJSON.assetPath].includes(sample.assetPath)))
-                    }
-                }}></input>
-                {file}
-            </div>)}
-            <div>Samples</div>
-            {props.fileList.map((file) => <div>
-                <input type="checkbox" id={file} checked={sampleTest.filter(sample => [file].includes(sample.assetPath)).length > 0 ? true : false} name={file} onChange={(e) => {
-                    if (e.target.checked) { setSampleTest((oldarray) => [...oldarray, { 'sampleId': 's0', 'assetPath': file }]) } else {
-                        let foundJSON = sampleTest.find(item => { return item.assetPath === file })
-                        if (foundJSON !== undefined) setSampleTest((oldarray) => oldarray.filter(sample => ![foundJSON.assetPath].includes(sample.assetPath)))
-                    }
-                }}></input>
-                {file}
-            </div>)}
-            <div className="mt-auto ml-auto">Cancel  <div onClick={() => {
+            <h4 className="font-semibold text-sm lg:text-base mb-1">Anchors</h4>
+            <div className="flex flex-row justify-between mb-4">
+                <div className="flex flex-col">
+                    {props.fileList.map((file) => <div>
+                        <input type="checkbox" id={file} checked={anchorsTest.filter(sample => [file].includes(sample.assetPath)).length > 0 ? true : false} name={file} onChange={(e) => {
+                            if (e.target.checked) { setAnchorsTest((oldarray) => [...oldarray, { 'sampleId': 'a0', 'assetPath': file }]) } else {
+                                let foundJSON = anchorsTest.find(item => { return item.assetPath === file })
+                                if (foundJSON !== undefined) setAnchorsTest((oldarray) => oldarray.filter(sample => ![foundJSON.assetPath].includes(sample.assetPath)))
+                            }
+                        }}></input>
+                        {file}
+                    </div>)}
+                </div>
+            </div>
+            <h4 className="font-semibold text-sm lg:text-base mb-1">Samples</h4>
+            <div className="flex flex-row justify-between mb-8">
+                <div className="flex flex-col">
+                    {props.fileList.map((file) => <div>
+                        <input type="checkbox" id={file} checked={sampleTest.filter(sample => [file].includes(sample.assetPath)).length > 0 ? true : false} name={file} onChange={(e) => {
+                            if (e.target.checked) { setSampleTest((oldarray) => [...oldarray, { 'sampleId': 's0', 'assetPath': file }]) } else {
+                                let foundJSON = sampleTest.find(item => { return item.assetPath === file })
+                                if (foundJSON !== undefined) setSampleTest((oldarray) => oldarray.filter(sample => ![foundJSON.assetPath].includes(sample.assetPath)))
+                            }
+                        }}></input>
+                        {file}
+                    </div>)}
+                </div>
+            </div>
+            <div className="mt-auto ml-auto flex flex-row justify-evenly">Cancel  <div onClick={() => {
                 props.setCurrentTest((oldTest: Test) => {
                     delete oldTest.questions
                     delete oldTest.axis
