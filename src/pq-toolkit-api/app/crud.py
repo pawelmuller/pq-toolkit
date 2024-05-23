@@ -148,6 +148,7 @@ def add_test_results(session: Session, results_data: dict[str, Any], test_mappin
 
     test_number_to_id = {number: test_id for number, test_id in test_mapping}
     new_results = []
+    placeholder = str(randint(1, 100000))
 
     for result_dict in results_list:
         test_number = result_dict.get('testNumber')
@@ -159,7 +160,7 @@ def add_test_results(session: Session, results_data: dict[str, Any], test_mappin
         new_result = ExperimentTestResult(
             test_id=test_id,
             test_result=result_dict,
-            experiment_use=str(randint)
+            experiment_use= placeholder
         )
 
         session.add(new_result)
@@ -173,17 +174,7 @@ def add_test_results(session: Session, results_data: dict[str, Any], test_mappin
 
     return new_results
 
-
-def get_experiments_results(session: Session, experiment_name: str) -> PqTestResultsList:
-    experiment_query = select(Experiment).where(Experiment.name == experiment_name)
-    try:
-        experiment = session.exec(experiment_query).one()
-    except NoResultFound:
-        raise ExperimentNotFound(experiment_name)
-    return get_test_results_by_ids(session, [test.id for test in experiment.tests])
-
-
-def get_experiment_tests_results(session: Session, experiment_name, result_name) -> PqTestResultsList:
+def get_experiment_tests_results(session: Session, experiment_name, result_name=None) -> PqTestResultsList:
     experiment_query = select(Experiment).where(Experiment.name == experiment_name)
     try:
         experiment = session.exec(experiment_query).one()
