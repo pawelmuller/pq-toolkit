@@ -31,6 +31,20 @@ class ExperimentAlreadyConfigured(PqException):
         super().__init__(f"Experiment {experiment_name} already configured!")
 
 
+class NoTestsFoundForExperiment(PqException):
+    def __init__(self, experiment_name: str) -> None:
+        super().__init__(f"Experiment {experiment_name} has not tests!")
+
+class NoResultsData(PqException):
+    def __init__(self) -> None:
+        super().__init__(f"No results data provided!")
+
+
+class NoMatchingTest(PqException):
+    def __init__(self, test_number: str) -> None:
+        super().__init__(f"No matching test found for test number {test_number}!")
+
+
 def transform_test(test: Test) -> dict:
     test_dict = {"test_number": test.number, "type": test.type}
     if test.test_setup:
@@ -131,23 +145,19 @@ def add_experiment_result(session: Session, experiment_name: str, experiment_res
         raise ExperimentNotFound(experiment_name)
 
     if len(experiment.tests) == 0:
-        raise ValueError("No tests found for the experiment")
+        raise NoTestsFoundForExperiment(experiment_name)
     test_mapping = [(test.number, test.id) for test in experiment.tests]
 
-    try:
-        added_results = add_test_results(session, experiment_result_raw_json, test_mapping)
-        return {"message": "Test results successfully added", "results": added_results}
-    except Exception as e:
-        raise Exception(f"Failed to add experiment results due to: {str(e)}")
+    results = add_test_results(session, experiment_result_raw_json, test_mapping)
+    return get_experiment_tests_results (session, experiment_name, results)      
 
 
-def add_test_results(session: Session, results_data: dict[str, Any], test_mapping: list[tuple]):
+def add_test_results(session: Session, results_data: dict[str, Any], test_mapping: list[tuple])-> str:
     results_list = results_data.get('results')
     if not results_list:
-        raise ValueError("The provided dictionary does not contain a 'results' key or it is empty.")
+        raise NoResultsData
 
     test_number_to_id = {number: test_id for number, test_id in test_mapping}
-    new_results = []
     placeholder = str(randint(1, 100000))
 
     for result_dict in results_list:
@@ -155,7 +165,7 @@ def add_test_results(session: Session, results_data: dict[str, Any], test_mappin
         test_id = test_number_to_id.get(test_number)
 
         if test_id is None:
-            raise ValueError(f"No test ID found for test number {test_number}")
+            raise NoMatchingTest(test_number)
 
         new_result = ExperimentTestResult(
             test_id=test_id,
@@ -164,15 +174,10 @@ def add_test_results(session: Session, results_data: dict[str, Any], test_mappin
         )
 
         session.add(new_result)
-        new_results.append(new_result)
+    session.commit()
 
-    try:
-        session.commit()
-    except Exception as e:
-        session.rollback()
-        raise Exception(f"Failed to add test results due to: {str(e)}")
 
-    return new_results
+    return placeholder
 
 def get_experiment_tests_results(session: Session, experiment_name, result_name=None) -> PqTestResultsList:
     experiment_query = select(Experiment).where(Experiment.name == experiment_name)
@@ -187,8 +192,11 @@ def get_test_results_by_ids(session: Session, test_ids: list[int], result_name=N
     if not result_name:
         results_query = select(ExperimentTestResult).where(ExperimentTestResult.test_id.in_(test_ids))
     else:
-        results_query = select(ExperimentTestResult).where(ExperimentTestResult.test_id.in_(test_ids) and ExperimentTestResult.experiment_use == result_name)
-    db_results = session.exec(results_query).all()
+        results_query = select(ExperimentTestResult).where(ExperimentTestResult.test_id.in_(test_ids) & ExperimentTestResult.experiment_use.__eq__(result_name))
+    try:
+        db_results = session.exec(results_query).all()
+    except NoResultFound:
+        raise ExperimentNotFound(results_query)
 
     test_results = []
 
