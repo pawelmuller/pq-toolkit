@@ -67,9 +67,10 @@ class Settings(BaseSettings):
             path=self.POSTGRES_DB,
         )
 
-    FIRST_SUPERUSER: str
+    FIRST_SUPERUSER_NAME: str
     FIRST_SUPERUSER_PASSWORD: str
-    USERS_OPEN_REGISTRATION: bool = False
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
+    SECRET_KEY: str = secrets.token_urlsafe(32)
 
     MINIO_ROOT_USER: str
     MINIO_ROOT_PASSWORD: str
