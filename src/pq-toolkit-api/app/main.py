@@ -40,7 +40,7 @@ if settings.BACKEND_CORS_ORIGINS:
 @app.exception_handler(PqException)
 async def pq_exception_handler(request: Request, exc: PqException):
     return JSONResponse(
-        status_code=400,
+        status_code=exc.error_code,
         content=exc.api_payload.model_dump(),
     )
 
