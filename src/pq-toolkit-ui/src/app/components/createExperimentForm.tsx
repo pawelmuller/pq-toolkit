@@ -522,10 +522,10 @@ const ApeEditor = (props: propsEditor) => {
                     )}
                 </div>
             </div>
-            <h4 className="font-semibold text-sm lg:text-base mb-2">Axis</h4>
+            <h4 className="font-semibold text-sm lg:text-base mb-2">Axes</h4>
             <div className="flex items-center w-full mb-2">
                 <input
-                    className="rounded outline-0 border-2 bg-gray-50 border-gray-300 dark:bg-gray-300 dark:border-gray-500 text-black w-full"
+                    className="rounded outline-0 border-2 bg-gray-50 border-gray-300 dark:bg-gray-800 dark:border-gray-500 text-black dark:text-white w-full"
                     value={newQuestion}
                     onChange={(e) => setNewQuestion(e.target.value)}
                 />
@@ -551,7 +551,13 @@ const ApeEditor = (props: propsEditor) => {
                 </button>
             </div>
             <div className="mb-8">
-                {props.currentTest.axis !== undefined ? props.currentTest.axis.map((question) => <div>{question.text}</div>) : <></>}
+                {props.currentTest.axis !== undefined ? (
+                    props.currentTest.axis.map((question, index) => (
+                        <div key={index} className="p-4 mb-2 bg-white dark:bg-gray-800 rounded-lg shadow-md">
+                            <p className="text-black dark:text-white">{question.text}</p>
+                        </div>
+                    ))
+                ) : null}
             </div>
             <div className="mt-auto ml-auto mb-2 self-center mr-auto flex flex-row justify-around max-w-[15rem] space-x-2 sm:space-x-sm lg:space-x-md">
                 <button
@@ -595,45 +601,55 @@ const AbxEditor = (props: propsEditor) => {
             <div className="flex flex-row justify-between mb-4">
                 <div className="flex flex-col space-y-1 whitespace-normal break-words w-11/12">
                     {props.fileList.length === 0 ? (
-                        <h3 className="text-sm font-medium text-pink-500 dark:text-pink-600">No Samples available. Please upload some.</h3>) : (
-                        props.fileList.map((file) => (
-                            <label className="flex items-center relative cursor-pointer mr-2 break-words w-full">
-                                <input 
-                                    type="checkbox" 
-                                    id={file} 
-                                    checked={sampleTest.filter(sample => [file].includes(sample.assetPath)).length > 0 ? true : false}
-                                    name={file} 
-                                    onChange={(e) => {
-                                        if (e.target.checked) { 
-                                            setSampleTest((oldarray) => [...oldarray, { 'sampleId': 's0', 'assetPath': file }]) 
-                                        } else {
-                                            let foundJSON = sampleTest.find(item => { return item.assetPath === file })
-                                            if (foundJSON !== undefined) {
-                                                setSampleTest((oldarray) => oldarray.filter(sample => ![foundJSON.assetPath].includes(sample.assetPath)))
+                        <h3 className="text-sm font-medium text-pink-500 dark:text-pink-600">No Samples available. Please upload some.</h3>
+                    ) : (
+                        props.fileList.map((file) => {
+                            const isChecked = sampleTest.filter(sample => [file].includes(sample.assetPath)).length > 0 ? true : false
+                            const isDisabled = !isChecked && sampleTest.length >= 2
+                            return (
+                                <label key={file} className="flex items-center relative cursor-pointer mr-2 break-words w-full">
+                                    <input
+                                        type="checkbox"
+                                        id={file}
+                                        checked={isChecked}
+                                        name={file}
+                                        disabled={isDisabled}
+                                        onChange={(e) => {
+                                            if (e.target.checked) {
+                                                if (sampleTest.length < 2) {
+                                                    setSampleTest((oldarray) => [...oldarray, { 'sampleId': 's0', 'assetPath': file }]) 
+                                                }
+                                            } else {
+                                                let foundJSON = sampleTest.find(item => { return item.assetPath === file })
+                                                if (foundJSON !== undefined) {
+                                                    setSampleTest((oldarray) => oldarray.filter(sample => ![foundJSON.assetPath].includes(sample.assetPath)))
+                                                }
                                             }
-                                        }
-                                    }} 
-                                    className="hidden" 
-                                />
-                                <span className="w-4 h-4 flex items-center justify-center">
-                                    <span className={`w-4 h-4 rounded border-2 flex items-center justify-center ${sampleTest.some(sample => sample.assetPath === file) ? "bg-pink-500 border-pink-500 dark:bg-pink-600 dark:border-pink-600" : "bg-gray-200 border-gray-400"} transition-transform transform hover:scale-110 duration-100 ease-in-out`}>
-                                        {sampleTest.some(sample => sample.assetPath === file) && (
-                                            <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="4" d="M5 13l4 4L19 7"></path>
-                                            </svg>
-                                        )}
+                                        }}
+                                        className="hidden"
+                                    />
+                                    <span className="w-4 h-4 flex items-center justify-center">
+                                        <span className={`w-4 h-4 rounded border-2 flex items-center justify-center ${isChecked ? "bg-pink-500 border-pink-500 dark:bg-pink-600 dark:border-pink-600" : "bg-gray-200 border-gray-400"} ${isDisabled ? "bg-gray-100 border-gray-300 dark:bg-gray-600 dark:border-gray-500 opacity-50 cursor-not-allowed" : "transition-transform transform hover:scale-110 duration-100 ease-in-out"}`}>
+                                            {isChecked && (
+                                                <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="4" d="M5 13l4 4L19 7"></path>
+                                                </svg>
+                                            )}
+                                        </span>
                                     </span>
-                                </span>
-                                <span className="ml-2 break-words w-full">{file}</span>
-                            </label>
-                        ))
+                                    <span className={`ml-2 break-words w-full ${isDisabled ? "text-gray-400 dark:text-gray-500" : "text-gray-700 dark:text-gray-300"}`}>
+                                        {file}
+                                    </span>
+                                </label>
+                            );
+                        })
                     )}
                 </div>
             </div>
             <h4 className="font-semibold text-sm lg:text-base mb-2">Questions</h4>
             <div className="flex items-center w-full mb-2">
                 <input
-                    className="rounded outline-0 border-2 bg-gray-50 border-gray-300 dark:bg-gray-300 dark:border-gray-500 text-black w-full"
+                    className="rounded outline-0 border-2 bg-gray-50 border-gray-300 dark:bg-gray-800 dark:border-gray-500 text-black dark:text-white w-full"
                     value={newQuestion}
                     onChange={(e) => setNewQuestion(e.target.value)}
                 />
@@ -643,12 +659,12 @@ const AbxEditor = (props: propsEditor) => {
                             props.setCurrentTest({
                                 ...props.currentTest,
                                 questions: [...props.currentTest.questions, { questionId: 'q3', text: newQuestion }]
-                            });
+                            })
                         } else {
                             props.setCurrentTest({
                                 ...props.currentTest,
                                 questions: [{ questionId: 'q3', text: newQuestion }]
-                            });
+                            })
                         }
                         setNewQuestion('')
                     }}
@@ -659,7 +675,13 @@ const AbxEditor = (props: propsEditor) => {
                 </button>
             </div>
             <div className="mb-8">
-                {props.currentTest.questions !== undefined ? (props.currentTest.questions.map((question) => <div>{question.text}</div>)) : <></>}
+                {props.currentTest.questions !== undefined ? (
+                    props.currentTest.questions.map((question, index) => (
+                        <div key={index} className="p-4 mb-2 bg-white dark:bg-gray-800 rounded-lg shadow-md">
+                            <p className="text-black dark:text-white">{question.text}</p>
+                        </div>
+                    ))
+                ) : null}
             </div>
             <div className="mt-auto ml-auto mb-2 self-center mr-auto flex flex-row justify-around max-w-[15rem] space-x-2 sm:space-x-sm lg:space-x-md">
                 <button
@@ -703,45 +725,55 @@ const AbEditor = (props: propsEditor) => {
             <div className="flex flex-row justify-between mb-4">
                 <div className="flex flex-col space-y-1 whitespace-normal break-words w-11/12">
                     {props.fileList.length === 0 ? (
-                        <h3 className="text-sm font-medium text-pink-500 dark:text-pink-600">No Samples available. Please upload some.</h3>) : (
-                        props.fileList.map((file) => (
-                            <label className="flex items-center relative cursor-pointer mr-2 break-words w-full">
-                                <input 
-                                    type="checkbox" 
-                                    id={file} 
-                                    checked={sampleTest.filter(sample => [file].includes(sample.assetPath)).length > 0 ? true : false}
-                                    name={file} 
-                                    onChange={(e) => {
-                                        if (e.target.checked) { 
-                                            setSampleTest((oldarray) => [...oldarray, { 'sampleId': 's0', 'assetPath': file }]) 
-                                        } else {
-                                            let foundJSON = sampleTest.find(item => { return item.assetPath === file })
-                                            if (foundJSON !== undefined) {
-                                                setSampleTest((oldarray) => oldarray.filter(sample => ![foundJSON.assetPath].includes(sample.assetPath)))
+                        <h3 className="text-sm font-medium text-pink-500 dark:text-pink-600">No Samples available. Please upload some.</h3>
+                    ) : (
+                        props.fileList.map((file) => {
+                            const isChecked = sampleTest.filter(sample => [file].includes(sample.assetPath)).length > 0 ? true : false
+                            const isDisabled = !isChecked && sampleTest.length >= 2
+                            return (
+                                <label key={file} className="flex items-center relative cursor-pointer mr-2 break-words w-full">
+                                    <input
+                                        type="checkbox"
+                                        id={file}
+                                        checked={isChecked}
+                                        name={file}
+                                        disabled={isDisabled}
+                                        onChange={(e) => {
+                                            if (e.target.checked) {
+                                                if (sampleTest.length < 2) {
+                                                    setSampleTest((oldarray) => [...oldarray, { 'sampleId': 's0', 'assetPath': file }])
+                                                }
+                                            } else {
+                                                let foundJSON = sampleTest.find(item => { return item.assetPath === file })
+                                                if (foundJSON !== undefined) {
+                                                    setSampleTest((oldarray) => oldarray.filter(sample => ![foundJSON.assetPath].includes(sample.assetPath)))
+                                                }
                                             }
-                                        }
-                                    }} 
-                                    className="hidden" 
-                                />
-                                <span className="w-4 h-4 flex items-center justify-center">
-                                    <span className={`w-4 h-4 rounded border-2 flex items-center justify-center ${sampleTest.some(sample => sample.assetPath === file) ? "bg-pink-500 border-pink-500 dark:bg-pink-600 dark:border-pink-600" : "bg-gray-200 border-gray-400"} transition-transform transform hover:scale-110 duration-100 ease-in-out`}>
-                                        {sampleTest.some(sample => sample.assetPath === file) && (
-                                            <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="4" d="M5 13l4 4L19 7"></path>
-                                            </svg>
-                                        )}
+                                        }}
+                                        className="hidden"
+                                    />
+                                    <span className="w-4 h-4 flex items-center justify-center">
+                                        <span className={`w-4 h-4 rounded border-2 flex items-center justify-center ${isChecked ? "bg-pink-500 border-pink-500 dark:bg-pink-600 dark:border-pink-600" : "bg-gray-200 border-gray-400"} ${isDisabled ? "bg-gray-100 border-gray-300 dark:bg-gray-600 dark:border-gray-500 opacity-50 cursor-not-allowed" : "transition-transform transform hover:scale-110 duration-100 ease-in-out"}`}>
+                                            {isChecked && (
+                                                <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="4" d="M5 13l4 4L19 7"></path>
+                                                </svg>
+                                            )}
+                                        </span>
                                     </span>
-                                </span>
-                                <span className="ml-2 break-words w-full">{file}</span>
-                            </label>
-                        ))
+                                    <span className={`ml-2 break-words w-full ${isDisabled ? "text-gray-400 dark:text-gray-500" : "text-gray-700 dark:text-gray-300"}`}>
+                                        {file}
+                                    </span>
+                                </label>
+                            )
+                        })
                     )}
                 </div>
             </div>
             <h4 className="font-semibold text-sm lg:text-base mb-2">Questions</h4>
             <div className="flex items-center w-full mb-2">
                 <input
-                    className="rounded outline-0 border-2 bg-gray-50 border-gray-300 dark:bg-gray-300 dark:border-gray-500 text-black w-full"
+                    className="rounded outline-0 border-2 bg-gray-50 border-gray-300 dark:bg-gray-800 dark:border-gray-500 text-black dark:text-white w-full"
                     value={newQuestion}
                     onChange={(e) => setNewQuestion(e.target.value)}
                 />
@@ -751,12 +783,12 @@ const AbEditor = (props: propsEditor) => {
                             props.setCurrentTest({
                                 ...props.currentTest,
                                 questions: [...props.currentTest.questions, { questionId: 'q3', text: newQuestion }]
-                            });
+                            })
                         } else {
                             props.setCurrentTest({
                                 ...props.currentTest,
                                 questions: [{ questionId: 'q3', text: newQuestion }]
-                            });
+                            })
                         }
                         setNewQuestion('')
                     }}
@@ -767,7 +799,13 @@ const AbEditor = (props: propsEditor) => {
                 </button>
             </div>
             <div className="mb-8">
-                {props.currentTest.questions !== undefined ? (props.currentTest.questions.map((question) => <div>{question.text}</div>)) : <></>}
+                {props.currentTest.questions !== undefined ? (
+                    props.currentTest.questions.map((question, index) => (
+                        <div key={index} className="p-4 mb-2 bg-white dark:bg-gray-800 rounded-lg shadow-md">
+                            <p className="text-black dark:text-white">{question.text}</p>
+                        </div>
+                    ))
+                ) : null}
             </div>
             <div className="mt-auto ml-auto mb-2 self-center mr-auto flex flex-row justify-around max-w-[15rem] space-x-2 sm:space-x-sm lg:space-x-md">
                 <button
