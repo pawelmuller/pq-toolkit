@@ -1,6 +1,6 @@
 from fastapi import APIRouter, UploadFile, Request
 
-from app.api.deps import SessionDep, SampleManagerDep
+from app.api.deps import SessionDep, SampleManagerDep, CurrentAdmin
 from app.schemas import *
 import app.crud as crud
 router = APIRouter()
@@ -12,13 +12,13 @@ def get_experiments(session: SessionDep):
 
 
 @router.post("/", response_model=PqExperimentsList)
-def add_experiment(session: SessionDep, experiment_name: PqExperimentName):
+def add_experiment(session: SessionDep, admin: CurrentAdmin, experiment_name: PqExperimentName):
     crud.add_experiment(session, experiment_name.name)
     return crud.get_experiments(session)
 
 
 @router.post("/{experiment_name}", response_model=PqSuccessResponse)
-def set_up_experiment(session: SessionDep, experiment_name: str, file: UploadFile):
+def set_up_experiment(session: SessionDep, admin: CurrentAdmin, experiment_name: str, file: UploadFile):
     crud.upload_experiment_config(session, experiment_name, file)
     return PqSuccessResponse(success=True)
 
@@ -29,7 +29,7 @@ def get_experiment(session: SessionDep, experiment_name: str):
 
 
 @router.delete("/", response_model=PqExperimentsList)
-def delete_experiment(session: SessionDep, experiment_name: PqExperimentName):
+def delete_experiment(session: SessionDep, admin: CurrentAdmin, experiment_name: PqExperimentName):
     crud.remove_experiment_by_name(session, experiment_name.name)
     return crud.get_experiments(session)
 
@@ -40,7 +40,7 @@ def get_samples(sample_manager: SampleManagerDep, experiment_name: str):
 
 
 @router.post("/{experiment_name}/samples", response_model=PqSuccessResponse)
-def upload_sample(sample_manager: SampleManagerDep, experiment_name: str, file: UploadFile):
+def upload_sample(sample_manager: SampleManagerDep, admin: CurrentAdmin, experiment_name: str, file: UploadFile):
     crud.upload_experiment_sample(sample_manager, experiment_name, file)
     return PqSuccessResponse(success=True)
 
@@ -51,7 +51,7 @@ async def get_sample(sample_manager: SampleManagerDep, experiment_name: str, fil
 
 
 @router.delete("/{experiment_name}/samples/{filename}", response_model=PqSuccessResponse)
-def delete_sample(sample_manager: SampleManagerDep, experiment_name: str, filename: str):
+def delete_sample(sample_manager: SampleManagerDep, admin: CurrentAdmin, experiment_name: str, filename: str):
     crud.delete_experiment_sample(sample_manager, experiment_name, filename)
     return PqSuccessResponse(success=True)
 
