@@ -1,6 +1,6 @@
 from sqlalchemy.exc import NoResultFound, IntegrityError
 
-from app.models import Experiment, Test, ExperimentTestResult
+from app.models import Experiment, Test, ExperimentTestResult, Admin
 from app.schemas import *
 from typing import Any
 from sqlmodel import Session, select
@@ -212,3 +212,10 @@ def get_test_results_by_ids(session: Session, test_ids: list[int], result_name=N
     return PqTestResultsList(results=test_results)
 
 
+def authenticate(session: Session, username: str, hashed_password: str) -> Admin | None:
+    statement = select(Admin).where(Admin.username == username)
+    try:
+        user = session.exec(statement).one()
+    except NoResultFound:
+        return None
+    return user if user.hashed_password == hashed_password else None

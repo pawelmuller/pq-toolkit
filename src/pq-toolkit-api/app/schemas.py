@@ -4,6 +4,15 @@ import inspect
 import uuid
 
 
+class AccessToken(BaseModel):
+    access_token: str
+    token_type: str = "bearer"
+
+
+class TokenPayload(BaseModel):
+    user_id: int = None
+
+
 class PqTestTypes(Enum):
     """
     Class representing types of tests handled by PQToolkit.

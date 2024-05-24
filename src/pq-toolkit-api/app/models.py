@@ -6,8 +6,9 @@ from app.schemas import PqTestTypes
 
 class Admin(SQLModel, table=True):
     id: int | None = Field(default=None, primary_key=True)
-    email: str = Field(index=True, unique=True)
-    hashed_password: str
+    username: str = Field(index=True, unique=True)
+    email: str | None = Field(default=None, index=True, unique=True)
+    hashed_password: str | None
     is_active: bool = True
 
 
