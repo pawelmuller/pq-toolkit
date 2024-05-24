@@ -1,5 +1,6 @@
 from fastapi import APIRouter, UploadFile, Request
 
+from app.models import ExperimentTestResult
 from app.api.deps import SessionDep, SampleManagerDep
 from app.schemas import *
 import app.crud as crud
@@ -58,10 +59,10 @@ def delete_sample(sample_manager: SampleManagerDep, experiment_name: str, filena
 
 @router.get("/{experiment_name}/results", response_model=PqTestResultsList)
 def get_results(session: SessionDep, experiment_name: str):
-    return crud.get_experiments_results(session, experiment_name)
+    return crud.get_experiment_tests_results(session, experiment_name)
 
 
-@router.post("/{experiment_name}/results", response_model=PqResultsList)
+@router.post("/{experiment_name}/results", response_model=PqTestResultsList)
 async def get_results(session: SessionDep, experiment_name: str, result_json: Request):
     res = await result_json.json()
     return crud.add_experiment_result(session, experiment_name, res)
