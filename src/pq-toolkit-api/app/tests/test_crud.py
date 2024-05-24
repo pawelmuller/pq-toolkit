@@ -111,8 +111,10 @@ def test_add_experiment_results(session):
             {
                 "test_number": 1,
                 "type": "AB",
-                "samples": [{"sample_id": "s1", "asset_path": "file_sample_5.mp3"}, {"sample_id": "s2", "asset_path": "file_sample_700.mp3"}],
-                "questions": [{"question_id": "q1", "text": "Select better quality"}, {"question_id": "q2", "text": "Select more warmth"}]
+                "samples": [{"sample_id": "s1", "asset_path": "file_sample_5.mp3"},
+                            {"sample_id": "s2", "asset_path": "file_sample_700.mp3"}],
+                "questions": [{"question_id": "q1", "text": "Select better quality"},
+                              {"question_id": "q2", "text": "Select more warmth"}]
             }
         ]
     }
