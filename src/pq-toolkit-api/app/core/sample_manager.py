@@ -12,7 +12,7 @@ from app.utils import PqException
 
 class SampleDoesNotExistError(PqException):
     def __init__(self, sample_name: str) -> None:
-        super().__init__(f"Sample {sample_name} does not exist!")
+        super().__init__(f"Sample {sample_name} does not exist!", 404)
 
 
 class IllegalNamingError(PqException):

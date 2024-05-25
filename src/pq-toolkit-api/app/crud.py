@@ -13,17 +13,17 @@ from random import randint
 
 class ExperimentNotFound(PqException):
     def __init__(self, experiment_name: str) -> None:
-        super().__init__(f"Experiment {experiment_name} not found!")
+        super().__init__(f"Experiment {experiment_name} not found!", error_code=404)
 
 
 class ExperimentAlreadyExists(PqException):
     def __init__(self, experiment_name: str) -> None:
-        super().__init__(f"Experiment {experiment_name} already exists!")
+        super().__init__(f"Experiment {experiment_name} already exists!", error_code=409)
 
 
 class ExperimentNotConfigured(PqException):
     def __init__(self, experiment_name: str) -> None:
-        super().__init__(f"Experiment {experiment_name} not configured!")
+        super().__init__(f"Experiment {experiment_name} not configured!", error_code=404)
 
 
 class ExperimentAlreadyConfigured(PqException):
@@ -33,16 +33,17 @@ class ExperimentAlreadyConfigured(PqException):
 
 class NoTestsFoundForExperiment(PqException):
     def __init__(self, experiment_name: str) -> None:
-        super().__init__(f"Experiment {experiment_name} has not tests!")
+        super().__init__(f"Experiment {experiment_name} has not tests!", error_code=404)
+
 
 class NoResultsData(PqException):
     def __init__(self) -> None:
-        super().__init__(f"No results data provided!")
+        super().__init__(f"No results data provided!", error_code=404)
 
 
 class NoMatchingTest(PqException):
     def __init__(self, test_number: str) -> None:
-        super().__init__(f"No matching test found for test number {test_number}!")
+        super().__init__(f"No matching test found for test number {test_number}!", error_code=404)
 
 
 def transform_test(test: Test) -> dict:
@@ -149,10 +150,10 @@ def add_experiment_result(session: Session, experiment_name: str, experiment_res
     test_mapping = [(test.number, test.id) for test in experiment.tests]
 
     results = add_test_results(session, experiment_result_raw_json, test_mapping)
-    return get_experiment_tests_results (session, experiment_name, results)      
+    return get_experiment_tests_results(session, experiment_name, results)
 
 
-def add_test_results(session: Session, results_data: dict[str, Any], test_mapping: list[tuple])-> str:
+def add_test_results(session: Session, results_data: dict[str, Any], test_mapping: list[tuple]) -> str:
     results_list = results_data.get('results')
     if not results_list:
         raise NoResultsData
@@ -170,14 +171,14 @@ def add_test_results(session: Session, results_data: dict[str, Any], test_mappin
         new_result = ExperimentTestResult(
             test_id=test_id,
             test_result=result_dict,
-            experiment_use= placeholder
+            experiment_use=placeholder
         )
 
         session.add(new_result)
     session.commit()
 
-
     return placeholder
+
 
 def get_experiment_tests_results(session: Session, experiment_name, result_name=None) -> PqTestResultsList:
     experiment_query = select(Experiment).where(Experiment.name == experiment_name)
