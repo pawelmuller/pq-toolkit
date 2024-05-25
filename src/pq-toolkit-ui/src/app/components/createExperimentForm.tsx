@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from "react"
 import { FaXmark } from "react-icons/fa6";
-import { FaPlus, FaInfoCircle, FaExclamationTriangle } from "react-icons/fa";
+import { FaPlus, FaInfoCircle, FaExclamationTriangle, FaSave } from "react-icons/fa";
 import DeleteQuestionComp from "./deleteQuestionComp";
 import DeleteAxisComp from "./deleteAxisComp";
 import { validateTestSchema } from "@/lib/schemas/utils";
@@ -180,6 +180,7 @@ const CreateExperimentForm = (props: any): JSX.Element => {
         <div className="flex flex-col self-center fadeInUpFast 2xl:self-start text-black dark:text-white bg-gray-50 dark:bg-stone-800 rounded-3xl shadow-lg 2xl:shadow-2xl w-full max-w-4xl z-10 p-6 overflow-hidden">
             <div className="flex justify-between items-center mb-6 w-full whitespace-normal break-words">
                 <span className="text-lg lg:text-xl font-semibold w-11/12">&apos;{props.selectedExperiment}&apos; Experiment Setup:</span>
+                <FaSave onClick={() => props.setSelectedExperiment(undefined)} className="cursor-pointer self-start mr-2 text-blue-400 dark:text-blue-500 hover:text-pink-500 dark:hover:text-pink-600 transform hover:scale-110 duration-300 ease-in-out" size={35} />
                 <FaXmark onClick={() => props.setSelectedExperiment(undefined)} className="cursor-pointer self-start text-blue-400 dark:text-blue-500 hover:text-pink-500 dark:hover:text-pink-600 transform hover:scale-110 duration-300 ease-in-out" size={40} />
             </div>
             <div className="flex flex-col md:flex-row h-full space-y-6 md:space-y-0 md:space-x-6">
