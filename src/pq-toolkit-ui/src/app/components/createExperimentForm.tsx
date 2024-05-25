@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from "react"
 import { FaXmark } from "react-icons/fa6";
-import { FaPlus, FaInfoCircle, FaExclamationTriangle } from "react-icons/fa";
-import DeleteSampleComp from "./deleteSampleComp";
+import { FaPlus, FaInfoCircle, FaExclamationTriangle, FaSave } from "react-icons/fa";
+import DeleteQuestionComp from "./deleteQuestionComp";
 import DeleteAxisComp from "./deleteAxisComp";
 import { validateTestSchema } from "@/lib/schemas/utils";
 import { validateApiData } from "@/core/apiHandlers/clientApiHandler";
@@ -30,14 +30,27 @@ const CreateExperimentForm = (props: any): JSX.Element => {
     })
 
     const [fileList, setFileList] = useState<string[]>([])
+    const [error, setError] = useState<string | null>(null)
 
     const readSampleFiles = (event: any): void => {
         const { files } = event.target;
+        const invalidFiles: string[] = [];
+        
         for (let i = 0; i < files.length; i++) {
-            setFileList((oldSampleFiles) => [...oldSampleFiles, files.item(i).name])
+            if (files[i].type === 'audio/mpeg') {
+                setFileList((oldSampleFiles) => [...oldSampleFiles, files.item(i).name])
+            } else {
+                invalidFiles.push(files[i].name)
+            }
+        }
+
+        if (invalidFiles.length > 0) {
+            setError(`Invalid file(s) detected: ${invalidFiles.join(', ')}`)
+        } else {
+            setError(null)
         }
         setFileList((oldSampleFiles) => { return oldSampleFiles.filter((value, index, array) => { return array.indexOf(value) === index }) })
-    };
+    }
 
     const fileRef = useRef(null);
 
@@ -127,11 +140,23 @@ const CreateExperimentForm = (props: any): JSX.Element => {
         e.currentTarget.classList.remove('drag-over');
 
         const files = e.dataTransfer.files;
+        const invalidFiles: string[] = [];
         setFileList([])
+
         for (let i = 0; i < files.length; i++) {
-            console.log(files[i].name)
-            setFileList((oldSampleFiles) => [...oldSampleFiles, files[i].name])
+            if (files[i].type === 'audio/mpeg') {
+                setFileList((oldSampleFiles) => [...oldSampleFiles, files[i].name])
+            } else {
+                invalidFiles.push(files[i].name)
+            } 
         }
+
+        if (invalidFiles.length > 0) {
+            setError(`Invalid file(s) detected: ${invalidFiles.join(', ')}`);
+        } else {
+            setError(null);
+        }
+        
         setFileList((oldSampleFiles) => { return oldSampleFiles.filter((value, index, array) => { return array.indexOf(value) === index }) })
     };
 
@@ -155,6 +180,7 @@ const CreateExperimentForm = (props: any): JSX.Element => {
         <div className="flex flex-col self-center fadeInUpFast 2xl:self-start text-black dark:text-white bg-gray-50 dark:bg-stone-800 rounded-3xl shadow-lg 2xl:shadow-2xl w-full max-w-4xl z-10 p-6 overflow-hidden">
             <div className="flex justify-between items-center mb-6 w-full whitespace-normal break-words">
                 <span className="text-lg lg:text-xl font-semibold w-11/12">&apos;{props.selectedExperiment}&apos; Experiment Setup:</span>
+                <FaSave onClick={() => props.setSelectedExperiment(undefined)} className="cursor-pointer self-start mr-2 text-blue-400 dark:text-blue-500 hover:text-pink-500 dark:hover:text-pink-600 transform hover:scale-110 duration-300 ease-in-out" size={35} />
                 <FaXmark onClick={() => props.setSelectedExperiment(undefined)} className="cursor-pointer self-start text-blue-400 dark:text-blue-500 hover:text-pink-500 dark:hover:text-pink-600 transform hover:scale-110 duration-300 ease-in-out" size={40} />
             </div>
             <div className="flex flex-col md:flex-row h-full space-y-6 md:space-y-0 md:space-x-6">
@@ -213,28 +239,37 @@ const CreateExperimentForm = (props: any): JSX.Element => {
                     </div>
                     <div className="mt-auto">
                         <h4 className="text-sm lg:text-base font-semibold mb-2">Upload Samples</h4>
-                        <div className="flex items-center justify-center w-full mb-4">
-                            <label htmlFor="dropzone-file-samples"
+                        <div className="flex items-center justify-center w-full mb-3">
+                            <label
+                                htmlFor="dropzone-file-samples"
                                 onDragOver={handleDragOver}
                                 onDragEnter={handleDragEnter}
                                 onDragLeave={handleDragLeave}
                                 onDrop={handleDropSamples}
-                                className="dropzone flex flex-col items-center justify-center w-full h-24 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-100 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-200 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600">
+                                className="dropzone flex flex-col items-center justify-center w-full h-24 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-100 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-200 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600"
+                            >
                                 <div className="flex flex-col items-center justify-center pt-5 pb-6">
                                     <svg className="w-6 h-6 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 16">
                                         <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2" />
                                     </svg>
                                     <p className="mb-1 text-xs text-center text-gray-500 dark:text-gray-400"><span className="font-semibold">Click to upload</span> or drag and drop</p>
-                                    <p className="text-xs text-center text-gray-500 dark:text-gray-400">MP3 (MAX. 800x400px)</p>
+                                    <p className="text-xs text-center text-gray-500 dark:text-gray-400">(MP3 files)</p>
                                 </div>
                                 <input id="dropzone-file-samples" ref={fileRef} multiple type="file" onChange={readSampleFiles} className="hidden" />
                             </label>
                         </div>
-
-                        {/* <input className="mb-4" ref={fileRef} multiple type="file" onChange={readSampleFiles} /> */}
-
-                        <h4 className="font-semibold text-sm lg:text-base mb-2">Upload Experiment Setup</h4>
-
+                        {/* {error && <p className="text-pink-500 dark:text-pink-600 text-sm font-medium whitespace-normal break-words w-2/3">{error}</p>} */}
+                        {/* {fileList.length > 0 && (
+                            <div className="mt-1 mb-4 whitespace-normal break-words">
+                                <h4 className="text-sm font-semibold">Uploaded files:</h4>
+                                <div className="pl-5 w-1/3">
+                                    {fileList.map((file, index) => (
+                                        <span key={index} className="text-sm">{file}</span>
+                                    ))}
+                                </div>
+                            </div>
+                        )} */}
+                        <h4 className="font-semibold text-sm lg:text-base mb-2 mt-4">Upload Experiment Setup</h4>
                         <div className="flex items-center justify-center w-full">
                             <label htmlFor="dropzone-file-setup"
                                 onDragOver={handleDragOver}
@@ -247,7 +282,7 @@ const CreateExperimentForm = (props: any): JSX.Element => {
                                         <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2" />
                                     </svg>
                                     <p className="mb-1 text-xs text-center text-gray-500 dark:text-gray-400"><span className="font-semibold">Click to upload</span> or drag and drop</p>
-                                    <p className="text-xs text-center text-gray-500 dark:text-gray-400">JSON (MAX. 800x400px)</p>
+                                    <p className="text-xs text-center text-gray-500 dark:text-gray-400">(JSON files)</p>
                                 </div>
                                 <input id="dropzone-file-setup" ref={fileRef} type="file" onChange={readFile} className="hidden" />
                             </label>
@@ -450,12 +485,12 @@ const MushraEditor = (props: {
             </div>
             <div className="mt-auto ml-auto mb-2 self-center mr-auto flex flex-row justify-around max-w-[15rem] space-x-2 sm:space-x-sm lg:space-x-md">
                 <button
-                    className="px-4 sm:px-7 py-2 bg-pink-500 dark:bg-pink-600 text-white font-semibold rounded-lg shadow-sm hover:bg-pink-600 dark:hover:bg-pink-700 transform hover:scale-105 duration-300 ease-in-out"
+                    className="px-5 sm:px-8 py-2 bg-pink-500 dark:bg-pink-600 text-white font-semibold rounded-lg shadow-sm hover:bg-pink-600 dark:hover:bg-pink-700 transform hover:scale-105 duration-300 ease-in-out"
                     onClick={() => {
                         // TODO: Logic for cancel action
                     }}
                 >
-                    Cancel
+                    Delete
                 </button>
                 <button
                     className="px-7 sm:px-10 py-2 bg-blue-400 dark:bg-blue-500 text-white font-semibold rounded-lg shadow-sm hover:bg-blue-500 dark:hover:bg-blue-600 transform hover:scale-105 duration-300 ease-in-out"
@@ -580,12 +615,12 @@ const ApeEditor = (props: {
             </div>
             <div className="mt-auto ml-auto mb-2 self-center mr-auto flex flex-row justify-around max-w-[15rem] space-x-2 sm:space-x-sm lg:space-x-md">
                 <button
-                    className="px-4 sm:px-7 py-2 bg-pink-500 dark:bg-pink-600 text-white font-semibold rounded-lg shadow-sm hover:bg-pink-600 dark:hover:bg-pink-700 transform hover:scale-105 duration-300 ease-in-out"
+                    className="px-5 sm:px-8 py-2 bg-pink-500 dark:bg-pink-600 text-white font-semibold rounded-lg shadow-sm hover:bg-pink-600 dark:hover:bg-pink-700 transform hover:scale-105 duration-300 ease-in-out"
                     onClick={() => {
                         // TODO: Logic for cancel action
                     }}
                 >
-                    Cancel
+                    Delete
                 </button>
                 <button
                     className="px-7 sm:px-10 py-2 bg-blue-400 dark:bg-blue-500 text-white font-semibold rounded-lg shadow-sm hover:bg-blue-500 dark:hover:bg-blue-600 transform hover:scale-105 duration-300 ease-in-out"
@@ -713,7 +748,7 @@ const AbxEditor = (props: {
                     props.currentTest.questions.map((question, index) => (
                         <div key={index} className="p-4 mb-2 bg-white dark:bg-gray-800 rounded-lg shadow-md flex justify-between items-center">
                             <p className="text-black dark:text-white whitespace-normal break-words w-9/12 lg:w-10/12">{question.text}</p>
-                            <DeleteSampleComp
+                            <DeleteQuestionComp
                                 index={index}
                                 setCurrentTest={props.setCurrentTest}
                                 currentTest={props.currentTest}
@@ -724,12 +759,12 @@ const AbxEditor = (props: {
             </div>
             <div className="mt-auto ml-auto mb-2 self-center mr-auto flex flex-row justify-around max-w-[15rem] space-x-2 sm:space-x-sm lg:space-x-md">
                 <button
-                    className="px-4 sm:px-7 py-2 bg-pink-500 dark:bg-pink-600 text-white font-semibold rounded-lg shadow-sm hover:bg-pink-600 dark:hover:bg-pink-700 transform hover:scale-105 duration-300 ease-in-out"
+                    className="px-5 sm:px-8 py-2 bg-pink-500 dark:bg-pink-600 text-white font-semibold rounded-lg shadow-sm hover:bg-pink-600 dark:hover:bg-pink-700 transform hover:scale-105 duration-300 ease-in-out"
                     onClick={() => {
                         // TODO: Logic for cancel action
                     }}
                 >
-                    Cancel
+                    Delete
                 </button>
                 <button
                     className="px-7 sm:px-10 py-2 bg-blue-400 dark:bg-blue-500 text-white font-semibold rounded-lg shadow-sm hover:bg-blue-500 dark:hover:bg-blue-600 transform hover:scale-105 duration-300 ease-in-out"
@@ -857,7 +892,7 @@ const AbEditor = (props: {
                     props.currentTest.questions.map((question, index) => (
                         <div key={index} className="p-4 mb-2 bg-white dark:bg-gray-800 rounded-lg shadow-md flex justify-between items-center">
                             <p className="text-black dark:text-white whitespace-normal break-words w-9/12 lg:w-10/12">{question.text}</p>
-                            <DeleteSampleComp
+                            <DeleteQuestionComp
                                 index={index}
                                 setCurrentTest={props.setCurrentTest}
                                 currentTest={props.currentTest}
@@ -868,12 +903,12 @@ const AbEditor = (props: {
             </div>
             <div className="mt-auto ml-auto mb-2 self-center mr-auto flex flex-row justify-around max-w-[15rem] space-x-2 sm:space-x-sm lg:space-x-md">
                 <button
-                    className="px-4 sm:px-7 py-2 bg-pink-500 dark:bg-pink-600 text-white font-semibold rounded-lg shadow-sm hover:bg-pink-600 dark:hover:bg-pink-700 transform hover:scale-105 duration-300 ease-in-out"
+                    className="px-5 sm:px-8 py-2 bg-pink-500 dark:bg-pink-600 text-white font-semibold rounded-lg shadow-sm hover:bg-pink-600 dark:hover:bg-pink-700 transform hover:scale-105 duration-300 ease-in-out"
                     onClick={() => {
                         // TODO: Logic for cancel action
                     }}
                 >
-                    Cancel
+                    Delete
                 </button>
                 <button
                     className="px-7 sm:px-10 py-2 bg-blue-400 dark:bg-blue-500 text-white font-semibold rounded-lg shadow-sm hover:bg-blue-500 dark:hover:bg-blue-600 transform hover:scale-105 duration-300 ease-in-out"

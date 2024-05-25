@@ -4,13 +4,13 @@ import {
     type ABTest, type ABXTest, type FullABXTest, type MUSHRATest, type APETest, type BaseTest
 } from '@/lib/schemas/experimentSetup'
 
-interface DeleteSampleCompProps {
+interface DeleteQuestionCompProps {
     index: number
     setCurrentTest: React.Dispatch<React.SetStateAction<ABTest | ABXTest | FullABXTest | MUSHRATest | APETest | BaseTest>>
     currentTest: ABTest | ABXTest | FullABXTest | MUSHRATest | APETest | BaseTest
 }
 
-const DeleteSampleComp = (props: DeleteSampleCompProps): JSX.Element => {
+const DeleteQuestionComp = (props: DeleteQuestionCompProps): JSX.Element => {
     const [deleteConfirm, setDeleteConfirm] = useState(false);
 
     return (
@@ -41,4 +41,4 @@ const DeleteSampleComp = (props: DeleteSampleCompProps): JSX.Element => {
     );
 };
 
-export default DeleteSampleComp
+export default DeleteQuestionComp
