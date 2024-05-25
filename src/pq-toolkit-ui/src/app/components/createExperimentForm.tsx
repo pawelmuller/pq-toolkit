@@ -384,7 +384,7 @@ const MushraEditor = (props: propsEditor) => {
                                         if (e.target.checked) {
                                             setAnchorsTest((oldarray) => [...oldarray, { 'sampleId': 'a0', 'assetPath': file }])
                                         } else {
-                                            let foundJSON = anchorsTest.find(item => { return item.assetPath === file })
+                                            const foundJSON = anchorsTest.find(item => { return item.assetPath === file })
                                             if (foundJSON !== undefined) {
                                                 setAnchorsTest((oldarray) => oldarray.filter(sample => ![foundJSON.assetPath].includes(sample.assetPath)))
                                             }
@@ -423,7 +423,7 @@ const MushraEditor = (props: propsEditor) => {
                                         if (e.target.checked) {
                                             setSampleTest((oldarray) => [...oldarray, { 'sampleId': 's0', 'assetPath': file }])
                                         } else {
-                                            let foundJSON = sampleTest.find(item => { return item.assetPath === file })
+                                            const foundJSON = sampleTest.find(item => { return item.assetPath === file })
                                             if (foundJSON !== undefined) {
                                                 setSampleTest((oldarray) => oldarray.filter(sample => ![foundJSON.assetPath].includes(sample.assetPath)))
                                             }
@@ -499,7 +499,7 @@ const ApeEditor = (props: propsEditor) => {
                                         if (e.target.checked) {
                                             setSampleTest((oldarray) => [...oldarray, { 'sampleId': 's0', 'assetPath': file }])
                                         } else {
-                                            let foundJSON = sampleTest.find(item => { return item.assetPath === file })
+                                            const foundJSON = sampleTest.find(item => { return item.assetPath === file })
                                             if (foundJSON !== undefined) {
                                                 setSampleTest((oldarray) => oldarray.filter(sample => ![foundJSON.assetPath].includes(sample.assetPath)))
                                             }
@@ -620,7 +620,7 @@ const AbxEditor = (props: propsEditor) => {
                                                     setSampleTest((oldarray) => [...oldarray, { 'sampleId': 's0', 'assetPath': file }])
                                                 }
                                             } else {
-                                                let foundJSON = sampleTest.find(item => { return item.assetPath === file })
+                                                const foundJSON = sampleTest.find(item => { return item.assetPath === file })
                                                 if (foundJSON !== undefined) {
                                                     setSampleTest((oldarray) => oldarray.filter(sample => ![foundJSON.assetPath].includes(sample.assetPath)))
                                                 }
@@ -744,7 +744,7 @@ const AbEditor = (props: propsEditor) => {
                                                     setSampleTest((oldarray) => [...oldarray, { 'sampleId': 's0', 'assetPath': file }])
                                                 }
                                             } else {
-                                                let foundJSON = sampleTest.find(item => { return item.assetPath === file })
+                                                const foundJSON = sampleTest.find(item => { return item.assetPath === file })
                                                 if (foundJSON !== undefined) {
                                                     setSampleTest((oldarray) => oldarray.filter(sample => ![foundJSON.assetPath].includes(sample.assetPath)))
                                                 }
