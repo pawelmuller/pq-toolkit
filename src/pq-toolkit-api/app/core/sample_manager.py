@@ -124,6 +124,10 @@ class SampleManager:
     def remove_sample(self, experiment_name: str, sample_name: str):
         object_name = self._object_name_from_experiment_and_sample(
             experiment_name, sample_name)
+
+        if not self.check_sample_exists(experiment_name, sample_name):
+            raise SampleDoesNotExistError(object_name)
+
         self._client.remove_object(self._sample_bucket_name, object_name)
 
     def list_matching_samples(self, experiment_name: str) -> list[str]:
