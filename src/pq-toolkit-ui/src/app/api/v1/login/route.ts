@@ -18,7 +18,7 @@ export async function POST(request: Request):Promise<Response> {
     if (password === adminSecret) {
       // Create a signed JWT token
       const token = await new SignJWT({
-        password: password,
+        password,
         role: "admin", // Set your own roles
       })
         .setProtectedHeader({ alg: "HS256" })

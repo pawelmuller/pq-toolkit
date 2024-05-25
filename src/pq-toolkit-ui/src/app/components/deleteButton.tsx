@@ -8,7 +8,7 @@ const DeleteButton = (props: any): JSX.Element => {
     >
         {deleteConfirm ?
             <div className="flex flex-row -mr-4">
-                <FaXmark className="fill-red-500 mr-2 cursor-pointer transform hover:scale-125 duration-300 ease-in-out" size={27} onClick={() => setDeleteConfirm(false)} />
+                <FaXmark className="fill-red-500 mr-2 cursor-pointer transform hover:scale-125 duration-300 ease-in-out" size={27} onClick={() => { setDeleteConfirm(false) }} />
                 <FaCheck className="fill-green-500 cursor-pointer transform hover:scale-125 duration-300 ease-in-out" size={25} onClick={() => {
                     props.deleteExperiment(props.name)
                     setDeleteConfirm(false)
@@ -18,7 +18,7 @@ const DeleteButton = (props: any): JSX.Element => {
                 }} />
             </div>
             :
-            <FaTrash className="fill-red-500 cursor-pointer transform hover:scale-125 duration-300 ease-in-out" size={27} onClick={() => setDeleteConfirm(true)} />}
+            <FaTrash className="fill-red-500 cursor-pointer transform hover:scale-125 duration-300 ease-in-out" size={27} onClick={() => { setDeleteConfirm(true) }} />}
     </div>
 
 }
