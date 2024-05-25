@@ -30,4 +30,4 @@ const DeleteSampleComp = (props: DeleteSampleCompProps): JSX.Element => {
     );
 };
 
-export default DeleteSampleComp;
+export default DeleteSampleComp
