@@ -595,7 +595,6 @@ const ApeEditor = (props: propsEditor) => {
 const AbxEditor = (props: propsEditor) => {
     const [newQuestion, setNewQuestion] = useState('')
     const [sampleTest, setSampleTest] = useState<any[]>(props.currentTest.samples)
-    const [deleteConfirm, setDeleteConfirm] = useState(false)
     return (
         <div className="w-full">
             <h4 className="font-semibold text-sm lg:text-base mb-1 mt-3">Samples</h4>
@@ -788,12 +787,12 @@ const AbEditor = (props: propsEditor) => {
                         if (props.currentTest.questions) {
                             props.setCurrentTest({
                                 ...props.currentTest,
-                                questions: [...props.currentTest.questions, { questionId: 'q3', text: newQuestion }]
+                                questions: [...props.currentTest.questions, { questionId: `q${props.currentTest.questions.length + 1}`, text: newQuestion }]
                             })
                         } else {
                             props.setCurrentTest({
                                 ...props.currentTest,
-                                questions: [{ questionId: 'q3', text: newQuestion }]
+                                questions: [{ questionId: 'q1', text: newQuestion }]
                             })
                         }
                         setNewQuestion('')
@@ -807,8 +806,13 @@ const AbEditor = (props: propsEditor) => {
             <div className="mb-8">
                 {props.currentTest.questions !== undefined ? (
                     props.currentTest.questions.map((question, index) => (
-                        <div key={index} className="p-4 mb-2 bg-white dark:bg-gray-800 rounded-lg shadow-md">
-                            <p className="text-black dark:text-white">{question.text}</p>
+                        <div key={index} className="p-4 mb-2 bg-white dark:bg-gray-800 rounded-lg shadow-md flex justify-between items-center">
+                            <p className="text-black dark:text-white whitespace-normal break-words w-9/12 lg:w-10/12">{question.text}</p>
+                            <DeleteSampleComp
+                                index={index}
+                                setCurrentTest={props.setCurrentTest}
+                                currentTest={props.currentTest}
+                            />
                         </div>
                     ))
                 ) : null}
