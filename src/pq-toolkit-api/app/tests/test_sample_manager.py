@@ -45,3 +45,7 @@ def test_manager_non_existent_file(sample_manager_localhost: SampleManager):
     with pytest.raises(SampleDoesNotExistError):
         for _ in sample_manager_localhost.get_sample("this", "does not exist"):
             pass
+
+    with pytest.raises(SampleDoesNotExistError):
+        for _ in sample_manager_localhost.get_sample("this", "does not exista again"):
+            pass
