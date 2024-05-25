@@ -10,12 +10,21 @@ Project members:
 - Paweł Müller
 - Grzegorz Rusinek
 
+### Further developed by
+ - ZPRP 24L course members:
+   - Igor Matynia
+   - Jakub Woźniak
+   - Jan Kowalczewski
+ - #TODO WIMU
+
 ## Project structure
 
 - docs - project documentation
 - src - source files organised by modules
     - pq-toolkit - Python toolkit interface
     - pq-toolkit-ui - frontend for conducting experiments
+    - pq-toolkit-api - backend service with api
+    - deployments - docker compose and env files
 
 ## Usage
 
@@ -43,15 +52,16 @@ More detailed walkthrough can be found in project's docs directory.
 ### How to use testing web application:
 
 1. Deployment:
-   - Go to `src/pq-toolkit-ui`
+   - Go to `src/deployments`
    - Fill in required configuration in `.env.*` files according to your specification
    - Build docker image by running `make build-[flavor]`
    - Deploy docker image by running `make start-[flavor]`
+   - (To stop an image use `make stop-[flavor]`)
 2. Uploading experiments
    - Using Python script
    - Using admin panel available at `/admin`
 3. Verifying configuration using admin panel (`/admin/[experiment-name]`)
-4. Testing users `/[experiment-name]`
+4. For users `/[experiment-name]`
 5. Getting results using Python script
 
 More information available in `src/pq-toolkit-ui/README.md`.
@@ -74,3 +84,7 @@ Potential improvements:
 
 Project was on schedule up to Christmas, then slight delays in finishing remaining test types
 and polishing features.
+
+## ZPRP-24L notes
+
+#TODO

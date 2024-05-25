@@ -2,6 +2,12 @@
 
 ## API Docs:
 
-Docs are available at host:8000/api/docs (at gateway) or host:8787/docs (at container)
+Docs are available at `localhost:8000/api/docs` (at gateway) or `localhost:8787/docs` (at container)
 
+# Technology stack:
 
+- FastAPI
+- PostgreSQL
+- Alembic
+
+#TODO
