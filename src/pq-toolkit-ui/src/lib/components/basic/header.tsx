@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 // eslint-disable-next-line import/no-restricted-paths
 import ThemeSwitch from '@/app/components/themeSwitch'
 
