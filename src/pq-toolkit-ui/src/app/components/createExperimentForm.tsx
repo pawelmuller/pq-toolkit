@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from "react"
 import { FaXmark } from "react-icons/fa6";
 import { FaPlus, FaInfoCircle, FaExclamationTriangle } from "react-icons/fa";
-import DeleteSampleComp from "./deleteSampleComp";
+import DeleteQuestionComp from "./deleteQuestionComp";
 import DeleteAxisComp from "./deleteAxisComp";
 import { validateTestSchema } from "@/lib/schemas/utils";
 import { validateApiData } from "@/core/apiHandlers/clientApiHandler";
@@ -713,7 +713,7 @@ const AbxEditor = (props: {
                     props.currentTest.questions.map((question, index) => (
                         <div key={index} className="p-4 mb-2 bg-white dark:bg-gray-800 rounded-lg shadow-md flex justify-between items-center">
                             <p className="text-black dark:text-white whitespace-normal break-words w-9/12 lg:w-10/12">{question.text}</p>
-                            <DeleteSampleComp
+                            <DeleteQuestionComp
                                 index={index}
                                 setCurrentTest={props.setCurrentTest}
                                 currentTest={props.currentTest}
@@ -857,7 +857,7 @@ const AbEditor = (props: {
                     props.currentTest.questions.map((question, index) => (
                         <div key={index} className="p-4 mb-2 bg-white dark:bg-gray-800 rounded-lg shadow-md flex justify-between items-center">
                             <p className="text-black dark:text-white whitespace-normal break-words w-9/12 lg:w-10/12">{question.text}</p>
-                            <DeleteSampleComp
+                            <DeleteQuestionComp
                                 index={index}
                                 setCurrentTest={props.setCurrentTest}
                                 currentTest={props.currentTest}

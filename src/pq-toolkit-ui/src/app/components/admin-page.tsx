@@ -113,7 +113,7 @@ const AdminPage = (props: any): JSX.Element => {
               </button>
             </div>
           )}
-          {selectedExperiment === undefined ? <div /> : <CreateExperimentForm setSelectedExperiment={setSelectedExperiment} selectedExperiment={selectedExperiment} />}
+          {selectedExperiment === undefined ? null : <CreateExperimentForm setSelectedExperiment={setSelectedExperiment} selectedExperiment={selectedExperiment} />}
         </div>
       </div>
     </div>
