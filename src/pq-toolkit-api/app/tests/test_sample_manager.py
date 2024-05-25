@@ -1,5 +1,4 @@
 from app.core.sample_manager import SampleManager, SampleDoesNotExistError
-from app.core.config import settings
 from io import BytesIO
 import pytest
 
@@ -14,9 +13,9 @@ def example_byte_stream():
 def sample_manager_localhost():
     return SampleManager(
         endpoint="localhost",
-        port=settings.MINIO_PORT,
-        access_key=settings.MINIO_ROOT_USER,
-        secret_key=settings.MINIO_ROOT_PASSWORD,
+        port=9000,
+        access_key="minioadmin",
+        secret_key="minioadmin",
         sample_bucket_name="testbucket"
     )
 
