@@ -2,6 +2,7 @@ import { useEffect, useState, useRef } from "react"
 import { FaXmark } from "react-icons/fa6";
 import { FaPlus, FaInfoCircle } from "react-icons/fa";
 import DeleteSampleComp from "./deleteSampleComp";
+import DeleteAxisComp from "./deleteAxisComp";
 import { validateTestSchema } from "@/lib/schemas/utils";
 import { validateApiData } from "@/core/apiHandlers/clientApiHandler";
 import {
@@ -538,12 +539,12 @@ const ApeEditor = (props: propsEditor): JSX.Element => {
                         if (props.currentTest.axis != null) {
                             props.setCurrentTest({
                                 ...props.currentTest,
-                                axis: [...props.currentTest.axis, { questionId: 'q3', text: newQuestion }]
+                                axis: [...props.currentTest.axis, { questionId: `q${props.currentTest.axis.length + 1}`, text: newQuestion }]
                             })
                         } else {
                             props.setCurrentTest({
                                 ...props.currentTest,
-                                axis: [{ questionId: 'q3', text: newQuestion }]
+                                axis: [{ questionId: 'q1', text: newQuestion }]
                             })
                         }
                         setNewQuestion('')
@@ -557,8 +558,13 @@ const ApeEditor = (props: propsEditor): JSX.Element => {
             <div className="mb-8">
                 {props.currentTest.axis !== undefined ? (
                     props.currentTest.axis.map((question, index) => (
-                        <div key={index} className="p-4 mb-2 bg-white dark:bg-gray-800 rounded-lg shadow-md">
-                            <p className="text-black dark:text-white">{question.text}</p>
+                        <div key={index} className="p-4 mb-2 bg-white dark:bg-gray-800 rounded-lg shadow-md flex justify-between items-center">
+                            <p className="text-black dark:text-white whitespace-normal break-words w-9/12 lg:w-10/12">{question.text}</p>
+                            <DeleteAxisComp
+                                index={index}
+                                setCurrentTest={props.setCurrentTest}
+                                currentTest={props.currentTest}
+                            />
                         </div>
                     ))
                 ) : null}
