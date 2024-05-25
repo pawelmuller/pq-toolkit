@@ -1,4 +1,4 @@
-import { jwtVerify, KeyLike } from "jose";
+import { jwtVerify, type KeyLike } from "jose";
 
 /**
  * Retrieves the JWT secret key from the environment variable and encodes it as a `Uint8Array`.
@@ -9,7 +9,7 @@ import { jwtVerify, KeyLike } from "jose";
  */
 export function getJwtSecretKey(): Uint8Array {
   const secret = process.env.NEXT_PUBLIC_JWT_SECRET_KEY;
-  if (!secret) {
+  if (secret === undefined || secret === null) {
     throw new Error(
       "JWT secret key is not defined in the environment variables."
     );

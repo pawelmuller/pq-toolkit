@@ -12,7 +12,7 @@ export default async function isAuth(): Promise<boolean> {
   const authCookie = cookieStore.get("auth");
 
   // If no auth cookie is found, log the event and return false
-  if (!authCookie) {
+  if (authCookie === undefined || authCookie === null) {
     return false;
   }
 
@@ -20,7 +20,7 @@ export default async function isAuth(): Promise<boolean> {
   const verifiedToken = await verifyJwtToken(authCookie.value);
 
   // If the token is verified, log the event and return true, otherwise log the failure and return false
-  if (verifiedToken) {
+  if (verifiedToken !== undefined || verifiedToken !== null) {
     return true;
   } else {
     return false;
