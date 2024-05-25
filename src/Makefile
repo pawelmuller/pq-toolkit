@@ -8,6 +8,10 @@ build-clean-dev: ## Build the development docker image without cache
 
 .PHONY: start-dev
 start-dev: ## Start the development docker container.
+	docker compose -f deployments/docker-compose.yml --env-file deployments/.env.dev up -d
+
+.PHONY: start-dev-debug
+start-dev-debug: ## Start the development docker container and attach
 	docker compose -f deployments/docker-compose.yml --env-file deployments/.env.dev up
 
 .PHONY: stop-dev
@@ -41,6 +45,10 @@ build-clean-prod: ## Build the production docker image.
 .PHONY: start-prod
 start-prod: ## Start the production docker container.
 	docker compose -f deployments/docker-compose.prod.yml --env-file deployments/.env.prod up -d
+
+.PHONY: start-prod-debug
+start-prod-debug: ## Start the production docker container.
+	docker compose -f deployments/docker-compose.prod.yml --env-file deployments/.env.prod up
 
 .PHONY: stop-prod
 stop-prod: ## Stop the production docker container.

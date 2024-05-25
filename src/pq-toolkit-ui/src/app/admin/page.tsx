@@ -42,7 +42,8 @@ const AdminPage = (): JSX.Element => {
   const deleteExperiment = (name: string): void => {
     fetch('/api/v1/experiments', {
       method: 'DELETE',
-      body: JSON.stringify({ name })
+      body: JSON.stringify({ name }),
+      headers: {'Content-Type': 'application/json'}
     })
       .then(async () => {
         await mutate()
@@ -53,7 +54,8 @@ const AdminPage = (): JSX.Element => {
   const addNewExperiment = (name: string): void => {
     fetch('/api/v1/experiments', {
       method: 'POST',
-      body: JSON.stringify({ name })
+      body: JSON.stringify({ name }),
+      headers: {'Content-Type': 'application/json'}
     })
       .then(async () => {
         await mutate()

@@ -1,12 +1,10 @@
 from io import BytesIO
 from app.schemas import PqErrorResponse
-
-
-def content_stream_from_bytes(sample_bytes: bytes):
-    yield from BytesIO(sample_bytes)
+from urllib3.response import HTTPResponse
 
 
 class PqException(Exception):
-    def __init__(self, message: str) -> None:
+    def __init__(self, message: str, error_code: int = 400) -> None:
         super().__init__(message)
         self.api_payload = PqErrorResponse(message=message)
+        self.error_code = error_code

@@ -4,7 +4,6 @@ services:
   # Database
   pq-toolkit-db-dev:
     image: postgres
-    restart: always
     shm_size: 128m
     environment:
       POSTGRES_USER: $POSTGRES_USER
@@ -19,6 +18,8 @@ services:
       interval: 1s
       timeout: 5s
       retries: 10
+    ports:
+      - 5432:5432
 
   # Database admin
   pq-adminer:
@@ -39,12 +40,16 @@ services:
       POSTGRES_PASSWORD: $POSTGRES_PASSWORD
       POSTGRES_DB: $POSTGRES_DB
       POSTGRES_SERVER: pq-toolkit-db-dev
-      FIRST_SUPERUSER: $FIRST_SUPERUSER
+      FIRST_SUPERUSER_NAME: $FIRST_SUPERUSER_NAME
       FIRST_SUPERUSER_PASSWORD: $FIRST_SUPERUSER_PASSWORD
       MINIO_ROOT_USER: $MINIO_ROOT_USER
       MINIO_ROOT_PASSWORD: $MINIO_ROOT_PASSWORD
       MINIO_ENDPOINT: $MINIO_ENDPOINT
       MINIO_STORAGE_USE_HTTPS: $MINIO_STORAGE_USE_HTTPS
+      PQ_API_PORT: $PQ_API_PORT
+    command: sh -c "./prestart.sh && python3 main.py"
+    volumes:
+      - ../pq-toolkit-api/app:/app/app
 
   # Frontend
   pq-toolkit-ui-dev:
@@ -85,3 +90,9 @@ services:
     depends_on:
       - pq-toolkit-api-dev
       - pq-toolkit-ui-dev
+    environment:
+      PQ_API_SERVER: $PQ_API_SERVER
+      PQ_API_PORT: $PQ_API_PORT
+      PQ_UI_SERVER: $PQ_UI_SERVER
+      PQ_UI_PORT: $PQ_UI_PORT
+      GATEWAY_PORT: $GATEWAY_PORT

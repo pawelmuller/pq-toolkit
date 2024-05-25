@@ -98,8 +98,8 @@ export type ABTest = z.infer<typeof ABTestSchema>
 export const ABXTestSchema = BaseTestSchema.extend({
   type: z.enum(['ABX']),
   samples: z.array(SampleSchema).min(2).max(2),
-  xSampleId: z.string().optional(),
-  questions: z.array(QuestionSchema).optional()
+  xSampleId: z.string().nullable(),
+  questions: z.array(QuestionSchema).nullable()
 })
 
 /**
@@ -113,7 +113,7 @@ export const FullABXTestSchema = ABXTestSchema.extend({
  * Type from {@link ABXTestSchema}
  * ABX test schema
  * @field samples - array of samples {@link SampleSchema}
- * @field xSampleId - id of sample X (optional)
+ * @field xSampleId - id of sample X (nullable)
  * @field questions - array of questions {@link QuestionSchema}
  */
 export type ABXTest = z.infer<typeof ABXTestSchema>
@@ -135,7 +135,7 @@ export type FullABXTest = z.infer<typeof FullABXTestSchema>
  */
 export const MUSHRATestSchema = BaseTestSchema.extend({
   type: z.enum(['MUSHRA']),
-  question: z.string().optional(),
+  question: z.string().nullable(),
   reference: SampleSchema,
   anchors: z.array(SampleSchema).min(1),
   samples: z.array(SampleSchema).min(2)
@@ -200,7 +200,7 @@ export const ExperimentSetupSchema = z.object({
   uid: z.string().min(1),
   name: z.string().min(1),
   description: z.string(),
-  endText: z.string().optional(),
+  endText: z.string().nullable(),
   tests: z.array(BaseTestSchema.passthrough()).min(1)
 })
 

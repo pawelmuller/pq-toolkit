@@ -10,6 +10,6 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
-EXPOSE 8787
+RUN chmod +x prestart.sh
 
-CMD ["python3", "main.py"]
+EXPOSE 8787

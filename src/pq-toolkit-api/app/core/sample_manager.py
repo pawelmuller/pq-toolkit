@@ -12,7 +12,7 @@ from app.utils import PqException
 
 class SampleDoesNotExistError(PqException):
     def __init__(self, sample_name: str) -> None:
-        super().__init__(f"Sample {sample_name} does not exist!")
+        super().__init__(f"Sample {sample_name} does not exist!", 404)
 
 
 class IllegalNamingError(PqException):
@@ -96,22 +96,38 @@ class SampleManager:
         except minio.error.S3Error as e:
             raise S3Error(e.code)
 
-    def get_sample(self, experiment_name: str, sample_name: str) -> bytes:
+    def _sample_data_generator(self, response: HTTPResponse, chunk_size: int):
         try:
-            object_name = self._object_name_from_experiment_and_sample(
-                experiment_name, sample_name)
-            response: HTTPResponse = self._client.get_object(
-                self._sample_bucket_name, object_name)
-            data = response.read()
+            data = response.read(chunk_size)
+            while data:
+                yield data
+                data = response.read(chunk_size)
+        finally:
             response.close()
             response.release_conn()
-            return data
-        except minio.error.S3Error as e:
+
+    def get_sample(self, experiment_name: str, sample_name: str, chunk_size: int = 1024*1024):
+        object_name = self._object_name_from_experiment_and_sample(
+            experiment_name, sample_name)
+
+        if not self.check_sample_exists(experiment_name, sample_name):
             raise SampleDoesNotExistError(object_name)
+
+        try:
+            response: HTTPResponse = self._client.get_object(
+                self._sample_bucket_name, object_name)
+        except minio.error.S3Error as e:
+            raise S3Error(e.code)
+
+        return self._sample_data_generator(response, chunk_size)
 
     def remove_sample(self, experiment_name: str, sample_name: str):
         object_name = self._object_name_from_experiment_and_sample(
             experiment_name, sample_name)
+
+        if not self.check_sample_exists(experiment_name, sample_name):
+            raise SampleDoesNotExistError(object_name)
+
         self._client.remove_object(self._sample_bucket_name, object_name)
 
     def list_matching_samples(self, experiment_name: str) -> list[str]:

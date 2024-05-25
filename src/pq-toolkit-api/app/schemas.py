@@ -4,6 +4,15 @@ import inspect
 import uuid
 
 
+class AccessToken(BaseModel):
+    access_token: str
+    token_type: str = "bearer"
+
+
+class TokenPayload(BaseModel):
+    user_id: int = None
+
+
 class PqTestTypes(Enum):
     """
     Class representing types of tests handled by PQToolkit.
@@ -167,7 +176,7 @@ class PqTestAPEAxisResult(BaseModel):
 
 
 class PqTestAPEResult(PqTestBaseResult):
-    axis_results: list[PqTestAPEAxisResult] | list = Field(alias="axisResults")
+    axis_results: list[PqTestAPEAxisResult] = Field(alias="axisResults")
 
 
 class PqTestResultsList(BaseModel):
@@ -188,6 +197,7 @@ class PqExperiment(BaseModel):
     uid: UUID4 | str = uuid.uuid4()
     name: str
     description: str
+    end_text: str | None = Field(alias="endText", default=None)
     tests: list[PqTestMUSHRA | PqTestAPE | PqTestABX | PqTestAB]
 
     @field_validator("tests", mode="before")  # noqa

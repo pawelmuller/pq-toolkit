@@ -1,55 +1,49 @@
-from sqlalchemy import Boolean, Column, ForeignKey, Integer, String
-from sqlalchemy.dialects.postgresql import JSONB
-from sqlalchemy.orm import relationship
+from sqlalchemy import Column, JSON
+from sqlmodel import SQLModel, Field, Relationship
 
-from app.core.db import Base
-
-
-class Admin(Base):
-    __tablename__ = "admins"
-
-    id = Column(Integer, primary_key=True)
-    email = Column(String, unique=True, index=True)
-    hashed_password = Column(String)
-    is_active = Column(Boolean, default=True)
+from app.schemas import PqTestTypes
 
 
-class Sample(Base):
-    __tablename__ = "sample_files"
-
-    id = Column(Integer, primary_key=True)
-    title = Column(String, index=True)
-    file_path = Column(String)
-
-
-class Experiment(Base):
-    __tablename__ = "experiment"
-
-    id = Column(Integer, primary_key=True)
-    name = Column(String, index=True)
-    description = Column(String, index=True)
-    end_text = Column(String, index=True)
-
-    tests = relationship("Test", back_populates="experiment")
+class Admin(SQLModel, table=True):
+    id: int | None = Field(default=None, primary_key=True)
+    username: str = Field(index=True, unique=True)
+    email: str | None = Field(default=None, index=True, unique=True)
+    hashed_password: str | None
+    is_active: bool = True
 
 
-class Test(Base):
-    __tablename__ = "test"
-
-    id = Column(Integer, primary_key=True)
-    number = Column(Integer)
-    test_setup = Column(JSONB, index=True)
-    experiment_id = Column(Integer, ForeignKey("experiment.id"))
-
-    experiment = relationship("Experiment", back_populates="tests")
-    experiment_test_results = relationship("ExperimentTestResult", back_populates="test")
+class Sample(SQLModel, table=True):
+    id: int | None = Field(default=None, primary_key=True)
+    title: str = Field(index=True)
+    file_path: str
 
 
-class ExperimentTestResult(Base):
-    __tablename__ = "experiment_test_result"
+class Experiment(SQLModel, table=True):
+    id: int | None = Field(default=None, primary_key=True)
+    name: str = Field(index=True, unique=True)
+    full_name: str | None = Field(default=None)
+    description: str | None = Field(default=None)
+    end_text: str | None
+    configured: bool = False
 
-    id = Column(Integer, primary_key=True)
-    test_result = Column(JSONB, index=True)
-    test_id = Column(Integer, ForeignKey("test.id"))
+    tests: list["Test"] = Relationship(back_populates="experiment")
 
-    test = relationship("Test", back_populates="experiment_test_results")
+
+class Test(SQLModel, table=True):
+    id: int | None = Field(default=None, primary_key=True)
+    number: int
+    type: PqTestTypes
+    test_setup: dict = Field(sa_column=Column(JSON))
+    experiment_id: int = Field(foreign_key="experiment.id")
+
+    experiment: Experiment = Relationship(back_populates="tests")
+    experiment_test_results: list["ExperimentTestResult"] = Relationship(back_populates="test")
+
+
+class ExperimentTestResult(SQLModel, table=True):
+    id: int | None = Field(default=None, primary_key=True)
+    test_result: dict = Field(sa_column=Column(JSON))
+    test_id: int = Field(foreign_key="test.id")
+    experiment_use: str
+
+    test: Test = Relationship(back_populates="experiment_test_results")

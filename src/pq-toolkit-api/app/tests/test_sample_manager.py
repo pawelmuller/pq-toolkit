@@ -1,5 +1,4 @@
-from app.core.sample_manager import SampleManager
-from app.core.config import settings
+from app.core.sample_manager import SampleManager, SampleDoesNotExistError
 from io import BytesIO
 import pytest
 
@@ -14,9 +13,9 @@ def example_byte_stream():
 def sample_manager_localhost():
     return SampleManager(
         endpoint="localhost",
-        port=settings.MINIO_PORT,
-        access_key=settings.MINIO_ROOT_USER,
-        secret_key=settings.MINIO_ROOT_PASSWORD,
+        port=9000,
+        access_key="minioadmin",
+        secret_key="minioadmin",
         sample_bucket_name="testbucket"
     )
 
@@ -36,6 +35,17 @@ def test_manager_complete(example_byte_stream: tuple[BytesIO, str], sample_manag
     machting_samples = manager.list_matching_samples(experiment_name)
     assert filename in machting_samples
 
-    byte_stream_in = manager.get_sample(experiment_name, filename)
-    assert byte_stream_in.decode() == message
+    for data in manager.get_sample(experiment_name, filename):
+        assert data.decode() == message
+
     manager.remove_sample(experiment_name, filename)
+
+
+def test_manager_non_existent_file(sample_manager_localhost: SampleManager):
+    with pytest.raises(SampleDoesNotExistError):
+        for _ in sample_manager_localhost.get_sample("this", "does not exist"):
+            pass
+
+    with pytest.raises(SampleDoesNotExistError):
+        for _ in sample_manager_localhost.get_sample("this", "does not exista again"):
+            pass

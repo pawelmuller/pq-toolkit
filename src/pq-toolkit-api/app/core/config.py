@@ -1,6 +1,7 @@
 import secrets
 import warnings
 from typing import Annotated, Any, Literal
+import logging
 
 from pydantic import (
     AnyUrl,
@@ -29,7 +30,9 @@ class Settings(BaseSettings):
         env_file=".env", env_ignore_empty=True, extra="ignore"
     )
 
+    LOG_LEVEL: int = logging.WARN
     API_V1_STR: str = "/v1"
+    PQ_API_PORT: int = 8787
     DOMAIN: str = "localhost"
     ENVIRONMENT: Literal["local", "staging", "production"] = "local"
 
@@ -64,9 +67,10 @@ class Settings(BaseSettings):
             path=self.POSTGRES_DB,
         )
 
-    FIRST_SUPERUSER: str
+    FIRST_SUPERUSER_NAME: str
     FIRST_SUPERUSER_PASSWORD: str
-    USERS_OPEN_REGISTRATION: bool = False
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
+    SECRET_KEY: str = secrets.token_urlsafe(32)
 
     MINIO_ROOT_USER: str
     MINIO_ROOT_PASSWORD: str
