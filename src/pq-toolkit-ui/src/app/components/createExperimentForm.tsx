@@ -64,7 +64,7 @@ const CreateExperimentForm = (props: any): JSX.Element => {
         endText: "",
         tests: []
     })
-    
+
     const [fileList, setFileList] = useState<string[]>([])
 
     const readSampleFiles = (event: any) => {
@@ -186,7 +186,7 @@ const CreateExperimentForm = (props: any): JSX.Element => {
             setSetup(JSON.parse(content))
         };
     };
-    
+
     return (
         <div className="flex flex-col self-center fadeInUpFast 2xl:self-start text-black dark:text-white bg-gray-50 dark:bg-stone-800 rounded-3xl shadow-lg 2xl:shadow-2xl w-full max-w-4xl z-10 p-6 overflow-hidden">
             <div className="flex justify-between items-center mb-6 w-full whitespace-normal break-words">
@@ -219,15 +219,15 @@ const CreateExperimentForm = (props: any): JSX.Element => {
                     <div className="mt-auto">
                         <h4 className="text-sm lg:text-base font-semibold mb-2">Upload Samples</h4>
                         <div className="flex items-center justify-center w-full mb-4">
-                            <label htmlFor="dropzone-file-samples" 
+                            <label htmlFor="dropzone-file-samples"
                                 onDragOver={handleDragOver}
                                 onDragEnter={handleDragEnter}
                                 onDragLeave={handleDragLeave}
-                                onDrop={handleDropSamples} 
+                                onDrop={handleDropSamples}
                                 className="dropzone flex flex-col items-center justify-center w-full h-24 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-100 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-200 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600">
                                 <div className="flex flex-col items-center justify-center pt-5 pb-6">
                                     <svg className="w-6 h-6 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 16">
-                                        <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"/>
+                                        <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2" />
                                     </svg>
                                     <p className="mb-1 text-xs text-center text-gray-500 dark:text-gray-400"><span className="font-semibold">Click to upload</span> or drag and drop</p>
                                     <p className="text-xs text-center text-gray-500 dark:text-gray-400">MP3 (MAX. 800x400px)</p>
@@ -239,17 +239,17 @@ const CreateExperimentForm = (props: any): JSX.Element => {
                         {/* <input className="mb-4" ref={fileRef} multiple type="file" onChange={readSampleFiles} /> */}
 
                         <h4 className="font-semibold text-sm lg:text-base mb-2">Upload Experiment Setup</h4>
-                        
+
                         <div className="flex items-center justify-center w-full">
                             <label htmlFor="dropzone-file-setup"
-                            onDragOver={handleDragOver}
-                            onDragEnter={handleDragEnter}
-                            onDragLeave={handleDragLeave}
-                            onDrop={handleDropSetup} 
-                            className="dropzone flex flex-col items-center justify-center w-full h-24 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-100 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-200 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600">
+                                onDragOver={handleDragOver}
+                                onDragEnter={handleDragEnter}
+                                onDragLeave={handleDragLeave}
+                                onDrop={handleDropSetup}
+                                className="dropzone flex flex-col items-center justify-center w-full h-24 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-100 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-200 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600">
                                 <div className="flex flex-col items-center justify-center pt-5 pb-6">
                                     <svg className="w-6 h-6 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 16">
-                                        <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"/>
+                                        <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2" />
                                     </svg>
                                     <p className="mb-1 text-xs text-center text-gray-500 dark:text-gray-400"><span className="font-semibold">Click to upload</span> or drag and drop</p>
                                     <p className="text-xs text-center text-gray-500 dark:text-gray-400">JSON (MAX. 800x400px)</p>
@@ -257,7 +257,7 @@ const CreateExperimentForm = (props: any): JSX.Element => {
                                 <input id="dropzone-file-setup" ref={fileRef} type="file" onChange={readFile} className="hidden" />
                             </label>
                         </div>
-                        
+
                         {/* <input ref={fileRef} type="file" onChange={readFile} /> */}
                     </div>
                 </div>
@@ -274,7 +274,7 @@ const CreateExperimentForm = (props: any): JSX.Element => {
                             </h4>
                             {showInfo && (
                                 <div className="mb-4 p-2 text-sm rounded-3xl bg-gray-200 dark:bg-gray-600 text-gray-700 dark:text-gray-300 fadeInDown">
-                                    Choose the <span className="font-semibold">type of experiment</span> you would like to configure for the given test. For more information about all types of experiments, 
+                                    Choose the <span className="font-semibold">type of experiment</span> you would like to configure for the given test. For more information about all types of experiments,
                                     please visit our <span className="font-semibold">About page</span>.
                                 </div>
                             )}
@@ -343,18 +343,18 @@ const MushraEditor = (props: propsEditor) => {
                         <h3 className="text-sm font-medium text-pink-500 dark:text-pink-600">No Reference samples available. Please upload some samples.</h3>) : (
                         props.fileList.map((file) => (
                             <label className="flex items-center relative cursor-pointer mr-2">
-                                <input 
-                                    type="radio" 
-                                    id={file} 
+                                <input
+                                    type="radio"
+                                    id={file}
                                     checked={referenceTest.assetPath === file ? true : false}
-                                    name="reference" 
+                                    name="reference"
                                     onChange={(e) => {
-                                        if (e.target.checked) { 
-                                            setReferenceTest({ 'sampleId': 'ref', 'assetPath': file }) 
+                                        if (e.target.checked) {
+                                            setReferenceTest({ 'sampleId': 'ref', 'assetPath': file })
                                         } else {
                                             setReferenceTest({ sampleId: "", assetPath: "" })
                                         }
-                                    }} 
+                                    }}
                                     className="hidden"
                                 />
                                 <span className="w-4 h-4 flex items-center justify-center">
@@ -365,7 +365,7 @@ const MushraEditor = (props: propsEditor) => {
                                 <span className="ml-2 break-words w-full">{file}</span>
                             </label>
                         ))
-                    )} 
+                    )}
                 </div>
             </div>
             <h4 className="font-semibold text-sm lg:text-base mb-1">Anchors</h4>
@@ -375,22 +375,22 @@ const MushraEditor = (props: propsEditor) => {
                         <h3 className="text-sm font-medium text-pink-500 dark:text-pink-600">No Anchor samples available. Please upload some samples.</h3>) : (
                         props.fileList.map((file) => (
                             <label className="flex items-center relative cursor-pointer mr-2 break-words w-full">
-                                <input 
-                                    type="checkbox" 
-                                    id={file} 
+                                <input
+                                    type="checkbox"
+                                    id={file}
                                     checked={anchorsTest.filter(sample => [file].includes(sample.assetPath)).length > 0 ? true : false}
-                                    name={file} 
+                                    name={file}
                                     onChange={(e) => {
-                                        if (e.target.checked) { 
-                                            setAnchorsTest((oldarray) => [...oldarray, { 'sampleId': 'a0', 'assetPath': file }]) 
+                                        if (e.target.checked) {
+                                            setAnchorsTest((oldarray) => [...oldarray, { 'sampleId': 'a0', 'assetPath': file }])
                                         } else {
-                                            let foundJSON = anchorsTest.find(item => { return item.assetPath === file })
+                                            const foundJSON = anchorsTest.find(item => { return item.assetPath === file })
                                             if (foundJSON !== undefined) {
                                                 setAnchorsTest((oldarray) => oldarray.filter(sample => ![foundJSON.assetPath].includes(sample.assetPath)))
                                             }
                                         }
-                                    }} 
-                                    className="hidden" 
+                                    }}
+                                    className="hidden"
                                 />
                                 <span className="w-4 h-4 flex items-center justify-center">
                                     <span className={`w-4 h-4 rounded border-2 flex items-center justify-center ${anchorsTest.some(sample => sample.assetPath === file) ? "bg-pink-500 border-pink-500 dark:bg-pink-600 dark:border-pink-600" : "bg-gray-200 border-gray-400"} transition-transform transform hover:scale-110 duration-100 ease-in-out`}>
@@ -404,7 +404,7 @@ const MushraEditor = (props: propsEditor) => {
                                 <span className="ml-2 break-words w-full">{file}</span>
                             </label>
                         ))
-                    )} 
+                    )}
                 </div>
             </div>
             <h4 className="font-semibold text-sm lg:text-base mb-1">Samples</h4>
@@ -414,22 +414,22 @@ const MushraEditor = (props: propsEditor) => {
                         <h3 className="text-sm font-medium text-pink-500 dark:text-pink-600">No Samples available. Please upload some.</h3>) : (
                         props.fileList.map((file) => (
                             <label className="flex items-center relative cursor-pointer mr-2 break-words w-full">
-                                <input 
-                                    type="checkbox" 
-                                    id={file} 
+                                <input
+                                    type="checkbox"
+                                    id={file}
                                     checked={sampleTest.filter(sample => [file].includes(sample.assetPath)).length > 0 ? true : false}
-                                    name={file} 
+                                    name={file}
                                     onChange={(e) => {
-                                        if (e.target.checked) { 
-                                            setSampleTest((oldarray) => [...oldarray, { 'sampleId': 's0', 'assetPath': file }]) 
+                                        if (e.target.checked) {
+                                            setSampleTest((oldarray) => [...oldarray, { 'sampleId': 's0', 'assetPath': file }])
                                         } else {
-                                            let foundJSON = sampleTest.find(item => { return item.assetPath === file })
+                                            const foundJSON = sampleTest.find(item => { return item.assetPath === file })
                                             if (foundJSON !== undefined) {
                                                 setSampleTest((oldarray) => oldarray.filter(sample => ![foundJSON.assetPath].includes(sample.assetPath)))
                                             }
                                         }
-                                    }} 
-                                    className="hidden" 
+                                    }}
+                                    className="hidden"
                                 />
                                 <span className="w-4 h-4 flex items-center justify-center">
                                     <span className={`w-4 h-4 rounded border-2 flex items-center justify-center ${sampleTest.some(sample => sample.assetPath === file) ? "bg-pink-500 border-pink-500 dark:bg-pink-600 dark:border-pink-600" : "bg-gray-200 border-gray-400"} transition-transform transform hover:scale-110 duration-100 ease-in-out`}>
@@ -490,22 +490,22 @@ const ApeEditor = (props: propsEditor) => {
                         <h3 className="text-sm font-medium text-pink-500 dark:text-pink-600">No Samples available. Please upload some.</h3>) : (
                         props.fileList.map((file) => (
                             <label className="flex items-center relative cursor-pointer mr-2 break-words w-full">
-                                <input 
-                                    type="checkbox" 
-                                    id={file} 
+                                <input
+                                    type="checkbox"
+                                    id={file}
                                     checked={sampleTest.filter(sample => [file].includes(sample.assetPath)).length > 0 ? true : false}
-                                    name={file} 
+                                    name={file}
                                     onChange={(e) => {
-                                        if (e.target.checked) { 
-                                            setSampleTest((oldarray) => [...oldarray, { 'sampleId': 's0', 'assetPath': file }]) 
+                                        if (e.target.checked) {
+                                            setSampleTest((oldarray) => [...oldarray, { 'sampleId': 's0', 'assetPath': file }])
                                         } else {
-                                            let foundJSON = sampleTest.find(item => { return item.assetPath === file })
+                                            const foundJSON = sampleTest.find(item => { return item.assetPath === file })
                                             if (foundJSON !== undefined) {
                                                 setSampleTest((oldarray) => oldarray.filter(sample => ![foundJSON.assetPath].includes(sample.assetPath)))
                                             }
                                         }
-                                    }} 
-                                    className="hidden" 
+                                    }}
+                                    className="hidden"
                                 />
                                 <span className="w-4 h-4 flex items-center justify-center">
                                     <span className={`w-4 h-4 rounded border-2 flex items-center justify-center ${sampleTest.some(sample => sample.assetPath === file) ? "bg-pink-500 border-pink-500 dark:bg-pink-600 dark:border-pink-600" : "bg-gray-200 border-gray-400"} transition-transform transform hover:scale-110 duration-100 ease-in-out`}>
@@ -618,10 +618,10 @@ const AbxEditor = (props: propsEditor) => {
                                         onChange={(e) => {
                                             if (e.target.checked) {
                                                 if (sampleTest.length < 2) {
-                                                    setSampleTest((oldarray) => [...oldarray, { 'sampleId': 's0', 'assetPath': file }]) 
+                                                    setSampleTest((oldarray) => [...oldarray, { 'sampleId': 's0', 'assetPath': file }])
                                                 }
                                             } else {
-                                                let foundJSON = sampleTest.find(item => { return item.assetPath === file })
+                                                const foundJSON = sampleTest.find(item => { return item.assetPath === file })
                                                 if (foundJSON !== undefined) {
                                                     setSampleTest((oldarray) => oldarray.filter(sample => ![foundJSON.assetPath].includes(sample.assetPath)))
                                                 }
@@ -750,7 +750,7 @@ const AbEditor = (props: propsEditor) => {
                                                     setSampleTest((oldarray) => [...oldarray, { 'sampleId': 's0', 'assetPath': file }])
                                                 }
                                             } else {
-                                                let foundJSON = sampleTest.find(item => { return item.assetPath === file })
+                                                const foundJSON = sampleTest.find(item => { return item.assetPath === file })
                                                 if (foundJSON !== undefined) {
                                                     setSampleTest((oldarray) => oldarray.filter(sample => ![foundJSON.assetPath].includes(sample.assetPath)))
                                                 }

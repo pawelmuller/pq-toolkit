@@ -1,12 +1,9 @@
 import { useState } from 'react'
 import { adminExperimentsListSchema } from '../admin/models'
-import Link from 'next/link'
-import { FaCheck, FaPlus, FaTrash, FaMinus, FaExpand } from 'react-icons/fa'
+import { FaPlus, FaMinus, FaExpand } from 'react-icons/fa'
 import useSWR from 'swr'
 import Loading from '../[name]/loading'
 import { validateApiData } from '@/core/apiHandlers/clientApiHandler'
-import { fireConfirmationModal } from '@/lib/components/modals/confirmationModals'
-import verifyAuth from "@/lib/authentication/is-auth";
 import Header from '@/lib/components/basic/header'
 import DeleteButton from './deleteButton'
 import CreateExperimentForm from './createExperimentForm'
@@ -49,22 +46,21 @@ const AdminPage = (props: any): JSX.Element => {
     fetch('/api/v1/experiments', {
       method: 'DELETE',
       body: JSON.stringify({ name })
-    })
+    }).catch((err) => { console.error(err) })
       .then(async () => {
         await mutate()
-      })
-      .catch(console.error)
+      }).catch((err) => { console.error(err) })
   }
 
   const addNewExperiment = (name: string): void => {
     fetch('/api/v1/experiments', {
       method: 'POST',
       body: JSON.stringify({ name })
-    })
+    }).catch((err) => { console.error(err) })
       .then(async () => {
         await mutate()
       })
-      .catch(console.error)
+      .catch((err) => { console.error(err) })
   }
 
   return (
@@ -77,9 +73,11 @@ const AdminPage = (props: any): JSX.Element => {
             fetch("/api/v1/logout", {
               method: "POST",
               headers: { "Content-Type": "application/json" },
-            }).then(async () => {
-              await props.refresh()
-            });
+            })
+              .catch((err) => { console.error(err) })
+              .then(async () => {
+                await props.refresh()
+              }).catch((err) => { console.error(err) });
           }}>
           <TbLogout2 className="mr-2" />
           Logout
@@ -108,14 +106,14 @@ const AdminPage = (props: any): JSX.Element => {
             <div className="flex flex-col fadeInUpFast items-center 2xl:absolute 2xl:mr-96 2xl:ml-[23rem] 2xl:mb-96 2xl:mt-96 2xl:-top-5">
               <button
                 className="flex items-center text-sm bg-blue-400 dark:bg-blue-500 hover:bg-pink-500 dark:hover:bg-pink-600 transform hover:scale-110 duration-300 ease-in-out rounded-xl p-xxs text-white"
-                onClick={() => setIsListVisible(true)}
+                onClick={() => { setIsListVisible(true) }}
               >
                 <FaExpand className="mr-2" />
                 <span className='font-semibold text-xs sm:text-sm'>Expand List</span>
               </button>
             </div>
           )}
-          {selectedExperiment == undefined ? <div /> : <CreateExperimentForm setSelectedExperiment={setSelectedExperiment} selectedExperiment={selectedExperiment} />}
+          {selectedExperiment === undefined ? <div /> : <CreateExperimentForm setSelectedExperiment={setSelectedExperiment} selectedExperiment={selectedExperiment} />}
         </div>
       </div>
     </div>
@@ -127,21 +125,19 @@ const AdminExperimentsListWidget = ({
   deleteExperiment,
   addNewExperiment,
   setSelectedExperiment,
-  selectedExperiment,
   setIsListVisible
 }: {
   experiments: string[]
   deleteExperiment: (name: string) => void
   addNewExperiment: (name: string) => void
-  setSelectedExperiment: (name: string) => void
-  selectedExperiment: any
+  setSelectedExperiment: (name: any) => void
   setIsListVisible: (visible: boolean) => void
 }): JSX.Element => {
   return (
     <div className="flex flex-col self-start fadeInUpFast items-center z-10 w-full max-w-4xl 2xl:max-w-md text-black dark:text-white bg-gray-50 dark:bg-stone-800 rounded-3xl p-8 shadow-2xl relative">
       <button
         className="absolute top-4 right-4 flex items-center text-sm bg-blue-400 dark:bg-blue-500 hover:bg-pink-500 dark:hover:bg-pink-600 transform hover:scale-110 duration-300 ease-in-out rounded-xl p-xxs text-white"
-        onClick={() => setIsListVisible(false)}
+        onClick={() => { setIsListVisible(false) }}
       >
         <FaMinus className="mr-2" />
         <span className='font-semibold text-xs sm:text-sm'>Minimize</span>
@@ -156,7 +152,7 @@ const AdminExperimentsListWidget = ({
         <ul className="space-y-2 w-full">
           {experiments.map((name, idx) => (
             <li key={idx} className="flex items-center gap-sm justify-between whitespace-normal break-words">
-              <div className='font-semibold text-white w-9/12 sm:w-[85%] lg:w-[90%] 2xl:w-10/12 bg-blue-400 dark:bg-blue-500 hover:bg-pink-500 dark:hover:bg-pink-600 transform hover:scale-105 duration-300 ease-in-out p-2 rounded-md cursor-pointer' onClick={() => setSelectedExperiment(name)}>
+              <div className='font-semibold text-white w-9/12 sm:w-[85%] lg:w-[90%] 2xl:w-10/12 bg-blue-400 dark:bg-blue-500 hover:bg-pink-500 dark:hover:bg-pink-600 transform hover:scale-105 duration-300 ease-in-out p-2 rounded-md cursor-pointer' onClick={() => { setSelectedExperiment(name) }}>
                 {name}
               </div>
               <DeleteButton deleteExperiment={deleteExperiment} name={name} />

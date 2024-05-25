@@ -1,12 +1,9 @@
 'use client'
 
 import useSWR from "swr"
-import { string } from "zod"
 import AdminPage from "../components/admin-page"
-import { useState } from "react"
 import Loading from "../loading"
 import LoginPage from "../components/login-page"
-import Header from "@/lib/components/basic/header"
 const AdminPageNew = (): JSX.Element => {
     const {
         data: apiData,

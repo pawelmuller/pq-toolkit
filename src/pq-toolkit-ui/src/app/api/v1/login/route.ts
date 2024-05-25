@@ -5,7 +5,7 @@ import { SignJWT } from "jose";
 import isAuth from "@/lib/authentication/is-auth";
 
 // Create a POST request handler
-export async function POST(request: Request) {
+export async function POST(request: Request):Promise<Response> {
   // Read the password from the request body
   const data = await request.json();
   const password = data.password;
