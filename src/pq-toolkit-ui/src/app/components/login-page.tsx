@@ -3,26 +3,21 @@
 import { useEffect, useState } from "react"
 import Header from "@/lib/components/basic/header"
 import Blobs from "./blobs"
+import axios from "axios"
 
 const sendLoginRequest = async (password: string, setPassword: (value: string) => void, refresh: () => Promise<undefined>, setErrorRequest: (value: boolean) => void): Promise<undefined> => {
-    fetch("/api/v1/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ password }),
-    }).then(async (e) => {
-        setPassword('')
-        if (e.ok) {
-            setErrorRequest(false)
-            await refresh()
+    const response = await axios.post("/api/v1/auth/login", new URLSearchParams({ grant_type: 'password', username: 'admin', password, client_id: 'string', client_secret: 'string' }), {
+        headers: {
+            'accept': 'application/json',
+            'Content-Type': 'application/x-www-form-urlencoded'
         }
-        else {
-            setErrorRequest(true)
-        }
-
-    }).catch((error) => {
-        console.error(error)
-        setPassword('')
     })
+
+    const accessToken = response.data.access_token
+    localStorage.setItem('token', accessToken);
+    setPassword('')
+    setErrorRequest(false)
+    await refresh()
 }
 
 type cleanup = () => void

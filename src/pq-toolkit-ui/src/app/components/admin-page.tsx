@@ -45,6 +45,10 @@ const AdminPage = (props: any): JSX.Element => {
   const deleteExperiment = (name: string): void => {
     fetch('/api/v1/experiments', {
       method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${localStorage.getItem('token')}`
+      },
       body: JSON.stringify({ name })
     }).catch((err) => { console.error(err) })
       .then(async () => {
@@ -55,6 +59,10 @@ const AdminPage = (props: any): JSX.Element => {
   const addNewExperiment = (name: string): void => {
     fetch('/api/v1/experiments', {
       method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${localStorage.getItem('token')}`
+      },
       body: JSON.stringify({ name })
     }).catch((err) => { console.error(err) })
       .then(async () => {
