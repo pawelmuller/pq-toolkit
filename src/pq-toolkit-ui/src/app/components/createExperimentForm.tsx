@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useRef } from "react"
 import { FaXmark } from "react-icons/fa6";
 import { FaPlus, FaInfoCircle, FaExclamationTriangle } from "react-icons/fa";
-import { Tooltip } from '@mui/material';
 import DeleteSampleComp from "./deleteSampleComp";
 import DeleteAxisComp from "./deleteAxisComp";
 import { validateTestSchema } from "@/lib/schemas/utils";
@@ -189,15 +188,15 @@ const CreateExperimentForm = (props: any): JSX.Element => {
                                 <div
                                     key={index}
                                     className="relative cursor-pointer p-2 text-white font-semibold bg-blue-400 dark:bg-blue-500 hover:bg-pink-500 dark:hover:bg-pink-600 transform hover:scale-105 duration-300 ease-in-out rounded-md"
-                                    onClick={() => setCurrentTest(test)}
+                                    onClick={() => { setCurrentTest(test) }}
                                 >
                                     <div className="flex items-center">
                                         <span>{test.testNumber}</span>
                                         {!areAllFilesProvided(test, fileList) && (
                                             <div
                                                 className="relative flex items-center ml-2"
-                                                onMouseEnter={() => setShowTooltip(index)}
-                                                onMouseLeave={() => setShowTooltip(null)}
+                                                onMouseEnter={() => { setShowTooltip(index) }}
+                                                onMouseLeave={() => { setShowTooltip(null) }}
                                             >
                                                 <FaExclamationTriangle className="text-yellow-400 transform hover:scale-125 duration-100 ease-in-out" />
                                                 {showTooltip === index && (
