@@ -1,18 +1,109 @@
 version: '3'
 
 services:
-  pq-toolkit-ui-prod:
+  # Database
+  pq-toolkit-db:
+    image: postgres
+    shm_size: 128m
+    environment:
+      POSTGRES_USER: $POSTGRES_USER
+      POSTGRES_PASSWORD: $POSTGRES_PASSWORD
+      POSTGRES_DB: $POSTGRES_DB
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -d $${POSTGRES_USER} -U $${POSTGRES_USER}"
+        ]
+      interval: 1s
+      timeout: 5s
+      retries: 10
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+
+  # Database admin
+  pq-adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080
+
+  # FastAPI backend
+  pq-toolkit-api:
+    build: ../pq-toolkit-api
+    depends_on:
+      pq-toolkit-db:
+        condition: service_healthy
+    environment:
+      PROJECT_NAME: $PROJECT_NAME
+      POSTGRES_USER: $POSTGRES_USER
+      POSTGRES_PASSWORD: $POSTGRES_PASSWORD
+      POSTGRES_DB: $POSTGRES_DB
+      POSTGRES_SERVER: pq-toolkit-db
+      FIRST_SUPERUSER_NAME: $FIRST_SUPERUSER_NAME
+      FIRST_SUPERUSER_PASSWORD: $FIRST_SUPERUSER_PASSWORD
+      MINIO_ROOT_USER: $MINIO_ROOT_USER
+      MINIO_ROOT_PASSWORD: $MINIO_ROOT_PASSWORD
+      MINIO_ENDPOINT: $MINIO_ENDPOINT
+      MINIO_STORAGE_USE_HTTPS: $MINIO_STORAGE_USE_HTTPS
+      PQ_API_PORT: $PQ_API_PORT
+    command: sh -c "./prestart.sh && python3 main.py"
+    volumes:
+      - ../pq-toolkit-api/app:/app/app
+
+  # Frontend
+  pq-toolkit-ui:
     build:
       context: ../pq-toolkit-ui
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.dev
       args:
-        ENV: prod
-        DATA_PATH: "/pq-toolkit/data"
-    image: pq-toolkit-ui-prod
-    ports:
-      - 80:3000
+        NEXT_PUBLIC_API_URL: "htshts"
+    image: pq-toolkit-ui
     volumes:
-      - pq-toolkit-data:/pq-toolkit/data
+      - ../pq-toolkit-ui/src:/app/src
+    depends_on:
+      - pq-toolkit-api
+    environment:
+      NEXT_PUBLIC_API_URL: $PUBLIC_API_URL
+
+  # MinIO buckets
+  pq-sample-storage-minio:
+    image: minio/minio
+    volumes:
+      - minio_storage:/data
+    environment:
+      MINIO_ROOT_USER: $MINIO_ROOT_USER
+      MINIO_ROOT_PASSWORD: $MINIO_ROOT_PASSWORD
+      MINIO_STORAGE_USE_HTTPS: $MINIO_STORAGE_USE_HTTPS
+    command: server --console-address ":9001" /data
+
+  # Gateway
+  pq-gateway:
+    build:
+      context: pq-gateway
+      dockerfile: Dockerfile
+    ports:
+      - $GATEWAY_PORT:$GATEWAY_PORT
+    depends_on:
+      - pq-toolkit-api
+      - pq-toolkit-ui
+    environment:
+      PQ_API_SERVER: $PQ_API_SERVER
+      PQ_API_PORT: $PQ_API_PORT
+      PQ_UI_SERVER: $PQ_UI_SERVER
+      PQ_UI_PORT: $PQ_UI_PORT
+      GATEWAY_PORT: $GATEWAY_PORT
 
 volumes:
-  pq-toolkit-data:
+  minio_storage:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: $MINIO_VOLUME
+  postgres-data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: $POSTGRES_VOLUME
