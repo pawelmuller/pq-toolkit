@@ -46,6 +46,10 @@ build-clean-prod: ## Build the production docker image.
 start-prod: ## Start the production docker container.
 	docker compose -f deployments/docker-compose.prod.yml --env-file deployments/.env.prod up -d
 
+.PHONY: start-prod-debug
+start-prod-debug: ## Start the production docker container.
+	docker compose -f deployments/docker-compose.prod.yml --env-file deployments/.env.prod up
+
 .PHONY: stop-prod
 stop-prod: ## Stop the production docker container.
 	docker compose -f deployments/docker-compose.prod.yml --env-file deployments/.env.prod down
