@@ -176,7 +176,7 @@ class PqTestAPEAxisResult(BaseModel):
 
 
 class PqTestAPEResult(PqTestBaseResult):
-    axis_results: list[PqTestAPEAxisResult] | list = Field(alias="axisResults")
+    axis_results: list[PqTestAPEAxisResult] = Field(alias="axisResults")
 
 
 class PqTestResultsList(BaseModel):
