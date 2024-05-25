@@ -7,7 +7,7 @@ import { Providers } from './providers'
 const inter = Inter({ subsets: ['latin-ext'] })
 
 export const metadata: Metadata = {
-  title: 'PQ Toolkit UI',
+  title: 'PQToolkit UI',
   description: 'Perceptual Qualities Toolkit Experiment UI'
 }
 
@@ -18,13 +18,15 @@ const RootLayout = ({
 }): JSX.Element => {
   return (
     <html lang="en" suppressHydrationWarning>
+      <head>
+        <link rel="icon" href="/logo.svg" />
+      </head>
       <body className={inter.className}>
         <Providers>
           <SWRConfigProvider>
             <div>{children}</div>
           </SWRConfigProvider>
         </Providers>
-        
       </body>
     </html>
   )
