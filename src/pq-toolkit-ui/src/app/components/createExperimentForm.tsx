@@ -1,6 +1,7 @@
 import { useEffect, useState, useRef } from "react"
 import { FaXmark } from "react-icons/fa6";
-import { FaPlus, FaInfoCircle } from "react-icons/fa";
+import { FaPlus, FaInfoCircle, FaExclamationTriangle } from "react-icons/fa";
+import { Tooltip } from '@mui/material';
 import DeleteSampleComp from "./deleteSampleComp";
 import DeleteAxisComp from "./deleteAxisComp";
 import { validateTestSchema } from "@/lib/schemas/utils";
@@ -187,6 +188,8 @@ const CreateExperimentForm = (props: any): JSX.Element => {
         };
     };
 
+    const [showTooltip, setShowTooltip] = useState<number | null>(null);
+
     return (
         <div className="flex flex-col self-center fadeInUpFast 2xl:self-start text-black dark:text-white bg-gray-50 dark:bg-stone-800 rounded-3xl shadow-lg 2xl:shadow-2xl w-full max-w-4xl z-10 p-6 overflow-hidden">
             <div className="flex justify-between items-center mb-6 w-full whitespace-normal break-words">
@@ -216,9 +219,35 @@ const CreateExperimentForm = (props: any): JSX.Element => {
                             <FaPlus />
                         </button>
                         {setup.tests.length === 0 ? (
-                            <h3 className="text-sm font-medium text-pink-500 dark:text-pink-600">No tests available. Please upload the Experiment Setup or add new test.</h3>) : (
-                            setup.tests.map((test, index) => <div key={index} className="cursor-pointer p-2 text-white font-semibold bg-blue-400 dark:bg-blue-500 hover:bg-pink-500 dark:hover:bg-pink-600 transform hover:scale-105 duration-300 ease-in-out rounded-md" onClick={() => { setCurrentTest(test) }}>{
-                                areAllFilesProvided(test, fileList) ? <div>{test.testNumber}</div> : <div>{test.testNumber}!</div>}</div>)
+                            <h3 className="text-sm font-medium text-pink-500 dark:text-pink-600">
+                                No tests available. Please upload the Experiment Setup or add new test.
+                            </h3>
+                        ) : (
+                            setup.tests.map((test, index) => (
+                                <div
+                                    key={index}
+                                    className="relative cursor-pointer p-2 text-white font-semibold bg-blue-400 dark:bg-blue-500 hover:bg-pink-500 dark:hover:bg-pink-600 transform hover:scale-105 duration-300 ease-in-out rounded-md"
+                                    onClick={() => setCurrentTest(test)}
+                                >
+                                    <div className="flex items-center">
+                                        <span>{test.testNumber}</span>
+                                        {!areAllFilesProvided(test, fileList) && (
+                                            <div
+                                                className="relative flex items-center ml-2"
+                                                onMouseEnter={() => setShowTooltip(index)}
+                                                onMouseLeave={() => setShowTooltip(null)}
+                                            >
+                                                <FaExclamationTriangle className="text-yellow-400 transform hover:scale-125 duration-100 ease-in-out" />
+                                                {showTooltip === index && (
+                                                    <div className="absolute left-0 bottom-full mb-2 w-40 p-2 text-xs text-white bg-gray-800 dark:text-black dark:bg-gray-300 rounded-md">
+                                                        Some sample files are missing for this test
+                                                    </div>
+                                                )}
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                            ))
                         )}
                     </div>
                     <div className="mt-auto">
