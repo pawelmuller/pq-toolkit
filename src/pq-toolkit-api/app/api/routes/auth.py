@@ -22,7 +22,7 @@ def login(session: SessionDep, form_data: Annotated[OAuth2PasswordRequestForm, D
     return AccessToken(access_token=create_access_token(user.id))
 
 
-@router.post("/user")
+@router.get("/user")
 def get_user(admin: CurrentAdmin) -> Admin:
     return Admin(id=admin.id, email=admin.email, is_active=admin.is_active, username=admin.username)
 
