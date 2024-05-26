@@ -176,7 +176,7 @@ const AddExperimentWidget = ({
   return (
     <div className="flex items-center z-10 mt-4 w-full">
       <input
-        className="rounded outline-0 border-2 bg-gray-100 border-gray-300 dark:bg-gray-700 dark:border-gray-600 dark:text-white text-black w-full"
+        className="rounded outline-0 border-2 bg-gray-100 border-gray-300 dark:bg-gray-700 dark:border-gray-500 dark:text-white text-black w-full"
         onChange={(e) => {
           setNewName(e.target.value)
         }}

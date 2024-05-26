@@ -212,7 +212,7 @@ const CreateExperimentForm = (props: any): JSX.Element => {
             <div className="flex flex-col md:flex-row h-full space-y-6 md:space-y-0 md:space-x-6">
                 <div className="flex flex-col border-r-0 border-b-2 md:border-r-2 md:border-b-0 h-full w-full md:w-2/3 p-4">
                     <h3 className="text-sm lg:text-base font-semibold -mb-5">Tests</h3>
-                    <div className="flex flex-col space-y-2 mb-4">
+                    <div className="flex flex-col space-y-2 mb-6">
                         <button className="flex items-center self-end bg-blue-400 dark:bg-blue-500 hover:bg-pink-500 dark:hover:bg-pink-600 text-white text-sm font-medium py-1 lg:py-2 px-1 lg:px-2 rounded-full shadow-lg transform transition-all duration-300 hover:scale-110"
                             onClick={() => {
                                 setSetup((oldSetup) => ({
@@ -262,6 +262,38 @@ const CreateExperimentForm = (props: any): JSX.Element => {
                                 </div>
                             ))
                         )}
+                    </div>
+                    <h4 className="font-semibold text-sm lg:text-base mb-2">Description</h4>
+                    <div className="flex items-center w-full mb-3">
+                        <input
+                            className="rounded outline-0 border-2 bg-gray-100 border-gray-300 dark:bg-gray-700 dark:border-gray-500 text-black dark:text-white w-full"
+                            // value={}
+                            onChange={(e) => { }}
+                        />
+                        {/* <button
+                            onClick={() => {
+                            }}
+                            // disabled={null}
+                            className="flex items-center text-sm disabled:bg-gray-400 dark:disabled:bg-gray-500 dark:disabled:text-gray-300 bg-blue-400 dark:bg-blue-500 hover:bg-pink-500 dark:hover:bg-pink-600 disabled:transform-none transform hover:scale-110 duration-300 ease-in-out rounded-xl p-xxs ml-4 text-white"
+                        >
+                            <FaPlus />
+                        </button> */}
+                    </div>
+                    <h4 className="font-semibold text-sm lg:text-base mb-2">End Credits</h4>
+                    <div className="flex items-center w-full mb-6">
+                        <input
+                            className="rounded outline-0 border-2 bg-gray-100 border-gray-300 dark:bg-gray-700 dark:border-gray-500 text-black dark:text-white w-full"
+                            // value={}
+                            onChange={(e) => { }}
+                        />
+                        {/* <button
+                            onClick={() => {
+                            }}
+                            // disabled={null}
+                            className="flex items-center text-sm disabled:bg-gray-400 dark:disabled:bg-gray-500 dark:disabled:text-gray-300 bg-blue-400 dark:bg-blue-500 hover:bg-pink-500 dark:hover:bg-pink-600 disabled:transform-none transform hover:scale-110 duration-300 ease-in-out rounded-xl p-xxs ml-4 text-white"
+                        >
+                            <FaPlus />
+                        </button> */}
                     </div>
                     <div className="mt-auto">
                         <h4 className="text-sm lg:text-base font-semibold mb-2">Upload Samples</h4>
