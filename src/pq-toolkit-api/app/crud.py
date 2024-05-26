@@ -106,9 +106,14 @@ def transform_test_upload(test: PqTestBase, experiment_id: int) -> Test:
 def upload_experiment_config(session: Session, experiment_name: str, json_file: UploadFile):
     experiment_upload = PqExperiment.model_validate_json(json_file.file.read())
     statement = select(Experiment).where(Experiment.name == experiment_name)
-    experiment_db = session.exec(statement).one()
-    if experiment_db.configured:
-        raise ExperimentAlreadyConfigured(experiment_name)
+    try:
+        experiment_db = session.exec(statement).one()
+    except NoResultFound:
+        raise ExperimentNotFound(experiment_name)
+    for test in experiment_db.tests:
+        for test_result in test.experiment_test_results:
+            session.delete(test_result)
+        session.delete(test)
     experiment_db.full_name = experiment_upload.name
     experiment_db.description = experiment_upload.description
     experiment_db.end_text = experiment_upload.end_text
