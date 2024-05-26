@@ -98,8 +98,8 @@ export type ABTest = z.infer<typeof ABTestSchema>
 export const ABXTestSchema = BaseTestSchema.extend({
   type: z.enum(['ABX']),
   samples: z.array(SampleSchema).min(2).max(2),
-  xSampleId: z.string().optional(),
-  questions: z.array(QuestionSchema).optional()
+  xSampleId: z.string().optional().nullable(),
+  questions: z.array(QuestionSchema).optional().nullable()
 })
 
 /**
@@ -135,7 +135,7 @@ export type FullABXTest = z.infer<typeof FullABXTestSchema>
  */
 export const MUSHRATestSchema = BaseTestSchema.extend({
   type: z.enum(['MUSHRA']),
-  question: z.string().optional(),
+  question: z.string().optional().nullable(),
   reference: SampleSchema,
   anchors: z.array(SampleSchema).min(1),
   samples: z.array(SampleSchema).min(2)

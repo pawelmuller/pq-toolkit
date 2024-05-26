@@ -10,7 +10,7 @@ import {
 } from '@/lib/schemas/experimentSetup'
 import axios from "axios";
 
-const sendSaveExperimentRequest = async (experimentName: string, experimentJSON: ExperimentSetup): Promise<undefined> => {
+const sendSaveExperimentRequest = async (experimentName: string, experimentJSON: ExperimentSetup): Promise<any> => {
     const formData = new FormData()
     const jsonBlob = new Blob([JSON.stringify(experimentJSON)], { type: 'application/json' });
     formData.append('file', jsonBlob, 'setup.json')
@@ -24,17 +24,17 @@ const sendSaveExperimentRequest = async (experimentName: string, experimentJSON:
 
 }
 
-const sendUploadSample = async (experimentName: string, sample: File, sampleName: string): Promise<undefined> => {
+const sendUploadSample = async (experimentName: string, sample: File, sampleName: string): Promise<any> => {
     const formData = new FormData()
     formData.append('file', sample, sampleName)
-    await axios.post(`/api/v1/experiments/${experimentName}/samples`, formData, {
+    const response = await axios.post(`/api/v1/experiments/${experimentName}/samples`, formData, {
         headers: {
             'accept': 'application/json',
             'Content-Type': 'multipart/form-data',
             'Authorization': `Bearer ${localStorage.getItem('token')}`
         }
     })
-
+    return response
 }
 
 const getExperiment = async (experimentName: string): Promise<any> => {
@@ -63,20 +63,6 @@ const getSample = async (experimentName: string, fileName: string): Promise<any>
     })
     return response
 }
-
-const deleteExperiment = async (name: string): Promise<any> => {
-    const response = await axios.delete(`/api/v1/experiments`, {
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${localStorage.getItem('token')}`
-        },
-        data: {
-            name
-        }
-    });
-    return response; // Return response data instead of the entire response
-
-};
 
 const CreateExperimentForm = (props: any): JSX.Element => {
     useEffect(() => {
@@ -126,7 +112,7 @@ const CreateExperimentForm = (props: any): JSX.Element => {
                 if (files[i].type === 'audio/mpeg') {
                     const newFile = files.item(i);
                     if (newFile !== null) {
-                        sendUploadSample(props.selectedExperiment, newFile, newFile.name).then(() => {
+                        sendUploadSample(props.selectedExperiment, newFile, newFile.name).then((response) => {
                             setFileList((oldSampleFiles) => {
                                 return [...oldSampleFiles, newFile]
                             })
@@ -159,7 +145,6 @@ const CreateExperimentForm = (props: any): JSX.Element => {
                 const { data, validationError } = validateApiData(uploadedData, ExperimentSetupSchema)
                 const testValidationErrors: string[] = []
                 if (validationError !== null) {
-                    console.log('zly setup')
                 }
                 if (data !== null) {
                     data.tests.forEach(test => {
@@ -170,12 +155,9 @@ const CreateExperimentForm = (props: any): JSX.Element => {
                     });
                     if (testValidationErrors.length <= 0) {
                         setSetup(uploadedData)
-                    } else {
-                        console.log('zly setup')
                     }
                 }
             } catch (error) {
-                console.log('zly setup')
             }
         };
     };
@@ -291,13 +273,8 @@ const CreateExperimentForm = (props: any): JSX.Element => {
                     void (async () => {
                         try {
                             await sendSaveExperimentRequest(props.selectedExperiment, setup);
-                        } catch (error: any) {
-                            if (error.response.data.message === `Experiment ${props.selectedExperiment} already configured!`) {
-                                const deleteResponse = await deleteExperiment(props.selectedExperiment)
-                                if (deleteResponse.status === 200) {
-                                    await sendSaveExperimentRequest(props.selectedExperiment, setup);
-                                }
-                            }
+                        } catch (error) {
+                            console.error(error)
                         }
                     })();
                 }} className="cursor-pointer self-start mr-2 text-blue-400 dark:text-blue-500 hover:text-pink-500 dark:hover:text-pink-600 transform hover:scale-110 duration-300 ease-in-out" size={35} />
@@ -601,7 +578,8 @@ const MushraEditor = (props: {
                 <button
                     className="px-5 sm:px-8 py-2 bg-pink-500 dark:bg-pink-600 text-white font-semibold rounded-lg shadow-sm hover:bg-pink-600 dark:hover:bg-pink-700 transform hover:scale-105 duration-300 ease-in-out"
                     onClick={() => {
-                        // TODO: Logic for cancel action
+                        props.setSetup((oldSetup) => ({ ...oldSetup, tests: oldSetup.tests.filter(test => test.testNumber !== props.currentTest.testNumber) }))
+                        props.setCurrentTest((oldTest) => ({ ...oldTest, testNumber: -1 }))
                     }}
                 >
                     Delete
@@ -609,22 +587,28 @@ const MushraEditor = (props: {
                 <button
                     className="px-7 sm:px-10 py-2 bg-blue-400 dark:bg-blue-500 text-white font-semibold rounded-lg shadow-sm hover:bg-blue-500 dark:hover:bg-blue-600 transform hover:scale-105 duration-300 ease-in-out"
                     onClick={() => {
-                        props.setCurrentTest((oldTest) => {
-                            if ('questions' in oldTest) {
-                                delete oldTest.questions
-                            }
-                            if ('axis' in oldTest) {
-                                const { axis, ...oldTestWithoutAxis } = oldTest
-                                return ({ ...oldTestWithoutAxis, 'samples': sampleTest, 'anchors': anchorsTest, 'reference': referenceTest })
-                            }
-                            return ({ ...oldTest, 'samples': sampleTest, 'anchors': anchorsTest, 'reference': referenceTest })
-                        })
+                        const updatedTest = {
+                            ...props.currentTest,
+                            samples: sampleTest,
+                            anchors: anchorsTest,
+                            reference: referenceTest
+                        };
+
+                        if ('questions' in updatedTest) {
+                            delete updatedTest.questions;
+                        }
+                        if ('axis' in updatedTest) {
+                            delete updatedTest.axis;
+                        }
+
                         props.setSetup((oldSetup) => ({
                             ...oldSetup,
                             tests: oldSetup.tests.map(test =>
-                                test.testNumber === props.currentTest.testNumber ? props.currentTest : test
+                                test.testNumber === updatedTest.testNumber ? updatedTest : test
                             ),
-                        }))
+                        }));
+
+                        props.setCurrentTest(updatedTest);
                     }}
                 >
                     Save
@@ -731,7 +715,8 @@ const ApeEditor = (props: {
                 <button
                     className="px-5 sm:px-8 py-2 bg-pink-500 dark:bg-pink-600 text-white font-semibold rounded-lg shadow-sm hover:bg-pink-600 dark:hover:bg-pink-700 transform hover:scale-105 duration-300 ease-in-out"
                     onClick={() => {
-                        // TODO: Logic for cancel action
+                        props.setSetup((oldSetup) => ({ ...oldSetup, tests: oldSetup.tests.filter(test => test.testNumber !== props.currentTest.testNumber) }))
+                        props.setCurrentTest((oldTest) => ({ ...oldTest, testNumber: -1 }))
                     }}
                 >
                     Delete
@@ -739,32 +724,36 @@ const ApeEditor = (props: {
                 <button
                     className="px-7 sm:px-10 py-2 bg-blue-400 dark:bg-blue-500 text-white font-semibold rounded-lg shadow-sm hover:bg-blue-500 dark:hover:bg-blue-600 transform hover:scale-105 duration-300 ease-in-out"
                     onClick={() => {
-                        props.setCurrentTest((oldTest) => {
-                            if ('questions' in oldTest) {
-                                const { questions, ...updatedTest } = oldTest;
-                                return { ...updatedTest, samples: sampleTest };
-                            } else if ('anchors' in oldTest) {
-                                const { anchors, ...updatedTest } = oldTest;
-                                return { ...updatedTest, samples: sampleTest };
-                            } else if ('reference' in oldTest) {
-                                const { reference, ...updatedTest } = oldTest;
-                                return { ...updatedTest, samples: sampleTest };
-                            } else {
-                                return { ...oldTest, samples: sampleTest };
-                            }
-                        })
-                        props.setSetup((oldSetup: ExperimentSetup) => ({
+                        const updatedTest = {
+                            ...props.currentTest,
+                            samples: sampleTest
+                        };
+
+                        if ('questions' in updatedTest) {
+                            delete updatedTest.questions;
+                        }
+                        if ('anchors' in updatedTest) {
+                            delete updatedTest.anchors;
+                        }
+                        if ('reference' in updatedTest) {
+                            delete updatedTest.reference;
+                        }
+
+                        props.setSetup((oldSetup) => ({
                             ...oldSetup,
                             tests: oldSetup.tests.map(test =>
-                                test.testNumber === props.currentTest.testNumber ? props.currentTest : test
+                                test.testNumber === updatedTest.testNumber ? updatedTest : test
                             ),
-                        }))
-                    }}
+                        }));
+
+                        props.setCurrentTest(updatedTest);
+                    }
+                    }
                 >
                     Save
                 </button>
             </div>
-        </div>
+        </div >
     )
 }
 
@@ -876,7 +865,8 @@ const AbxEditor = (props: {
                 <button
                     className="px-5 sm:px-8 py-2 bg-pink-500 dark:bg-pink-600 text-white font-semibold rounded-lg shadow-sm hover:bg-pink-600 dark:hover:bg-pink-700 transform hover:scale-105 duration-300 ease-in-out"
                     onClick={() => {
-                        // TODO: Logic for cancel action
+                        props.setSetup((oldSetup) => ({ ...oldSetup, tests: oldSetup.tests.filter(test => test.testNumber !== props.currentTest.testNumber) }))
+                        props.setCurrentTest((oldTest) => ({ ...oldTest, testNumber: -1 }))
                     }}
                 >
                     Delete
@@ -884,26 +874,29 @@ const AbxEditor = (props: {
                 <button
                     className="px-7 sm:px-10 py-2 bg-blue-400 dark:bg-blue-500 text-white font-semibold rounded-lg shadow-sm hover:bg-blue-500 dark:hover:bg-blue-600 transform hover:scale-105 duration-300 ease-in-out"
                     onClick={() => {
-                        props.setCurrentTest((oldTest) => {
-                            if ('axis' in oldTest) {
-                                const { axis, ...updatedTest } = oldTest;
-                                return { ...updatedTest, samples: sampleTest };
-                            } else if ('anchors' in oldTest) {
-                                const { anchors, ...updatedTest } = oldTest;
-                                return { ...updatedTest, samples: sampleTest };
-                            } else if ('reference' in oldTest) {
-                                const { reference, ...updatedTest } = oldTest;
-                                return { ...updatedTest, samples: sampleTest };
-                            } else {
-                                return { ...oldTest, samples: sampleTest };
-                            }
-                        })
-                        props.setSetup((oldSetup: ExperimentSetup) => ({
+                        const updatedTest = {
+                            ...props.currentTest,
+                            samples: sampleTest
+                        };
+
+                        if ('axis' in updatedTest) {
+                            delete updatedTest.axis;
+                        }
+                        if ('anchors' in updatedTest) {
+                            delete updatedTest.anchors;
+                        }
+                        if ('reference' in updatedTest) {
+                            delete updatedTest.reference;
+                        }
+
+                        props.setSetup((oldSetup) => ({
                             ...oldSetup,
                             tests: oldSetup.tests.map(test =>
-                                test.testNumber === props.currentTest.testNumber ? props.currentTest : test
+                                test.testNumber === updatedTest.testNumber ? updatedTest : test
                             ),
-                        }))
+                        }));
+
+                        props.setCurrentTest(updatedTest);
                     }}
                 >
                     Save
@@ -1020,7 +1013,8 @@ const AbEditor = (props: {
                 <button
                     className="px-5 sm:px-8 py-2 bg-pink-500 dark:bg-pink-600 text-white font-semibold rounded-lg shadow-sm hover:bg-pink-600 dark:hover:bg-pink-700 transform hover:scale-105 duration-300 ease-in-out"
                     onClick={() => {
-                        // TODO: Logic for cancel action
+                        props.setSetup((oldSetup) => ({ ...oldSetup, tests: oldSetup.tests.filter(test => test.testNumber !== props.currentTest.testNumber) }))
+                        props.setCurrentTest((oldTest) => ({ ...oldTest, testNumber: -1 }))
                     }}
                 >
                     Delete
@@ -1028,26 +1022,29 @@ const AbEditor = (props: {
                 <button
                     className="px-7 sm:px-10 py-2 bg-blue-400 dark:bg-blue-500 text-white font-semibold rounded-lg shadow-sm hover:bg-blue-500 dark:hover:bg-blue-600 transform hover:scale-105 duration-300 ease-in-out"
                     onClick={() => {
-                        props.setCurrentTest((oldTest) => {
-                            if ('axis' in oldTest) {
-                                const { axis, ...updatedTest } = oldTest;
-                                return { ...updatedTest, samples: sampleTest };
-                            } else if ('anchors' in oldTest) {
-                                const { anchors, ...updatedTest } = oldTest;
-                                return { ...updatedTest, samples: sampleTest };
-                            } else if ('reference' in oldTest) {
-                                const { reference, ...updatedTest } = oldTest;
-                                return { ...updatedTest, samples: sampleTest };
-                            } else {
-                                return { ...oldTest, samples: sampleTest };
-                            }
-                        })
-                        props.setSetup((oldSetup: ExperimentSetup) => ({
+                        const updatedTest = {
+                            ...props.currentTest,
+                            samples: sampleTest
+                        };
+
+                        if ('axis' in updatedTest) {
+                            delete updatedTest.axis;
+                        }
+                        if ('anchors' in updatedTest) {
+                            delete updatedTest.anchors;
+                        }
+                        if ('reference' in updatedTest) {
+                            delete updatedTest.reference;
+                        }
+
+                        props.setSetup((oldSetup) => ({
                             ...oldSetup,
                             tests: oldSetup.tests.map(test =>
-                                test.testNumber === props.currentTest.testNumber ? props.currentTest : test
+                                test.testNumber === updatedTest.testNumber ? updatedTest : test
                             ),
-                        }))
+                        }));
+
+                        props.setCurrentTest(updatedTest);
                     }}
                 >
                     Save

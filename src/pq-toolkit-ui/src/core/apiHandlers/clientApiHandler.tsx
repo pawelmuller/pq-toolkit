@@ -8,7 +8,7 @@ interface APIError {
 }
 
 const fetcher = async (url: RequestInfo | URL): Promise<unknown> => {
-  const res = await fetch(url)
+  const res = await fetch(url, { headers: { 'accept': 'application/json' } })
 
   if (!res.ok) {
     const error: APIError = {
