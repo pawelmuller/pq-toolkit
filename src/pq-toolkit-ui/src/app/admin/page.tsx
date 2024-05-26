@@ -4,32 +4,22 @@ import useSWR from "swr"
 import AdminPage from "../components/admin-page"
 import Loading from "../loading"
 import LoginPage from "../components/login-page"
-const AdminPageNew = (): JSX.Element => {
-    // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-    const fetcher = async (url: string): Promise<any> => {
-        const response = await fetch(url, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${localStorage.getItem('token')}`
-            },
-        });
+import { authorizedFetch } from "@/core/apiHandlers/fetchers"
+import { type UserData } from "@/lib/schemas/authenticationData"
 
-        return await response.json();
-    };
+const AdminPageNew = (): JSX.Element => {
     const {
         data: apiData,
         error,
         isLoading,
         mutate
-    } = useSWR(`/api/v1/auth/user`, fetcher)
+    } = useSWR<UserData>(`/api/v1/auth/user`, authorizedFetch)
     if (isLoading) return <Loading />
     if (error != null) return <div><div>Authorization Error</div><div>{error.toString()}</div></div>
-    // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
-    if (apiData.is_active) {
+    if ((apiData?.is_active) ?? false) {
         return <AdminPage refresh={mutate} />
     } else {
-        return <LoginPage refresh={mutate} />
+        return <LoginPage refreshAdminPage={mutate} />
     }
 }
 

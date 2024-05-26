@@ -3,32 +3,28 @@
 import { useEffect, useState } from "react"
 import Header from "@/lib/components/basic/header"
 import Blobs from "./blobs"
-import axios from "axios"
+import { loginFetch } from "@/core/apiHandlers/fetchers"
+import { LoginSchema, type UserData } from "@/lib/schemas/authenticationData"
+import { type KeyedMutator } from "swr"
 
-const sendLoginRequest = async (password: string, setPassword: (value: string) => void, refresh: () => Promise<undefined>, setErrorRequest: (value: boolean) => void): Promise<undefined> => {
-    const response = await axios.post("/api/v1/auth/login", new URLSearchParams({ grant_type: 'password', username: 'admin', password, client_id: 'string', client_secret: 'string' }), {
-        headers: {
-            'accept': 'application/json',
-            'Content-Type': 'application/x-www-form-urlencoded'
-        }
-    })
-
-    const accessToken = response.data.access_token
-    localStorage.setItem('token', accessToken);
-    setPassword('')
-    setErrorRequest(false)
-    await refresh()
-}
-
-type cleanup = () => void
-
-const LoginPage = (props: any): JSX.Element => {
+const LoginPage = ({
+    refreshAdminPage
+}: {
+    refreshAdminPage: KeyedMutator<UserData>
+}): JSX.Element => {
     const [password, setPassword] = useState('')
     const [errorRequest, setErrorRequest] = useState(false)
-    useEffect((): cleanup => {
+    useEffect(() => {
         async function handleKeyDown(e: any): Promise<undefined> {
             if (e.key === 'Enter') {
-                await sendLoginRequest(password, setPassword, props.refresh, setErrorRequest)
+                void loginFetch(password, LoginSchema).then(async response => {
+                    const accessToken = response.access_token
+                    localStorage.setItem('token', accessToken);
+                    setPassword('')
+                    setErrorRequest(false)
+                    await refreshAdminPage()
+                }).catch()
+
             }
         }
         document.addEventListener('keydown', (event) => { handleKeyDown(event).catch(err => { console.error(err) }) });
@@ -62,7 +58,13 @@ const LoginPage = (props: any): JSX.Element => {
                             <div className="bg-clip-text font-bold text-transparent bg-gradient-to-r from-cyan-500  to-pink-500 cursor-pointer" onClick={() => {
                                 void (async () => {
                                     try {
-                                        await sendLoginRequest(password, setPassword, props.refresh, setErrorRequest);
+                                        void loginFetch(password, LoginSchema).then(async response => {
+                                            const accessToken = response.access_token
+                                            localStorage.setItem('token', accessToken);
+                                            setPassword('')
+                                            setErrorRequest(false)
+                                            await refreshAdminPage()
+                                        }).catch()
                                     } catch (error) {
                                         console.error(error);
                                     }
