@@ -134,7 +134,7 @@ const AdminExperimentsListWidget = ({
   setIsListVisible: (visible: boolean) => void
 }): JSX.Element => {
   return (
-    <div className="flex flex-col self-start fadeInUpFast items-center z-10 w-full max-w-4xl 2xl:max-w-md text-black dark:text-white bg-gray-50 dark:bg-stone-800 rounded-3xl p-8 shadow-2xl relative">
+    <div className="flex flex-col self-start fadeInUpFast items-center z-10 w-full max-w-full 2xl:max-w-md text-black dark:text-white bg-gray-50 dark:bg-stone-800 rounded-3xl p-8 shadow-2xl relative">
       <button
         className="absolute top-4 right-4 flex items-center text-sm bg-blue-400 dark:bg-blue-500 hover:bg-pink-500 dark:hover:bg-pink-600 transform hover:scale-110 duration-300 ease-in-out rounded-xl p-xxs text-white"
         onClick={() => { setIsListVisible(false) }}
