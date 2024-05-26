@@ -233,4 +233,19 @@ def test_add_experiment_results(session, create_experiment, upload_config, confi
     assert isinstance(added_test_results.results[0], expected_result_type)
 
 
-
+def test_update_experiment_config(session, create_experiment, upload_config, experiment_data, updated_experiment_data):
+    experiment_name = "Test Experiment"
+    create_experiment(experiment_name)
+    upload_config(experiment_name, experiment_data)
+    experiment = get_experiment_by_name(session, experiment_name)
+    assert experiment.name == experiment_data["name"]
+    assert experiment.description == experiment_data["description"]
+    assert len(experiment.tests) == 1
+    assert experiment.tests[0].test_number == experiment_data["tests"][0]["test_number"]
+    
+    upload_config(experiment_name, updated_experiment_data)
+    updated_experiment = get_experiment_by_name(session, experiment_name)
+    assert updated_experiment.name == updated_experiment_data["name"]
+    assert updated_experiment.description == updated_experiment_data["description"]
+    assert len(updated_experiment.tests) == 2
+    assert updated_experiment.tests[1].test_number == updated_experiment_data["tests"][1]["test_number"]

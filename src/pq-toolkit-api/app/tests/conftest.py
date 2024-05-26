@@ -1,6 +1,10 @@
 import pytest
 from sqlmodel import Session, create_engine, SQLModel
 from app.models import Experiment
+from fastapi import UploadFile
+from io import BytesIO
+from app.crud import upload_experiment_config
+import json
 
 @pytest.fixture(name="engine")
 def engine_fixture():
@@ -30,6 +34,28 @@ def experiment_data():
     }
 
 @pytest.fixture
+def updated_experiment_data():
+    return {
+        "name": "Updated Experiment Name",
+        "description": "Updated Experiment Description",
+        "end_text": "Updated Experiment End Text",
+        "tests": [
+            {
+                "test_number": 1,
+                "type": "AB",
+                "samples": [{"sample_id": "s1", "asset_path": "file_sample_5.mp3"}],
+                "questions": [{"question_id": "q1", "text": "Select better quality"}]
+            },
+            {
+                "test_number": 2,
+                "type": "ABX",
+                "samples": [{"sample_id": "s2", "asset_path": "file_sample_700.mp3"}],
+                "questions": [{"question_id": "q2", "text": "Select more warmth"}]
+            }
+        ]
+    }
+
+@pytest.fixture
 def create_experiment(session):
     def _create_experiment(name):
         experiment = Experiment(name=name)
@@ -40,11 +66,6 @@ def create_experiment(session):
 
 @pytest.fixture
 def upload_config(session):
-    from fastapi import UploadFile
-    from io import BytesIO
-    from app.crud import upload_experiment_config
-    import json
-
     def _upload_config(experiment_name, config_data):
         json_file = UploadFile(filename="config.json", file=BytesIO(json.dumps(config_data).encode()))
         upload_experiment_config(session, experiment_name, json_file)
