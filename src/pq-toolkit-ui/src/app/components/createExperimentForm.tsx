@@ -8,18 +8,104 @@ import { validateApiData } from "@/core/apiHandlers/clientApiHandler";
 import {
     type ExperimentSetup, ExperimentSetupSchema, type ABTest, type ABXTest, type FullABXTest, type MUSHRATest, type APETest, type BaseTest, type Sample
 } from '@/lib/schemas/experimentSetup'
+import axios from "axios";
 
+const sendSaveExperimentRequest = async (experimentName: string, experimentJSON: ExperimentSetup): Promise<undefined> => {
+    const formData = new FormData()
+    const jsonBlob = new Blob([JSON.stringify(experimentJSON)], { type: 'application/json' });
+    formData.append('file', jsonBlob, 'setup.json')
+    await axios.post(`/api/v1/experiments/${experimentName}`, formData, {
+        headers: {
+            'accept': 'application/json',
+            'Content-Type': 'multipart/form-data',
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+    })
+
+}
+
+const sendUploadSample = async (experimentName: string, sample: File, sampleName: string): Promise<undefined> => {
+    const formData = new FormData()
+    formData.append('file', sample, sampleName)
+    await axios.post(`/api/v1/experiments/${experimentName}/samples`, formData, {
+        headers: {
+            'accept': 'application/json',
+            'Content-Type': 'multipart/form-data',
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+    })
+
+}
+
+const getExperiment = async (experimentName: string): Promise<any> => {
+    const response = await axios.get(`/api/v1/experiments/${experimentName}`, {
+        headers: {
+            'accept': 'application/json',
+        }
+    })
+    return response
+}
+
+const getSamples = async (experimentName: string): Promise<any> => {
+    const response = await axios.get(`/api/v1/experiments/${experimentName}/samples`, {
+        headers: {
+            'accept': 'application/json',
+        }
+    })
+    return response
+}
+
+const getSample = async (experimentName: string, fileName: string): Promise<any> => {
+    const response = await axios.get(`/api/v1/experiments/${experimentName}/samples/${fileName}`, {
+        headers: {
+            'accept': 'application/json',
+        }
+    })
+    return response
+}
+
+const deleteExperiment = async (name: string): Promise<any> => {
+    const response = await axios.delete(`/api/v1/experiments`, {
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+        },
+        data: {
+            name
+        }
+    });
+    return response; // Return response data instead of the entire response
+
+};
 
 const CreateExperimentForm = (props: any): JSX.Element => {
     useEffect(() => {
-        setSetup({
-            uid: "",
-            name: "",
-            description: "",
-            endText: "",
-            tests: []
+        getExperiment(props.selectedExperiment).then((response) => { setSetup(response.data) }).catch(error => {
+            setSetup({
+                uid: "",
+                name: "",
+                description: "",
+                endText: "",
+                tests: []
+            })
+            console.error(error)
         })
-        console.log('zmiana')
+        getSamples(props.selectedExperiment).then((response) => {
+            for (const sampleName of response.data) {
+                getSample(props.selectedExperiment, sampleName).then(response => {
+                    const responseData: ArrayBuffer = response.data
+                    const newFile = new File([responseData], sampleName);
+                    setFileList((oldSampleFiles) => {
+                        const fileExists = oldSampleFiles.some(file => file.name === newFile.name);
+                        if (!fileExists) {
+                            return [...oldSampleFiles, newFile];
+                        } else {
+                            return oldSampleFiles;
+                        }
+                    });
+                }).catch(error => { console.error(error) })
+            }
+        }).catch(error => { console.error(error) })
     }, [props.selectedExperiment]);
     const [setup, setSetup] = useState<ExperimentSetup>({
         uid: " ",
@@ -29,21 +115,29 @@ const CreateExperimentForm = (props: any): JSX.Element => {
         tests: []
     })
 
-    const [fileList, setFileList] = useState<string[]>([])
+    const [fileList, setFileList] = useState<File[]>([])
     const [error, setError] = useState<string | null>(null)
 
-    const readSampleFiles = (event: any): void => {
+    const readSampleFiles = (event: React.ChangeEvent<HTMLInputElement>): void => {
         const { files } = event.target;
-        const invalidFiles: string[] = [];
-        
-        for (let i = 0; i < files.length; i++) {
-            if (files[i].type === 'audio/mpeg') {
-                setFileList((oldSampleFiles) => [...oldSampleFiles, files.item(i).name])
-            } else {
-                invalidFiles.push(files[i].name)
+        const invalidFiles: File[] = [];
+        if (files !== null) {
+            for (let i = 0; i < files.length; i++) {
+                if (files[i].type === 'audio/mpeg') {
+                    const newFile = files.item(i);
+                    if (newFile !== null) {
+                        sendUploadSample(props.selectedExperiment, newFile, newFile.name).then(() => {
+                            setFileList((oldSampleFiles) => {
+                                return [...oldSampleFiles, newFile]
+                            })
+                        }).catch((error) => { console.error(error) })
+
+                    }
+                } else {
+                    invalidFiles.push(files[i])
+                }
             }
         }
-
         if (invalidFiles.length > 0) {
             setError(`Invalid file(s) detected: ${invalidFiles.join(', ')}`)
         } else {
@@ -86,23 +180,30 @@ const CreateExperimentForm = (props: any): JSX.Element => {
         };
     };
 
-    const areAllFilesProvided = (test: ABTest | ABXTest | FullABXTest | MUSHRATest | APETest | BaseTest, fileList: string[]): boolean => {
+    const areAllFilesProvided = (test: ABTest | ABXTest | FullABXTest | MUSHRATest | APETest | BaseTest, fileList: File[]): boolean => {
         if (Object.prototype.hasOwnProperty.call(test, 'reference')) {
             if ('reference' in test && test.reference !== undefined) {
-                if (!fileList.includes(test.reference.assetPath)) {
-                    return false
+                const fileExists = fileList.some(file => file.name === test.reference.assetPath);
+                if (!fileExists) {
+                    return false;
                 }
             }
         }
         if (Object.prototype.hasOwnProperty.call(test, 'anchors')) {
             if ('anchors' in test && test.anchors !== undefined) {
-                if (!test.anchors.every(sample => fileList.includes(sample.assetPath))) {
-                    return false
+                const anchorsExist = test.anchors.every(anchor =>
+                    fileList.some(file => file.name === anchor.assetPath)
+                );
+                if (!anchorsExist) {
+                    return false;
                 }
             }
         }
-        if (!test.samples.every(sample => fileList.includes(sample.assetPath))) {
-            return false
+        const samplesExist = test.samples.every(sample =>
+            fileList.some(file => file.name === sample.assetPath)
+        );
+        if (!samplesExist) {
+            return false;
         }
         return true
     }
@@ -145,10 +246,16 @@ const CreateExperimentForm = (props: any): JSX.Element => {
 
         for (let i = 0; i < files.length; i++) {
             if (files[i].type === 'audio/mpeg') {
-                setFileList((oldSampleFiles) => [...oldSampleFiles, files[i].name])
+                setFileList((oldSampleFiles) => {
+                    const newFile = files.item(i);
+                    if (newFile !== null) {
+                        return [...oldSampleFiles, newFile];
+                    }
+                    return oldSampleFiles;
+                })
             } else {
                 invalidFiles.push(files[i].name)
-            } 
+            }
         }
 
         if (invalidFiles.length > 0) {
@@ -156,7 +263,7 @@ const CreateExperimentForm = (props: any): JSX.Element => {
         } else {
             setError(null);
         }
-        
+
         setFileList((oldSampleFiles) => { return oldSampleFiles.filter((value, index, array) => { return array.indexOf(value) === index }) })
     };
 
@@ -180,7 +287,20 @@ const CreateExperimentForm = (props: any): JSX.Element => {
         <div className="flex flex-col self-center fadeInUpFast 2xl:self-start text-black dark:text-white bg-gray-50 dark:bg-stone-800 rounded-3xl shadow-lg 2xl:shadow-2xl w-full max-w-4xl z-10 p-6 overflow-hidden">
             <div className="flex justify-between items-center mb-6 w-full whitespace-normal break-words">
                 <span className="text-lg lg:text-xl font-semibold w-11/12">&apos;{props.selectedExperiment}&apos; Experiment Setup:</span>
-                <FaSave onClick={() => props.setSelectedExperiment(undefined)} className="cursor-pointer self-start mr-2 text-blue-400 dark:text-blue-500 hover:text-pink-500 dark:hover:text-pink-600 transform hover:scale-110 duration-300 ease-in-out" size={35} />
+                <FaSave onClick={() => {
+                    void (async () => {
+                        try {
+                            await sendSaveExperimentRequest(props.selectedExperiment, setup);
+                        } catch (error: any) {
+                            if (error.response.data.message === `Experiment ${props.selectedExperiment} already configured!`) {
+                                const deleteResponse = await deleteExperiment(props.selectedExperiment)
+                                if (deleteResponse.status === 200) {
+                                    await sendSaveExperimentRequest(props.selectedExperiment, setup);
+                                }
+                            }
+                        }
+                    })();
+                }} className="cursor-pointer self-start mr-2 text-blue-400 dark:text-blue-500 hover:text-pink-500 dark:hover:text-pink-600 transform hover:scale-110 duration-300 ease-in-out" size={35} />
                 <FaXmark onClick={() => props.setSelectedExperiment(undefined)} className="cursor-pointer self-start text-blue-400 dark:text-blue-500 hover:text-pink-500 dark:hover:text-pink-600 transform hover:scale-110 duration-300 ease-in-out" size={40} />
             </div>
             <div className="flex flex-col md:flex-row h-full space-y-6 md:space-y-0 md:space-x-6">
@@ -363,8 +483,8 @@ const CreateExperimentForm = (props: any): JSX.Element => {
 const MushraEditor = (props: {
     currentTest: MUSHRATest
     setCurrentTest: React.Dispatch<React.SetStateAction<ABTest | ABXTest | FullABXTest | MUSHRATest | APETest | BaseTest>>
-    fileList: string[]
-    setFileList: (value: string[]) => void
+    fileList: File[]
+    setFileList: React.Dispatch<React.SetStateAction<File[]>>
     setup: ExperimentSetup
     setSetup: React.Dispatch<React.SetStateAction<ExperimentSetup>>
 }): JSX.Element => {
@@ -382,12 +502,12 @@ const MushraEditor = (props: {
                             <label key={index} className="flex items-center relative cursor-pointer mr-2">
                                 <input
                                     type="radio"
-                                    id={file}
-                                    checked={referenceTest.assetPath === file}
+                                    id={file.name}
+                                    checked={referenceTest.assetPath === file.name}
                                     name="reference"
                                     onChange={(e) => {
                                         if (e.target.checked) {
-                                            setReferenceTest({ 'sampleId': 'ref', 'assetPath': file })
+                                            setReferenceTest({ 'sampleId': 'ref', 'assetPath': file.name })
                                         } else {
                                             setReferenceTest({ sampleId: "", assetPath: "" })
                                         }
@@ -395,11 +515,11 @@ const MushraEditor = (props: {
                                     className="hidden"
                                 />
                                 <span className="w-4 h-4 flex items-center justify-center">
-                                    <span className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${referenceTest.assetPath === file ? "bg-pink-500 border-pink-500 dark:bg-pink-600 dark:border-pink-600" : "bg-gray-200 border-gray-400"} transition-transform transform hover:scale-110 duration-100 ease-in-out`}>
-                                        {referenceTest.assetPath === file && <span className="w-2 h-2 rounded-full bg-white dark:bg-gray-100"></span>}
+                                    <span className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${referenceTest.assetPath === file.name ? "bg-pink-500 border-pink-500 dark:bg-pink-600 dark:border-pink-600" : "bg-gray-200 border-gray-400"} transition-transform transform hover:scale-110 duration-100 ease-in-out`}>
+                                        {referenceTest.assetPath === file.name && <span className="w-2 h-2 rounded-full bg-white dark:bg-gray-100"></span>}
                                     </span>
                                 </span>
-                                <span className="ml-2 break-words w-full">{file}</span>
+                                <span className="ml-2 break-words w-full">{file.name}</span>
                             </label>
                         ))
                     )}
@@ -414,31 +534,28 @@ const MushraEditor = (props: {
                             <label key={index} className="flex items-center relative cursor-pointer mr-2 break-words w-full">
                                 <input
                                     type="checkbox"
-                                    id={file}
-                                    checked={anchorsTest.filter(sample => [file].includes(sample.assetPath)).length > 0}
-                                    name={file}
+                                    id={file.name}
+                                    checked={anchorsTest.some(sample => sample.assetPath === file.name)}
+                                    name={file.name}
                                     onChange={(e) => {
                                         if (e.target.checked) {
-                                            setAnchorsTest((oldarray) => [...oldarray, { 'sampleId': 'a0', 'assetPath': file }])
+                                            setAnchorsTest((oldarray) => [...oldarray, { 'sampleId': 'a0', 'assetPath': file.name }])
                                         } else {
-                                            const foundJSON = anchorsTest.find(item => { return item.assetPath === file })
-                                            if (foundJSON !== undefined) {
-                                                setAnchorsTest((oldarray) => oldarray.filter(sample => ![foundJSON.assetPath].includes(sample.assetPath)))
-                                            }
+                                            setAnchorsTest((oldarray) => oldarray.filter(sample => sample.assetPath !== file.name))
                                         }
                                     }}
                                     className="hidden"
                                 />
                                 <span className="w-4 h-4 flex items-center justify-center">
-                                    <span className={`w-4 h-4 rounded border-2 flex items-center justify-center ${anchorsTest.some(sample => sample.assetPath === file) ? "bg-pink-500 border-pink-500 dark:bg-pink-600 dark:border-pink-600" : "bg-gray-200 border-gray-400"} transition-transform transform hover:scale-110 duration-100 ease-in-out`}>
-                                        {anchorsTest.some(sample => sample.assetPath === file) && (
+                                    <span className={`w-4 h-4 rounded border-2 flex items-center justify-center ${anchorsTest.some(sample => sample.assetPath === file.name) ? "bg-pink-500 border-pink-500 dark:bg-pink-600 dark:border-pink-600" : "bg-gray-200 border-gray-400"} transition-transform transform hover:scale-110 duration-100 ease-in-out`}>
+                                        {anchorsTest.some(sample => sample.assetPath === file.name) && (
                                             <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="4" d="M5 13l4 4L19 7"></path>
                                             </svg>
                                         )}
                                     </span>
                                 </span>
-                                <span className="ml-2 break-words w-full">{file}</span>
+                                <span className="ml-2 break-words w-full">{file.name}</span>
                             </label>
                         ))
                     )}
@@ -453,31 +570,28 @@ const MushraEditor = (props: {
                             <label key={index} className="flex items-center relative cursor-pointer mr-2 break-words w-full">
                                 <input
                                     type="checkbox"
-                                    id={file}
-                                    checked={sampleTest.filter(sample => [file].includes(sample.assetPath)).length > 0}
-                                    name={file}
+                                    id={file.name}
+                                    checked={sampleTest.some(sample => sample.assetPath === file.name)}
+                                    name={file.name}
                                     onChange={(e) => {
                                         if (e.target.checked) {
-                                            setSampleTest((oldarray) => [...oldarray, { 'sampleId': 's0', 'assetPath': file }])
+                                            setSampleTest((oldarray) => [...oldarray, { 'sampleId': 's0', 'assetPath': file.name }])
                                         } else {
-                                            const foundJSON = sampleTest.find(item => { return item.assetPath === file })
-                                            if (foundJSON !== undefined) {
-                                                setSampleTest((oldarray) => oldarray.filter(sample => ![foundJSON.assetPath].includes(sample.assetPath)))
-                                            }
+                                            setSampleTest((oldarray) => oldarray.filter(sample => sample.assetPath !== file.name))
                                         }
                                     }}
                                     className="hidden"
                                 />
                                 <span className="w-4 h-4 flex items-center justify-center">
-                                    <span className={`w-4 h-4 rounded border-2 flex items-center justify-center ${sampleTest.some(sample => sample.assetPath === file) ? "bg-pink-500 border-pink-500 dark:bg-pink-600 dark:border-pink-600" : "bg-gray-200 border-gray-400"} transition-transform transform hover:scale-110 duration-100 ease-in-out`}>
-                                        {sampleTest.some(sample => sample.assetPath === file) && (
+                                    <span className={`w-4 h-4 rounded border-2 flex items-center justify-center ${sampleTest.some(sample => sample.assetPath === file.name) ? "bg-pink-500 border-pink-500 dark:bg-pink-600 dark:border-pink-600" : "bg-gray-200 border-gray-400"} transition-transform transform hover:scale-110 duration-100 ease-in-out`}>
+                                        {sampleTest.some(sample => sample.assetPath === file.name) && (
                                             <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="4" d="M5 13l4 4L19 7"></path>
                                             </svg>
                                         )}
                                     </span>
                                 </span>
-                                <span className="ml-2 break-words w-full">{file}</span>
+                                <span className="ml-2 break-words w-full">{file.name}</span>
                             </label>
                         ))
                     )}
@@ -523,13 +637,13 @@ const MushraEditor = (props: {
 const ApeEditor = (props: {
     currentTest: APETest
     setCurrentTest: React.Dispatch<React.SetStateAction<ABTest | ABXTest | FullABXTest | MUSHRATest | APETest | BaseTest>>
-    fileList: string[]
-    setFileList: (value: string[]) => void
+    fileList: File[]
+    setFileList: React.Dispatch<React.SetStateAction<File[]>>
     setup: ExperimentSetup
     setSetup: React.Dispatch<React.SetStateAction<ExperimentSetup>>
 }): JSX.Element => {
     const [newQuestion, setNewQuestion] = useState('')
-    const [sampleTest, setSampleTest] = useState<any[]>(props.currentTest.samples)
+    const [sampleTest, setSampleTest] = useState<Sample[]>(props.currentTest.samples)
     return (
         <div className="w-full">
             <h4 className="font-semibold text-sm lg:text-base mb-1 mt-3">Samples</h4>
@@ -541,31 +655,31 @@ const ApeEditor = (props: {
                             <label key={index} className="flex items-center relative cursor-pointer mr-2 break-words w-full">
                                 <input
                                     type="checkbox"
-                                    id={file}
-                                    checked={sampleTest.filter(sample => [file].includes(sample.assetPath)).length > 0}
-                                    name={file}
+                                    id={file.name}
+                                    checked={sampleTest.some(sample => sample.assetPath === file.name)}
+                                    name={file.name}
                                     onChange={(e) => {
                                         if (e.target.checked) {
-                                            setSampleTest((oldarray) => [...oldarray, { 'sampleId': 's0', 'assetPath': file }])
+                                            setSampleTest((oldarray) => [...oldarray, { 'sampleId': 's0', 'assetPath': file.name }]);
                                         } else {
-                                            const foundJSON = sampleTest.find(item => { return item.assetPath === file })
+                                            const foundJSON = sampleTest.find(item => item.assetPath === file.name);
                                             if (foundJSON !== undefined) {
-                                                setSampleTest((oldarray) => oldarray.filter(sample => ![foundJSON.assetPath].includes(sample.assetPath)))
+                                                setSampleTest((oldarray) => oldarray.filter(sample => sample.assetPath !== file.name));
                                             }
                                         }
                                     }}
                                     className="hidden"
                                 />
                                 <span className="w-4 h-4 flex items-center justify-center">
-                                    <span className={`w-4 h-4 rounded border-2 flex items-center justify-center ${sampleTest.some(sample => sample.assetPath === file) ? "bg-pink-500 border-pink-500 dark:bg-pink-600 dark:border-pink-600" : "bg-gray-200 border-gray-400"} transition-transform transform hover:scale-110 duration-100 ease-in-out`}>
-                                        {sampleTest.some(sample => sample.assetPath === file) && (
+                                    <span className={`w-4 h-4 rounded border-2 flex items-center justify-center ${sampleTest.some(sample => sample.assetPath === file.name) ? "bg-pink-500 border-pink-500 dark:bg-pink-600 dark:border-pink-600" : "bg-gray-200 border-gray-400"} transition-transform transform hover:scale-110 duration-100 ease-in-out`}>
+                                        {sampleTest.some(sample => sample.assetPath === file.name) && (
                                             <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="4" d="M5 13l4 4L19 7"></path>
                                             </svg>
                                         )}
                                     </span>
                                 </span>
-                                <span className="ml-2 break-words w-full">{file}</span>
+                                <span className="ml-2 break-words w-full">{file.name}</span>
                             </label>
                         ))
                     )}
@@ -657,13 +771,13 @@ const ApeEditor = (props: {
 const AbxEditor = (props: {
     currentTest: ABXTest
     setCurrentTest: React.Dispatch<React.SetStateAction<ABTest | ABXTest | FullABXTest | MUSHRATest | APETest | BaseTest>>
-    fileList: string[]
-    setFileList: (value: string[]) => void
+    fileList: File[]
+    setFileList: React.Dispatch<React.SetStateAction<File[]>>
     setup: ExperimentSetup
     setSetup: React.Dispatch<React.SetStateAction<ExperimentSetup>>
 }): JSX.Element => {
     const [newQuestion, setNewQuestion] = useState('')
-    const [sampleTest, setSampleTest] = useState<any[]>(props.currentTest.samples)
+    const [sampleTest, setSampleTest] = useState<Sample[]>(props.currentTest.samples)
     return (
         <div className="w-full">
             <h4 className="font-semibold text-sm lg:text-base mb-1 mt-3">Samples</h4>
@@ -673,25 +787,26 @@ const AbxEditor = (props: {
                         <h3 className="text-sm font-medium text-pink-500 dark:text-pink-600">No Samples available. Please upload some.</h3>
                     ) : (
                         props.fileList.map((file) => {
-                            const isChecked = sampleTest.filter(sample => [file].includes(sample.assetPath)).length > 0
+                            const isChecked = sampleTest.filter(sample => sample.assetPath === file.name).length > 0;
+
                             const isDisabled = !isChecked && sampleTest.length >= 2
                             return (
-                                <label key={file} className="flex items-center relative cursor-pointer mr-2 break-words w-full">
+                                <label key={file.name} className="flex items-center relative cursor-pointer mr-2 break-words w-full">
                                     <input
                                         type="checkbox"
-                                        id={file}
+                                        id={file.name}
                                         checked={isChecked}
-                                        name={file}
+                                        name={file.name}
                                         disabled={isDisabled}
                                         onChange={(e) => {
                                             if (e.target.checked) {
                                                 if (sampleTest.length < 2) {
-                                                    setSampleTest((oldarray) => [...oldarray, { 'sampleId': 's0', 'assetPath': file }])
+                                                    setSampleTest((oldarray) => [...oldarray, { 'sampleId': 's0', 'assetPath': file.name }]);
                                                 }
                                             } else {
-                                                const foundJSON = sampleTest.find(item => { return item.assetPath === file })
+                                                const foundJSON = sampleTest.find(item => item.assetPath === file.name);
                                                 if (foundJSON !== undefined) {
-                                                    setSampleTest((oldarray) => oldarray.filter(sample => ![foundJSON.assetPath].includes(sample.assetPath)))
+                                                    setSampleTest((oldarray) => oldarray.filter(sample => sample.assetPath !== file.name));
                                                 }
                                             }
                                         }}
@@ -707,7 +822,7 @@ const AbxEditor = (props: {
                                         </span>
                                     </span>
                                     <span className={`ml-2 break-words w-full ${isDisabled ? "text-gray-400 dark:text-gray-500" : "text-gray-700 dark:text-gray-300"}`}>
-                                        {file}
+                                        {file.name}
                                     </span>
                                 </label>
                             );
@@ -744,7 +859,7 @@ const AbxEditor = (props: {
                 </button>
             </div>
             <div className="mb-8">
-                {props.currentTest.questions !== undefined ? (
+                {props.currentTest.questions !== undefined && props.currentTest.questions !== null ? (
                     props.currentTest.questions.map((question, index) => (
                         <div key={index} className="p-4 mb-2 bg-white dark:bg-gray-800 rounded-lg shadow-md flex justify-between items-center">
                             <p className="text-black dark:text-white whitespace-normal break-words w-9/12 lg:w-10/12">{question.text}</p>
@@ -801,13 +916,13 @@ const AbxEditor = (props: {
 const AbEditor = (props: {
     currentTest: ABTest
     setCurrentTest: React.Dispatch<React.SetStateAction<ABTest | ABXTest | FullABXTest | MUSHRATest | APETest | BaseTest>>
-    fileList: string[]
-    setFileList: (value: string[]) => void
+    fileList: File[]
+    setFileList: React.Dispatch<React.SetStateAction<File[]>>
     setup: ExperimentSetup
     setSetup: React.Dispatch<React.SetStateAction<ExperimentSetup>>
 }): JSX.Element => {
     const [newQuestion, setNewQuestion] = useState('')
-    const [sampleTest, setSampleTest] = useState<any[]>(props.currentTest.samples)
+    const [sampleTest, setSampleTest] = useState<Sample[]>(props.currentTest.samples)
     return (
         <div className="w-full">
             <h4 className="font-semibold text-sm lg:text-base mb-1 mt-3">Samples</h4>
@@ -817,23 +932,23 @@ const AbEditor = (props: {
                         <h3 className="text-sm font-medium text-pink-500 dark:text-pink-600">No Samples available. Please upload some.</h3>
                     ) : (
                         props.fileList.map((file) => {
-                            const isChecked = sampleTest.filter(sample => [file].includes(sample.assetPath)).length > 0
+                            const isChecked = sampleTest.filter(sample => sample.assetPath === file.name).length > 0;
                             const isDisabled = !isChecked && sampleTest.length >= 2
                             return (
-                                <label key={file} className="flex items-center relative cursor-pointer mr-2 break-words w-full">
+                                <label key={file.name} className="flex items-center relative cursor-pointer mr-2 break-words w-full">
                                     <input
                                         type="checkbox"
-                                        id={file}
+                                        id={file.name}
                                         checked={isChecked}
-                                        name={file}
+                                        name={file.name}
                                         disabled={isDisabled}
                                         onChange={(e) => {
                                             if (e.target.checked) {
                                                 if (sampleTest.length < 2) {
-                                                    setSampleTest((oldarray) => [...oldarray, { 'sampleId': 's0', 'assetPath': file }])
+                                                    setSampleTest((oldarray) => [...oldarray, { 'sampleId': 's0', 'assetPath': file.name }])
                                                 }
                                             } else {
-                                                const foundJSON = sampleTest.find(item => { return item.assetPath === file })
+                                                const foundJSON = sampleTest.find(item => { return item.assetPath === file.name })
                                                 if (foundJSON !== undefined) {
                                                     setSampleTest((oldarray) => oldarray.filter(sample => ![foundJSON.assetPath].includes(sample.assetPath)))
                                                 }
@@ -851,7 +966,7 @@ const AbEditor = (props: {
                                         </span>
                                     </span>
                                     <span className={`ml-2 break-words w-full ${isDisabled ? "text-gray-400 dark:text-gray-500" : "text-gray-700 dark:text-gray-300"}`}>
-                                        {file}
+                                        {file.name}
                                     </span>
                                 </label>
                             )
