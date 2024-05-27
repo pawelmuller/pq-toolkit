@@ -52,3 +52,43 @@ export const loginFetch = async <T>(password: string, schema: z.Schema<T>): Prom
     
       return parsed
 }
+
+export const deleteExperimentFetch = async <T>(name: string, schema: z.Schema<T>): Promise<T> => {
+    const body = JSON.stringify({ name })
+    const response = await fetch('/api/v1/experiments', {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }, next: { revalidate: 0 },
+        body
+    });
+    
+    if (!response.ok)
+        throw new Error(`API error: ${response.status} ${response.statusText}`)
+    
+      const data = await response.json()
+      const parsed = schema.parse(data)
+    
+      return parsed
+}
+  
+export const addNewExperimentFetch = async <T>(name: string, schema: z.Schema<T>): Promise<T> => {
+    const body = JSON.stringify({ name })
+    const response = await fetch('/api/v1/experiments', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }, next: { revalidate: 0 },
+        body
+      })
+    
+      if (!response.ok)
+        throw new Error(`API error: ${response.status} ${response.statusText}`)
+    
+      const data = await response.json()
+      const parsed = schema.parse(data)
+    
+      return parsed
+}

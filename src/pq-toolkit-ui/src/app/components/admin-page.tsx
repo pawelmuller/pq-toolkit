@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { adminExperimentsListSchema } from '../admin/models'
 import { FaPlus, FaMinus, FaExpand } from 'react-icons/fa'
-import useSWR from 'swr'
+import useSWR, { type KeyedMutator } from 'swr'
 import Loading from '../[name]/loading'
 import { validateApiData } from '@/core/apiHandlers/clientApiHandler'
 import Header from '@/lib/components/basic/header'
@@ -9,16 +9,24 @@ import DeleteButton from './deleteButton'
 import CreateExperimentForm from './createExperimentForm'
 import Blobs from './blobs'
 import { TbLogout2 } from "react-icons/tb";
+import { addExperimentSchema, type getExperimentsData } from '@/lib/schemas/experimentGet'
+import { type UserData } from '@/lib/schemas/authenticationData'
+import { addNewExperimentFetch } from '@/core/apiHandlers/fetchers'
 
-const AdminPage = (props: any): JSX.Element => {
+const AdminPage = ({
+  refreshAdminPage
+}: {
+  refreshAdminPage: KeyedMutator<UserData>
+}): JSX.Element => {
   const {
     data: apiData,
     error,
     isLoading,
     mutate
-  } = useSWR(`/api/v1/experiments`)
-  const [selectedExperiment, setSelectedExperiment] = useState(undefined)
-  const [isListVisible, setIsListVisible] = useState(true)
+  } = useSWR<getExperimentsData>(`/api/v1/experiments`)
+
+  const [selectedExperiment, setSelectedExperiment] = useState<string>("")
+  const [isListVisible, setIsListVisible] = useState<boolean>(true)
 
   if (isLoading) return <Loading />
   if (error != null)
@@ -42,44 +50,15 @@ const AdminPage = (props: any): JSX.Element => {
     )
   }
 
-  const deleteExperiment = (name: string): void => {
-    fetch('/api/v1/experiments', {
-      method: 'DELETE',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${localStorage.getItem('token')}`
-      },
-      body: JSON.stringify({ name })
-    }).catch((err) => { console.error(err) })
-      .then(async () => {
-        await mutate()
-      }).catch((err) => { console.error(err) })
-  }
-
-  const addNewExperiment = (name: string): void => {
-    fetch('/api/v1/experiments', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${localStorage.getItem('token')}`
-      },
-      body: JSON.stringify({ name })
-    }).catch((err) => { console.error(err) })
-      .then(async () => {
-        await mutate()
-      })
-      .catch((err) => { console.error(err) })
-  }
-
   return (
     <div className="min-h-screen bg-gray-100 dark:bg-stone-900">
       <Header />
       <div className='flex justify-end fadeInUp mr-4 md:mr-10 z-50'>
         <button
           className='flex items-center font-semibold max-md:text-sm max-md:px-2 max-md:py-1 bg-blue-400 dark:bg-blue-500 hover:bg-pink-500 dark:hover:bg-pink-600 text-white px-4 py-2 rounded-full shadow-lg transform transition-transform duration-300 ease-in-out hover:scale-105'
-          onClick={async () => {
+          onClick={() => {
             localStorage.removeItem('token')
-            await props.refresh()
+            refreshAdminPage().catch(error => { console.error(error) })
           }}>
           <TbLogout2 className="mr-2" />
           Logout
@@ -99,10 +78,10 @@ const AdminPage = (props: any): JSX.Element => {
           {isListVisible ? (
             <AdminExperimentsListWidget
               experiments={data.experiments}
-              deleteExperiment={deleteExperiment}
-              addNewExperiment={addNewExperiment}
               setSelectedExperiment={setSelectedExperiment}
               setIsListVisible={setIsListVisible}
+              refreshPage={mutate}
+              selectedExperiment={selectedExperiment}
             />
           ) : (
             <div className="flex flex-col fadeInUpFast items-center 2xl:absolute 2xl:mr-96 2xl:ml-[23rem] 2xl:mb-96 2xl:mt-96 2xl:-top-5">
@@ -115,7 +94,7 @@ const AdminPage = (props: any): JSX.Element => {
               </button>
             </div>
           )}
-          {selectedExperiment === undefined ? null : <CreateExperimentForm setSelectedExperiment={setSelectedExperiment} selectedExperiment={selectedExperiment} />}
+          {selectedExperiment === "" ? null : <CreateExperimentForm setSelectedExperiment={setSelectedExperiment} selectedExperiment={selectedExperiment} />}
         </div>
       </div>
     </div>
@@ -124,16 +103,16 @@ const AdminPage = (props: any): JSX.Element => {
 
 const AdminExperimentsListWidget = ({
   experiments,
-  deleteExperiment,
-  addNewExperiment,
   setSelectedExperiment,
-  setIsListVisible
+  setIsListVisible,
+  refreshPage,
+  selectedExperiment
 }: {
   experiments: string[]
-  deleteExperiment: (name: string) => void
-  addNewExperiment: (name: string) => void
-  setSelectedExperiment: (name: any) => void
-  setIsListVisible: (visible: boolean) => void
+  setSelectedExperiment: React.Dispatch<React.SetStateAction<string>>
+  setIsListVisible: React.Dispatch<React.SetStateAction<boolean>>
+  refreshPage: KeyedMutator<getExperimentsData>,
+  selectedExperiment: string
 }): JSX.Element => {
   return (
     <div className="flex flex-col self-start fadeInUpFast items-center z-10 w-full max-w-full 2xl:max-w-md text-black dark:text-white bg-gray-50 dark:bg-stone-800 rounded-3xl p-8 shadow-2xl relative">
@@ -147,7 +126,7 @@ const AdminExperimentsListWidget = ({
       <div className="flex text-lg md:text-xl font-semibold">Add Experiment</div>
       <AddExperimentWidget
         experiments={experiments}
-        addExperiment={addNewExperiment}
+        refreshPage={refreshPage}
       />
       <div className="flex self-start mt-3 mb-2 text-sm md:text-base font-semibold text-black dark:text-white">Experiments:</div>
       <div className='w-full'>
@@ -157,7 +136,7 @@ const AdminExperimentsListWidget = ({
               <div className='font-semibold text-white w-9/12 sm:w-[85%] lg:w-[90%] 2xl:w-10/12 bg-blue-400 dark:bg-blue-500 hover:bg-pink-500 dark:hover:bg-pink-600 transform hover:scale-105 duration-300 ease-in-out p-2 rounded-md cursor-pointer' onClick={() => { setSelectedExperiment(name) }}>
                 {name}
               </div>
-              <DeleteButton deleteExperiment={deleteExperiment} name={name} />
+              <DeleteButton name={name} selectedExperiment={selectedExperiment} setSelectedExperiment={setSelectedExperiment} refreshPage={refreshPage} />
             </li>
           ))}
         </ul>
@@ -167,29 +146,39 @@ const AdminExperimentsListWidget = ({
 }
 
 const AddExperimentWidget = ({
-  addExperiment,
-  experiments
+  experiments,
+  refreshPage
 }: {
-  addExperiment: (name: string) => void
-  experiments: string[]
+  experiments: string[],
+  refreshPage: KeyedMutator<getExperimentsData>
 }): JSX.Element => {
-  const [newName, setNewName] = useState('')
+  const [newExperimentName, setNewExperimentName] = useState('')
 
   return (
     <div className="flex items-center z-10 mt-4 w-full">
       <input
         className="rounded outline-0 border-2 bg-gray-100 border-gray-300 dark:bg-gray-700 dark:border-gray-500 dark:text-white text-black w-full"
         onChange={(e) => {
-          setNewName(e.target.value)
+          setNewExperimentName(e.target.value)
         }}
-        value={newName}
+        value={newExperimentName}
       />
       <button
         onClick={() => {
-          addExperiment(newName)
-          setNewName('')
+          addNewExperimentFetch(newExperimentName, addExperimentSchema)
+            .then(async () => {
+              try {
+                await refreshPage();
+              } catch (error) {
+                console.error(error);
+              }
+            })
+            .catch(error => {
+              console.error(error);
+            });
+          setNewExperimentName('')
         }}
-        disabled={newName.length === 0 || experiments.includes(newName)}
+        disabled={newExperimentName.length === 0 || experiments.includes(newExperimentName)}
         className="flex items-center text-sm disabled:bg-gray-400 dark:disabled:bg-gray-700 dark:disabled:text-gray-400 bg-blue-400 dark:bg-blue-500 hover:bg-pink-500 dark:hover:bg-pink-600 transform hover:scale-110 duration-300 disabled:transform-none ease-in-out rounded-xl p-xxs ml-4 text-white"
       >
         <FaPlus />

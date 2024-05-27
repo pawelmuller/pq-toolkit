@@ -14,6 +14,7 @@ const LoginPage = ({
 }): JSX.Element => {
     const [password, setPassword] = useState<string>('')
     const [errorRequest, setErrorRequest] = useState<boolean>(false)
+
     const loginAttempt = async (): Promise<undefined> => {
         try {
             const response = await loginFetch(password, LoginSchema);

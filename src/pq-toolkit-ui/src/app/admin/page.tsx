@@ -22,7 +22,7 @@ const AdminPageNew = (): JSX.Element => {
         } else
             return <div><div>Authorization Error</div><div>{error.toString()}</div></div>
     if ((apiData?.is_active) ?? false) {
-        return <AdminPage refresh={mutate} />
+        return <AdminPage refreshAdminPage={mutate} />
     } else {
         return <LoginPage refreshAdminPage={mutate} />
     }
