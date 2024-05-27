@@ -4,7 +4,7 @@ import useSWR from "swr"
 import AdminPage from "../components/admin-page"
 import Loading from "../loading"
 import LoginPage from "../components/login-page"
-import { userFetch } from "@/core/apiHandlers/fetchers"
+import { userFetch } from '@/lib/utils/fetchers'
 import { type UserData } from "@/lib/schemas/authenticationData"
 
 
