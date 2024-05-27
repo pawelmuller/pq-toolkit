@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react'
 import { FaArrowUp } from 'react-icons/fa'
 
 const ScrollToTopButton = (): JSX.Element => {
-  const [isVisible, setIsVisible] = useState(false)
+  const [isVisible, setIsVisible] = useState<boolean>(false)
 
   const toggleVisibility = (): void => {
     if (window.scrollY > 300) {

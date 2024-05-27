@@ -6,8 +6,8 @@ import { FaCog, FaSun, FaMoon } from "react-icons/fa"
 
 export default function ThemeSwitch(): JSX.Element {
   const { setTheme, resolvedTheme } = useTheme()
-  const [mounted, setMounted] = useState(false)
-  const [hovered, setHovered] = useState(false)
+  const [mounted, setMounted] = useState<boolean>(false)
+  const [hovered, setHovered] = useState<boolean>(false)
 
   useEffect(() => {
     setMounted(true)
@@ -39,10 +39,10 @@ export default function ThemeSwitch(): JSX.Element {
           className={`absolute h-7 w-7 md:h-9 md:w-9 transition-opacity duration-500 ease-in-out text-blue-400 dark:text-blue-500 transform ${hovered ? 'opacity-0 scale-0' : 'opacity-100 scale-100'}`}
         />
         <FaSun
-          className={`absolute h-7 w-7 md:h-9 md:w-9 transition-all duration-1000 ease-in-out text-pink-500 dark:text-pink-600 transform ${isDark && hovered ? 'opacity-100 scale-100 rotate-0' : 'opacity-0 scale-0 -rotate-180'}`}
+          className={`absolute h-7 w-7 md:h-9 md:w-9 transition-all duration-300 ease-in-out text-pink-500 dark:text-pink-600 transform ${isDark && hovered ? 'opacity-100 scale-100 rotate-0' : 'opacity-0 scale-0 -rotate-180'}`}
         />
         <FaMoon
-          className={`absolute h-7 w-7 md:h-9 md:w-9 transition-all duration-1000 ease-in-out text-pink-500 dark:text-pink-600 transform ${!isDark && hovered ? 'opacity-100 scale-100 rotate-0' : 'opacity-0 scale-0 -rotate-180'}`}
+          className={`absolute h-7 w-7 md:h-9 md:w-9 transition-all duration-300 ease-in-out text-pink-500 dark:text-pink-600 transform ${!isDark && hovered ? 'opacity-100 scale-100 rotate-0' : 'opacity-0 scale-0 -rotate-180'}`}
         />
       </div>
     </div>

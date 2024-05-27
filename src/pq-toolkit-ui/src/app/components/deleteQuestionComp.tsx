@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { FaCheck, FaTrash, FaTimes } from 'react-icons/fa';
 import {
-    type ABTest, type ABXTest, type FullABXTest, type MUSHRATest, type APETest, type BaseTest
+    type ABTest, type ABXTest, type FullABXTest, type MUSHRATest, type APETest, type BaseTest,
+    type Question
 } from '@/lib/schemas/experimentSetup'
 
 interface DeleteQuestionCompProps {
@@ -11,7 +12,7 @@ interface DeleteQuestionCompProps {
 }
 
 const DeleteQuestionComp = (props: DeleteQuestionCompProps): JSX.Element => {
-    const [deleteConfirm, setDeleteConfirm] = useState(false);
+    const [deleteConfirm, setDeleteConfirm] = useState<boolean>(false);
 
     return (
         <div>
@@ -24,7 +25,7 @@ const DeleteQuestionComp = (props: DeleteQuestionCompProps): JSX.Element => {
                             if ('questions' in oldTest) {
                                 return {
                                     ...oldTest,
-                                    questions: oldTest.questions?.filter((_: any, i: number) => i !== props.index)
+                                    questions: oldTest.questions?.filter((_: Question, i: number) => i !== props.index)
                                 }
                             } else {
                                 return {
