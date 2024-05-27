@@ -3,7 +3,7 @@ import { useState } from "react"
 import { FaCheck, FaTrash } from 'react-icons/fa'
 import { FaXmark } from "react-icons/fa6";
 import { type KeyedMutator } from "swr";
-import { deleteExperimentFetch } from "@/core/apiHandlers/fetchers";
+import { deleteExperimentFetch } from '@/lib/utils/fetchers';
 const DeleteButton = ({ name, refreshPage, selectedExperiment, setSelectedExperiment }: {
     name: string
     refreshPage: KeyedMutator<getExperimentsData>,

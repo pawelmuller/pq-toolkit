@@ -11,7 +11,7 @@ import Blobs from './blobs'
 import { TbLogout2 } from "react-icons/tb";
 import { addExperimentSchema, type getExperimentsData } from '@/lib/schemas/experimentGet'
 import { type UserData } from '@/lib/schemas/authenticationData'
-import { addNewExperimentFetch } from '@/core/apiHandlers/fetchers'
+import { addNewExperimentFetch } from '@/lib/utils/fetchers'
 
 const AdminPage = ({
   refreshAdminPage

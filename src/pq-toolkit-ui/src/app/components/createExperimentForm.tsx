@@ -8,65 +8,12 @@ import { validateApiData } from "@/core/apiHandlers/clientApiHandler";
 import {
     type ExperimentSetup, ExperimentSetupSchema, type ABTest, type ABXTest, type FullABXTest, type MUSHRATest, type APETest, type BaseTest, type Sample
 } from '@/lib/schemas/experimentSetup'
-import axios from "axios";
-
-const sendSaveExperimentRequest = async (experimentName: string, experimentJSON: ExperimentSetup): Promise<any> => {
-    const formData = new FormData()
-    const jsonBlob = new Blob([JSON.stringify(experimentJSON)], { type: 'application/json' });
-    formData.append('file', jsonBlob, 'setup.json')
-    await axios.post(`/api/v1/experiments/${experimentName}`, formData, {
-        headers: {
-            'accept': 'application/json',
-            'Content-Type': 'multipart/form-data',
-            'Authorization': `Bearer ${localStorage.getItem('token')}`
-        }
-    })
-
-}
-
-const sendUploadSample = async (experimentName: string, sample: File, sampleName: string): Promise<any> => {
-    const formData = new FormData()
-    formData.append('file', sample, sampleName)
-    const response = await axios.post(`/api/v1/experiments/${experimentName}/samples`, formData, {
-        headers: {
-            'accept': 'application/json',
-            'Content-Type': 'multipart/form-data',
-            'Authorization': `Bearer ${localStorage.getItem('token')}`
-        }
-    })
-    return response
-}
-
-const getExperiment = async (experimentName: string): Promise<any> => {
-    const response = await axios.get(`/api/v1/experiments/${experimentName}`, {
-        headers: {
-            'accept': 'application/json',
-        }
-    })
-    return response
-}
-
-const getSamples = async (experimentName: string): Promise<any> => {
-    const response = await axios.get(`/api/v1/experiments/${experimentName}/samples`, {
-        headers: {
-            'accept': 'application/json',
-        }
-    })
-    return response
-}
-
-const getSample = async (experimentName: string, fileName: string): Promise<any> => {
-    const response = await axios.get(`/api/v1/experiments/${experimentName}/samples/${fileName}`, {
-        headers: {
-            'accept': 'application/json',
-        }
-    })
-    return response
-}
+import { getExperimentFetch, getSampleFetch, getSamplesFetch, setUpExperimentFetch, uploadSampleFetch } from '@/lib/utils/fetchers';
+import { getSampleSchema, getSamplesSchema, setUpExperimentSchema, uploadSampleSchema } from "@/lib/schemas/experimentGet";
 
 const CreateExperimentForm = (props: any): JSX.Element => {
     useEffect(() => {
-        getExperiment(props.selectedExperiment).then((response) => { setSetup(response.data) }).catch(error => {
+        getExperimentFetch(props.selectedExperiment, ExperimentSetupSchema).then((response) => { setSetup(response) }).catch(error => {
             setSetup({
                 uid: "",
                 name: "",
@@ -76,10 +23,11 @@ const CreateExperimentForm = (props: any): JSX.Element => {
             })
             console.error(error)
         })
-        getSamples(props.selectedExperiment).then((response) => {
-            for (const sampleName of response.data) {
-                getSample(props.selectedExperiment, sampleName).then(response => {
-                    const responseData: ArrayBuffer = response.data
+        getSamplesFetch(props.selectedExperiment, getSamplesSchema).then((response) => {
+            for (const sampleName of response) {
+                getSampleFetch(props.selectedExperiment, sampleName, getSampleSchema).then(response => {
+                    const encoder = new TextEncoder();
+                    const responseData: ArrayBuffer = encoder.encode(response).buffer;
                     const newFile = new File([responseData], sampleName);
                     setFileList((oldSampleFiles) => {
                         const fileExists = oldSampleFiles.some(file => file.name === newFile.name);
@@ -128,7 +76,7 @@ const CreateExperimentForm = (props: any): JSX.Element => {
                 if (files[i].type === 'audio/mpeg') {
                     const newFile = files.item(i);
                     if (newFile !== null) {
-                        sendUploadSample(props.selectedExperiment, newFile, newFile.name).then((response) => {
+                        uploadSampleFetch(props.selectedExperiment, newFile, newFile.name, uploadSampleSchema).then((response) => {
                             setFileList((oldSampleFiles) => {
                                 return [...oldSampleFiles, newFile]
                             })
@@ -162,7 +110,6 @@ const CreateExperimentForm = (props: any): JSX.Element => {
                 const uploadedData: ExperimentSetup = JSON.parse(content)
                 const { data, validationError } = validateApiData(uploadedData, ExperimentSetupSchema)
                 const testValidationErrors: string[] = []
-                console.log(uploadedData)
                 if (validationError !== null) {
                     setSetupError('Invalid setup file.')
                 }
@@ -302,13 +249,13 @@ const CreateExperimentForm = (props: any): JSX.Element => {
                     <FaSave onClick={() => {
                         void (async () => {
                             try {
-                                await sendSaveExperimentRequest(props.selectedExperiment, setup);
+                                await setUpExperimentFetch(props.selectedExperiment, setup, setUpExperimentSchema);
                             } catch (error) {
                                 console.error(error)
                             }
                         })();
                     }} className="cursor-pointer text-blue-400 dark:text-blue-500 hover:text-pink-500 dark:hover:text-pink-600 transform hover:scale-110 duration-300 ease-in-out" size={35} />
-                    <FaXmark onClick={() => props.setSelectedExperiment(undefined)} className="cursor-pointer text-blue-400 dark:text-blue-500 hover:text-pink-500 dark:hover:text-pink-600 transform hover:scale-110 duration-300 ease-in-out" size={40} />
+                    <FaXmark onClick={() => props.setSelectedExperiment("")} className="cursor-pointer text-blue-400 dark:text-blue-500 hover:text-pink-500 dark:hover:text-pink-600 transform hover:scale-110 duration-300 ease-in-out" size={40} />
                 </div>
             </div>
             <div className="flex flex-col md:flex-row h-full space-y-6 md:space-y-0 md:space-x-6">
