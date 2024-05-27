@@ -4,8 +4,9 @@ import useSWR from "swr"
 import AdminPage from "../components/admin-page"
 import Loading from "../loading"
 import LoginPage from "../components/login-page"
-import { authorizedFetch } from "@/core/apiHandlers/fetchers"
+import { userFetch } from "@/core/apiHandlers/fetchers"
 import { type UserData } from "@/lib/schemas/authenticationData"
+
 
 const AdminPageNew = (): JSX.Element => {
     const {
@@ -13,9 +14,13 @@ const AdminPageNew = (): JSX.Element => {
         error,
         isLoading,
         mutate
-    } = useSWR<UserData>(`/api/v1/auth/user`, authorizedFetch)
+    } = useSWR<UserData>(`/api/v1/auth/user`, userFetch)
     if (isLoading) return <Loading />
-    if (error != null) return <div><div>Authorization Error</div><div>{error.toString()}</div></div>
+    if (error != null)
+        if (error.message.includes("\"status\":401")) {
+            return <LoginPage refreshAdminPage={mutate} />
+        } else
+            return <div><div>Authorization Error</div><div>{error.toString()}</div></div>
     if ((apiData?.is_active) ?? false) {
         return <AdminPage refresh={mutate} />
     } else {

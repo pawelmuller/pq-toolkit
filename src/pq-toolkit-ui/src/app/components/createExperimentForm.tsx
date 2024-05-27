@@ -369,8 +369,8 @@ const CreateExperimentForm = (props: any): JSX.Element => {
                     <div className="flex items-center w-full mb-3">
                         <input
                             className="rounded outline-0 border-2 bg-gray-100 border-gray-300 dark:bg-gray-700 dark:border-gray-500 text-black dark:text-white w-full"
-                            // value={}
-                            onChange={(e) => { }}
+                            value={setup.description}
+                            onChange={(e) => { setSetup((oldSetup) => ({ ...oldSetup, description: e.target.value })) }}
                         />
                         {/* <button
                             onClick={() => {
@@ -385,8 +385,8 @@ const CreateExperimentForm = (props: any): JSX.Element => {
                     <div className="flex items-center w-full mb-6">
                         <input
                             className="rounded outline-0 border-2 bg-gray-100 border-gray-300 dark:bg-gray-700 dark:border-gray-500 text-black dark:text-white w-full"
-                            // value={}
-                            onChange={(e) => { }}
+                            value={setup.endText}
+                            onChange={(e) => { setSetup((oldSetup) => ({ ...oldSetup, endText: e.target.value })) }}
                         />
                         {/* <button
                             onClick={() => {
@@ -431,7 +431,7 @@ const CreateExperimentForm = (props: any): JSX.Element => {
                                                         <h4 className="text-sm font-semibold">Uploaded files:</h4>
                                                         <ul className="list-disc pl-5">
                                                             {fileList.map((file, index) => (
-                                                                <li key={index} className="text-sm break-words">{file}</li>
+                                                                <li key={index} className="text-sm break-words">{file.name}</li>
                                                             ))}
                                                         </ul>
                                                     </div>
