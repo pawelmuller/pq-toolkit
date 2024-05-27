@@ -12,25 +12,38 @@ const LoginPage = ({
 }: {
     refreshAdminPage: KeyedMutator<UserData>
 }): JSX.Element => {
-    const [password, setPassword] = useState('')
-    const [errorRequest, setErrorRequest] = useState(false)
+    const [password, setPassword] = useState<string>('')
+    const [errorRequest, setErrorRequest] = useState<boolean>(false)
+    const loginAttempt = async (): Promise<undefined> => {
+        try {
+            const response = await loginFetch(password, LoginSchema);
+            const accessToken = response.access_token;
+            localStorage.setItem('token', accessToken);
+            setPassword('');
+            setErrorRequest(false);
+            await refreshAdminPage();
+        } catch (error) {
+            setErrorRequest(true);
+        }
+    }
     useEffect(() => {
-        async function handleKeyDown(e: any): Promise<undefined> {
+        async function handleKeyDown(e: KeyboardEvent): Promise<void> {
             if (e.key === 'Enter') {
-                void loginFetch(password, LoginSchema).then(async response => {
-                    const accessToken = response.access_token
-                    localStorage.setItem('token', accessToken);
-                    setPassword('')
-                    setErrorRequest(false)
-                    await refreshAdminPage()
-                }).catch()
-
+                await loginAttempt()
             }
         }
-        document.addEventListener('keydown', (event) => { handleKeyDown(event).catch(err => { console.error(err) }) });
+
+        const keyDownListener = (event: KeyboardEvent): void => {
+            handleKeyDown(event).catch(err => {
+                console.error(err);
+            });
+        };
+
+        document.addEventListener('keydown', keyDownListener);
+
         return function cleanup(): void {
-            document.removeEventListener('keydown', (event) => { handleKeyDown(event).catch(err => { console.error(err) }) });
-        }
+            document.removeEventListener('keydown', keyDownListener);
+        };
     }, [password]);
     return (
         <div className="min-h-screen bg-gray-100 dark:bg-stone-900">
@@ -57,17 +70,7 @@ const LoginPage = ({
                         <div className="flex justify-center content-center mt-3">
                             <div className="bg-clip-text font-bold text-transparent bg-gradient-to-r from-cyan-500  to-pink-500 cursor-pointer" onClick={() => {
                                 void (async () => {
-                                    try {
-                                        void loginFetch(password, LoginSchema).then(async response => {
-                                            const accessToken = response.access_token
-                                            localStorage.setItem('token', accessToken);
-                                            setPassword('')
-                                            setErrorRequest(false)
-                                            await refreshAdminPage()
-                                        }).catch()
-                                    } catch (error) {
-                                        console.error(error);
-                                    }
+                                    await loginAttempt()
                                 })();
                             }}>Login</div>
                         </div>

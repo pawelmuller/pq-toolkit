@@ -17,7 +17,7 @@ const AdminPageNew = (): JSX.Element => {
     } = useSWR<UserData>(`/api/v1/auth/user`, userFetch)
     if (isLoading) return <Loading />
     if (error != null)
-        if (error.message.includes("\"status\":401")) {
+        if (error.message.includes("\"status\":401") as boolean) {
             return <LoginPage refreshAdminPage={mutate} />
         } else
             return <div><div>Authorization Error</div><div>{error.toString()}</div></div>

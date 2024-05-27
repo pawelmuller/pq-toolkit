@@ -417,15 +417,15 @@ const CreateExperimentForm = (props: any): JSX.Element => {
                                 </div>
                                 <input id="dropzone-file-samples" ref={fileRef} multiple type="file" onChange={readSampleFiles} className="hidden" />
                                 {(fileList.length > 0 || invalidfileList.length > 0) && (
-                                    <div className="absolute self-end mb-16 mr-2 z-20" onMouseEnter={() => setShowTooltipSample(true)} onMouseLeave={() => setShowTooltipSample(false)}>
-                                        {error ? (
+                                    <div className="absolute self-end mb-16 mr-2 z-20" onMouseEnter={() => { setShowTooltipSample(true); }} onMouseLeave={() => { setShowTooltipSample(false); }}>
+                                        {(error != null) ? (
                                             <FaExclamationCircle className="text-red-500 transform hover:scale-110 duration-100 ease-in-out" size={24} />
                                         ) : (
                                             <FaCheckCircle className="text-green-500 transform hover:scale-110 duration-100 ease-in-out" size={24} />
                                         )}
                                         {showTooltipSample && (
                                             <div className="absolute right-0 top-full mt-2 w-64 p-2 text-xs text-white bg-gray-800 dark:text-black dark:bg-gray-300 rounded-md shadow-lg z-10">
-                                                {error && <p className="text-pink-500 dark:text-pink-600 text-sm font-medium whitespace-normal break-words w-2/3">{error}</p>}
+                                                {(error != null) && <p className="text-pink-500 dark:text-pink-600 text-sm font-medium whitespace-normal break-words w-2/3">{error}</p>}
                                                 {fileList.length > 0 ? (
                                                     <div>
                                                         <h4 className="text-sm font-semibold">Uploaded files:</h4>
@@ -460,8 +460,8 @@ const CreateExperimentForm = (props: any): JSX.Element => {
                                 </div>
                                 <input id="dropzone-file-setup" ref={fileRef} type="file" onChange={readFile} className="hidden" />
                                 {setupUploadedFlag && (
-                                    <div className="absolute self-end mb-16 mr-2 z-20" onMouseEnter={() => setShowTooltipSetup(true)} onMouseLeave={() => setShowTooltipSetup(false)}>
-                                        {setupError ? (
+                                    <div className="absolute self-end mb-16 mr-2 z-20" onMouseEnter={() => { setShowTooltipSetup(true); }} onMouseLeave={() => { setShowTooltipSetup(false); }}>
+                                        {(setupError != null) ? (
                                             <FaExclamationCircle className="text-red-500 transform hover:scale-110 duration-100 ease-in-out" size={24} />
                                         ) : (
                                             <FaCheckCircle className="text-green-500 transform hover:scale-110 duration-100 ease-in-out" size={24} />
@@ -478,7 +478,7 @@ const CreateExperimentForm = (props: any): JSX.Element => {
                                                         </ul>
                                                     </div>
                                                 ) : (null)}
-                                                {setupError && <p className="text-pink-500 dark:text-pink-600 text-sm font-medium whitespace-normal break-words">{setupError}</p>}
+                                                {(setupError != null) && <p className="text-pink-500 dark:text-pink-600 text-sm font-medium whitespace-normal break-words">{setupError}</p>}
                                             </div>
                                         )}
                                     </div>
