@@ -48,7 +48,7 @@ const LoginPage = ({
                 <div className="flex content-center bg-gray-50 dark:bg-stone-800 rounded-2xl justify-center fadeInUp z-10 p-3 mt-4 md:mt-8">
                     <div className="flex flex-col justify-center content-center">
                         <div className="mt-2">
-                            <input className={`rounded outline-0 border-2 bg-gray-100 border-gray-300 dark:bg-gray-700 dark:border-gray-600 dark:text-white text-black ${errorRequest ? 'border-red-800' : ''}`} type='password' value={password} onChange={e => {
+                            <input className={`rounded outline-0 border-2 bg-gray-100 border-gray-300 dark:bg-gray-700 dark:border-gray-500 dark:text-white text-black ${errorRequest ? 'border-red-800' : ''}`} type='password' value={password} onChange={e => {
                                 setErrorRequest(false)
                                 setPassword(e.target.value)
                             }}></input>

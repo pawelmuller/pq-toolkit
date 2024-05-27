@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from "react"
 import { FaXmark } from "react-icons/fa6";
-import { FaPlus, FaInfoCircle, FaExclamationTriangle, FaSave } from "react-icons/fa";
+import { FaPlus, FaInfoCircle, FaExclamationTriangle, FaSave, FaExclamationCircle, FaCheckCircle } from "react-icons/fa";
 import DeleteQuestionComp from "./deleteQuestionComp";
 import DeleteAxisComp from "./deleteAxisComp";
 import { validateTestSchema } from "@/lib/schemas/utils";
@@ -93,6 +93,7 @@ const CreateExperimentForm = (props: any): JSX.Element => {
             }
         }).catch(error => { console.error(error) })
     }, [props.selectedExperiment]);
+
     const [setup, setSetup] = useState<ExperimentSetup>({
         uid: " ",
         name: " ",
@@ -100,9 +101,24 @@ const CreateExperimentForm = (props: any): JSX.Element => {
         endText: "",
         tests: []
     })
+    const [currentTest, setCurrentTest] = useState<ABTest | ABXTest | FullABXTest | MUSHRATest | APETest | BaseTest>({
+        testNumber: -1,
+        type: "AB",
+        samples: [],
+        questions: []
+    })
 
     const [fileList, setFileList] = useState<File[]>([])
+    const [setupUploadedFlag, setSetupUploadedFlag] = useState(false)
+    const [setupList, setSetupList] = useState<string[]>([])
+    const [invalidfileList, setInvalidFileList] = useState<string[]>([])
     const [error, setError] = useState<string | null>(null)
+    const [setupError, setSetupError] = useState<string | null>(null)
+    const [showTooltip, setShowTooltip] = useState<number | null>(null)
+    const [showTooltipSample, setShowTooltipSample] = useState<boolean>(false)
+    const [showTooltipSetup, setShowTooltipSetup] = useState<boolean>(false)
+    const fileRef = useRef(null)
+    const [showInfo, setShowInfo] = useState(false)
 
     const readSampleFiles = (event: React.ChangeEvent<HTMLInputElement>): void => {
         const { files } = event.target;
@@ -132,19 +148,23 @@ const CreateExperimentForm = (props: any): JSX.Element => {
         setFileList((oldSampleFiles) => { return oldSampleFiles.filter((value, index, array) => { return array.indexOf(value) === index }) })
     }
 
-    const fileRef = useRef(null);
-
     const readFile = (event: any): void => {
         const fileReader = new FileReader();
         const { files } = event.target;
+        if (files[0].type !== 'application/json') {
+            setSetupError('Invalid file type. Please upload a JSON file.');
+            return;
+        }
         fileReader.readAsText(files[0], "UTF-8");
         fileReader.onload = (e: any) => {
-            const content = e.target.result;
+            const content = e.target.result
             try {
                 const uploadedData: ExperimentSetup = JSON.parse(content)
                 const { data, validationError } = validateApiData(uploadedData, ExperimentSetupSchema)
                 const testValidationErrors: string[] = []
+                console.log(uploadedData)
                 if (validationError !== null) {
+                    setSetupError('Invalid setup file.')
                 }
                 if (data !== null) {
                     data.tests.forEach(test => {
@@ -152,15 +172,19 @@ const CreateExperimentForm = (props: any): JSX.Element => {
                         if (validationResult.validationError != null)
                             testValidationErrors.push(validationResult.validationError)
                         else test = validationResult.data
-                    });
+                    })
                     if (testValidationErrors.length <= 0) {
                         setSetup(uploadedData)
+                        setSetupError(null)
+                    } else {
+                        setSetupError('Invalid setup file.')
                     }
                 }
             } catch (error) {
+                setSetupError('Invalid setup file.')
             }
-        };
-    };
+        }
+    }
 
     const areAllFilesProvided = (test: ABTest | ABXTest | FullABXTest | MUSHRATest | APETest | BaseTest, fileList: File[]): boolean => {
         if (Object.prototype.hasOwnProperty.call(test, 'reference')) {
@@ -190,41 +214,33 @@ const CreateExperimentForm = (props: any): JSX.Element => {
         return true
     }
 
-    const [currentTest, setCurrentTest] = useState<ABTest | ABXTest | FullABXTest | MUSHRATest | APETest | BaseTest>({
-        testNumber: -1,
-        type: "AB",
-        samples: [],
-        questions: []
-    })
-
-    const [showInfo, setShowInfo] = useState(false);
-
     const handleDragOver = (e: React.DragEvent<HTMLLabelElement>): void => {
-        e.preventDefault();
-        e.stopPropagation();
-        e.currentTarget.classList.add('drag-over');
+        e.preventDefault()
+        e.stopPropagation()
+        e.currentTarget.classList.add('drag-over')
     };
 
     const handleDragEnter = (e: React.DragEvent<HTMLLabelElement>): void => {
-        e.preventDefault();
-        e.stopPropagation();
-        e.currentTarget.classList.add('drag-over');
+        e.preventDefault()
+        e.stopPropagation()
+        e.currentTarget.classList.add('drag-over')
     };
 
     const handleDragLeave = (e: React.DragEvent<HTMLLabelElement>): void => {
-        e.preventDefault();
-        e.stopPropagation();
-        e.currentTarget.classList.remove('drag-over');
+        e.preventDefault()
+        e.stopPropagation()
+        e.currentTarget.classList.remove('drag-over')
     };
 
     const handleDropSamples = (e: React.DragEvent<HTMLLabelElement>): void => {
-        e.preventDefault();
-        e.stopPropagation();
-        e.currentTarget.classList.remove('drag-over');
+        e.preventDefault()
+        e.stopPropagation()
+        e.currentTarget.classList.remove('drag-over')
 
-        const files = e.dataTransfer.files;
-        const invalidFiles: string[] = [];
+        const files = e.dataTransfer.files
+        const invalidFiles: string[] = []
         setFileList([])
+        setInvalidFileList([])
 
         for (let i = 0; i < files.length; i++) {
             if (files[i].type === 'audio/mpeg') {
@@ -237,53 +253,68 @@ const CreateExperimentForm = (props: any): JSX.Element => {
                 })
             } else {
                 invalidFiles.push(files[i].name)
+                setInvalidFileList(invalidFiles)
             }
         }
 
         if (invalidFiles.length > 0) {
             setError(`Invalid file(s) detected: ${invalidFiles.join(', ')}`);
         } else {
-            setError(null);
+            setError(null)
         }
 
         setFileList((oldSampleFiles) => { return oldSampleFiles.filter((value, index, array) => { return array.indexOf(value) === index }) })
-    };
+    }
 
     const handleDropSetup = (e: React.DragEvent<HTMLLabelElement>): void => {
-        e.preventDefault();
-        e.stopPropagation();
-        e.currentTarget.classList.remove('drag-over');
+        e.preventDefault()
+        e.stopPropagation()
+        e.currentTarget.classList.remove('drag-over')
+        setSetupList([])
+        setSetupUploadedFlag(true)
 
-        const fileReader = new FileReader();
-        const files = e.dataTransfer.files;
-        fileReader.readAsText(files[0], "UTF-8");
+        const fileReader = new FileReader()
+        const files = e.dataTransfer.files
+
+        if (files[0].type !== 'application/json') {
+            setSetupError('Invalid file type. Please upload a JSON file.')
+            return
+        }
+
+        fileReader.readAsText(files[0], "UTF-8")
         fileReader.onload = (e: any) => {
-            const content = e.target.result;
+            const content = e.target.result
+            if (JSON.parse(content).tests === undefined) {
+                setSetupError('Invalid setup file.')
+                return
+            }
+            setSetupList([files[0].name])
             setSetup(JSON.parse(content))
-        };
-    };
-
-    const [showTooltip, setShowTooltip] = useState<number | null>(null);
+            setSetupError(null)
+        }
+    }
 
     return (
         <div className="flex flex-col self-center fadeInUpFast 2xl:self-start text-black dark:text-white bg-gray-50 dark:bg-stone-800 rounded-3xl shadow-lg 2xl:shadow-2xl w-full max-w-4xl z-10 p-6 overflow-hidden">
             <div className="flex justify-between items-center mb-6 w-full whitespace-normal break-words">
-                <span className="text-lg lg:text-xl font-semibold w-11/12">&apos;{props.selectedExperiment}&apos; Experiment Setup:</span>
-                <FaSave onClick={() => {
-                    void (async () => {
-                        try {
-                            await sendSaveExperimentRequest(props.selectedExperiment, setup);
-                        } catch (error) {
-                            console.error(error)
-                        }
-                    })();
-                }} className="cursor-pointer self-start mr-2 text-blue-400 dark:text-blue-500 hover:text-pink-500 dark:hover:text-pink-600 transform hover:scale-110 duration-300 ease-in-out" size={35} />
-                <FaXmark onClick={() => props.setSelectedExperiment(undefined)} className="cursor-pointer self-start text-blue-400 dark:text-blue-500 hover:text-pink-500 dark:hover:text-pink-600 transform hover:scale-110 duration-300 ease-in-out" size={40} />
+                <span className="text-lg lg:text-xl font-semibold w-8/12 sm:w-9/12">&apos;{props.selectedExperiment}&apos; Experiment Setup:</span>
+                <div className="flex flex-row space-x-2 ml-4 self-start">
+                    <FaSave onClick={() => {
+                        void (async () => {
+                            try {
+                                await sendSaveExperimentRequest(props.selectedExperiment, setup);
+                            } catch (error) {
+                                console.error(error)
+                            }
+                        })();
+                    }} className="cursor-pointer text-blue-400 dark:text-blue-500 hover:text-pink-500 dark:hover:text-pink-600 transform hover:scale-110 duration-300 ease-in-out" size={35} />
+                    <FaXmark onClick={() => props.setSelectedExperiment(undefined)} className="cursor-pointer text-blue-400 dark:text-blue-500 hover:text-pink-500 dark:hover:text-pink-600 transform hover:scale-110 duration-300 ease-in-out" size={40} />
+                </div>
             </div>
             <div className="flex flex-col md:flex-row h-full space-y-6 md:space-y-0 md:space-x-6">
                 <div className="flex flex-col border-r-0 border-b-2 md:border-r-2 md:border-b-0 h-full w-full md:w-2/3 p-4">
                     <h3 className="text-sm lg:text-base font-semibold -mb-5">Tests</h3>
-                    <div className="flex flex-col space-y-2 mb-4">
+                    <div className="flex flex-col space-y-2 mb-6">
                         <button className="flex items-center self-end bg-blue-400 dark:bg-blue-500 hover:bg-pink-500 dark:hover:bg-pink-600 text-white text-sm font-medium py-1 lg:py-2 px-1 lg:px-2 rounded-full shadow-lg transform transition-all duration-300 hover:scale-110"
                             onClick={() => {
                                 setSetup((oldSetup) => ({
@@ -323,7 +354,7 @@ const CreateExperimentForm = (props: any): JSX.Element => {
                                             >
                                                 <FaExclamationTriangle className="text-yellow-400 transform hover:scale-125 duration-100 ease-in-out" />
                                                 {showTooltip === index && (
-                                                    <div className="absolute left-0 bottom-full mb-2 w-40 p-2 text-xs text-white bg-gray-800 dark:text-black dark:bg-gray-300 rounded-md">
+                                                    <div className="absolute left-0 bottom-full mb-2 w-40 p-2 text-xs text-white bg-gray-800 dark:text-black dark:bg-gray-300 rounded-md shadow-lg">
                                                         Some sample files are missing for this test
                                                     </div>
                                                 )}
@@ -333,6 +364,38 @@ const CreateExperimentForm = (props: any): JSX.Element => {
                                 </div>
                             ))
                         )}
+                    </div>
+                    <h4 className="font-semibold text-sm lg:text-base mb-2">Description</h4>
+                    <div className="flex items-center w-full mb-3">
+                        <input
+                            className="rounded outline-0 border-2 bg-gray-100 border-gray-300 dark:bg-gray-700 dark:border-gray-500 text-black dark:text-white w-full"
+                            // value={}
+                            onChange={(e) => { }}
+                        />
+                        {/* <button
+                            onClick={() => {
+                            }}
+                            // disabled={null}
+                            className="flex items-center text-sm disabled:bg-gray-400 dark:disabled:bg-gray-500 dark:disabled:text-gray-300 bg-blue-400 dark:bg-blue-500 hover:bg-pink-500 dark:hover:bg-pink-600 disabled:transform-none transform hover:scale-110 duration-300 ease-in-out rounded-xl p-xxs ml-4 text-white"
+                        >
+                            <FaPlus />
+                        </button> */}
+                    </div>
+                    <h4 className="font-semibold text-sm lg:text-base mb-2">End Credits</h4>
+                    <div className="flex items-center w-full mb-6">
+                        <input
+                            className="rounded outline-0 border-2 bg-gray-100 border-gray-300 dark:bg-gray-700 dark:border-gray-500 text-black dark:text-white w-full"
+                            // value={}
+                            onChange={(e) => { }}
+                        />
+                        {/* <button
+                            onClick={() => {
+                            }}
+                            // disabled={null}
+                            className="flex items-center text-sm disabled:bg-gray-400 dark:disabled:bg-gray-500 dark:disabled:text-gray-300 bg-blue-400 dark:bg-blue-500 hover:bg-pink-500 dark:hover:bg-pink-600 disabled:transform-none transform hover:scale-110 duration-300 ease-in-out rounded-xl p-xxs ml-4 text-white"
+                        >
+                            <FaPlus />
+                        </button> */}
                     </div>
                     <div className="mt-auto">
                         <h4 className="text-sm lg:text-base font-semibold mb-2">Upload Samples</h4>
@@ -345,7 +408,7 @@ const CreateExperimentForm = (props: any): JSX.Element => {
                                 onDrop={handleDropSamples}
                                 className="dropzone flex flex-col items-center justify-center w-full h-24 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-100 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-200 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600"
                             >
-                                <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                                <div className="flex flex-col items-center justify-center pt-5 pb-6 z-10">
                                     <svg className="w-6 h-6 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 16">
                                         <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2" />
                                     </svg>
@@ -353,22 +416,36 @@ const CreateExperimentForm = (props: any): JSX.Element => {
                                     <p className="text-xs text-center text-gray-500 dark:text-gray-400">(MP3 files)</p>
                                 </div>
                                 <input id="dropzone-file-samples" ref={fileRef} multiple type="file" onChange={readSampleFiles} className="hidden" />
+                                {(fileList.length > 0 || invalidfileList.length > 0) && (
+                                    <div className="absolute self-end mb-16 mr-2 z-20" onMouseEnter={() => setShowTooltipSample(true)} onMouseLeave={() => setShowTooltipSample(false)}>
+                                        {error ? (
+                                            <FaExclamationCircle className="text-red-500 transform hover:scale-110 duration-100 ease-in-out" size={24} />
+                                        ) : (
+                                            <FaCheckCircle className="text-green-500 transform hover:scale-110 duration-100 ease-in-out" size={24} />
+                                        )}
+                                        {showTooltipSample && (
+                                            <div className="absolute right-0 top-full mt-2 w-64 p-2 text-xs text-white bg-gray-800 dark:text-black dark:bg-gray-300 rounded-md shadow-lg z-10">
+                                                {error && <p className="text-pink-500 dark:text-pink-600 text-sm font-medium whitespace-normal break-words w-2/3">{error}</p>}
+                                                {fileList.length > 0 ? (
+                                                    <div>
+                                                        <h4 className="text-sm font-semibold">Uploaded files:</h4>
+                                                        <ul className="list-disc pl-5">
+                                                            {fileList.map((file, index) => (
+                                                                <li key={index} className="text-sm break-words">{file}</li>
+                                                            ))}
+                                                        </ul>
+                                                    </div>
+                                                ) : (null)}
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
                             </label>
                         </div>
-                        {/* {error && <p className="text-pink-500 dark:text-pink-600 text-sm font-medium whitespace-normal break-words w-2/3">{error}</p>} */}
-                        {/* {fileList.length > 0 && (
-                            <div className="mt-1 mb-4 whitespace-normal break-words">
-                                <h4 className="text-sm font-semibold">Uploaded files:</h4>
-                                <div className="pl-5 w-1/3">
-                                    {fileList.map((file, index) => (
-                                        <span key={index} className="text-sm">{file}</span>
-                                    ))}
-                                </div>
-                            </div>
-                        )} */}
                         <h4 className="font-semibold text-sm lg:text-base mb-2 mt-4">Upload Experiment Setup</h4>
                         <div className="flex items-center justify-center w-full">
-                            <label htmlFor="dropzone-file-setup"
+                            <label
+                                htmlFor="dropzone-file-setup"
                                 onDragOver={handleDragOver}
                                 onDragEnter={handleDragEnter}
                                 onDragLeave={handleDragLeave}
@@ -382,10 +459,32 @@ const CreateExperimentForm = (props: any): JSX.Element => {
                                     <p className="text-xs text-center text-gray-500 dark:text-gray-400">(JSON files)</p>
                                 </div>
                                 <input id="dropzone-file-setup" ref={fileRef} type="file" onChange={readFile} className="hidden" />
+                                {setupUploadedFlag && (
+                                    <div className="absolute self-end mb-16 mr-2 z-20" onMouseEnter={() => setShowTooltipSetup(true)} onMouseLeave={() => setShowTooltipSetup(false)}>
+                                        {setupError ? (
+                                            <FaExclamationCircle className="text-red-500 transform hover:scale-110 duration-100 ease-in-out" size={24} />
+                                        ) : (
+                                            <FaCheckCircle className="text-green-500 transform hover:scale-110 duration-100 ease-in-out" size={24} />
+                                        )}
+                                        {showTooltipSetup && (
+                                            <div className="absolute right-0 top-full mt-2 w-64 p-2 text-xs text-white bg-gray-800 dark:text-black dark:bg-gray-300 rounded-md shadow-lg z-10">
+                                                {setupList.length > 0 ? (
+                                                    <div>
+                                                        <h4 className="text-sm font-semibold">Uploaded Setup:</h4>
+                                                        <ul className="list-disc pl-5">
+                                                            {setupList.map((setup, index) => (
+                                                                <li key={index} className="text-sm break-words">{setup}</li>
+                                                            ))}
+                                                        </ul>
+                                                    </div>
+                                                ) : (null)}
+                                                {setupError && <p className="text-pink-500 dark:text-pink-600 text-sm font-medium whitespace-normal break-words">{setupError}</p>}
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
                             </label>
                         </div>
-
-                        {/* <input ref={fileRef} type="file" onChange={readFile} /> */}
                     </div>
                 </div>
                 {currentTest.testNumber === -1 ? <div /> : (
