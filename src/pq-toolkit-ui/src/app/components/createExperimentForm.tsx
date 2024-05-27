@@ -69,6 +69,7 @@ const CreateExperimentForm = ({ selectedExperiment, setSelectedExperiment }: { s
     const [showTooltipSetup, setShowTooltipSetup] = useState<boolean>(false)
     const fileRef = useRef(null)
     const [showInfo, setShowInfo] = useState<boolean>(false)
+    const [showSaveInfo, setShowSaveInfo] = useState<boolean>(false);
 
     const readSampleFiles = (event: React.ChangeEvent<HTMLInputElement>): void => {
         const { files } = event.target;
@@ -255,16 +256,28 @@ const CreateExperimentForm = ({ selectedExperiment, setSelectedExperiment }: { s
             <div className="flex justify-between items-center mb-6 w-full whitespace-normal break-words">
                 <span className="text-lg lg:text-xl font-semibold w-8/12 sm:w-9/12">&apos;{selectedExperiment}&apos; Experiment Setup:</span>
                 <div className="flex flex-row space-x-2 ml-4 self-start">
-                    <FaSave onClick={() => {
-                        void (async () => {
-                            try {
-                                await setUpExperimentFetch(selectedExperiment, setup, setUpExperimentSchema);
-                            } catch (error) {
-                                console.error(error)
-                            }
-                        })();
-                    }} className="cursor-pointer text-blue-400 dark:text-blue-500 hover:text-pink-500 dark:hover:text-pink-600 transform hover:scale-110 duration-300 ease-in-out" size={35} />
-                    <FaXmark onClick={() => { setSelectedExperiment("") }} className="cursor-pointer text-blue-400 dark:text-blue-500 hover:text-pink-500 dark:hover:text-pink-600 transform hover:scale-110 duration-300 ease-in-out" size={40} />
+                    <div className="relative inline-block">
+                        <FaSave
+                            onClick={() => {
+                                void (async () => {
+                                    try {
+                                        await setUpExperimentFetch(selectedExperiment, setup, setUpExperimentSchema);
+                                    } catch (error) {
+                                        console.error(error);
+                                    }
+                                })();
+                            }}
+                            className="cursor-pointer text-blue-400 dark:text-blue-500 hover:text-pink-500 dark:hover:text-pink-600 transform hover:scale-110 duration-300 ease-in-out"
+                            size={35}
+                            onMouseEnter={() => { setShowSaveInfo(true) }}
+                            onMouseLeave={() => { setShowSaveInfo(false) }}
+                        />
+                        {showSaveInfo && (
+                            <div className="absolute right-0 top-full mt-2 w-64 p-2 text-xs text-white bg-gray-800 dark:text-black dark:bg-gray-300 rounded-md shadow-lg z-10">
+                                Overwriting the experiment will delete the results
+                            </div>
+                        )}
+                    </div><FaXmark onClick={() => { setSelectedExperiment("") }} className="cursor-pointer text-blue-400 dark:text-blue-500 hover:text-pink-500 dark:hover:text-pink-600 transform hover:scale-110 duration-300 ease-in-out" size={40} />
                 </div>
             </div>
             <div className="flex flex-col md:flex-row h-full space-y-6 md:space-y-0 md:space-x-6">
