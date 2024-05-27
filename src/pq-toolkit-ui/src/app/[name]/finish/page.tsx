@@ -29,7 +29,7 @@ const FinishPage = ({ params }: { params: { name: string } }): JSX.Element => {
         </div>
         <div className="flex content-center bg-white dark:bg-stone-900 rounded-2xl justify-center fadeInUp z-10 p-6 mt-4 md:mt-8">
           <div className="flex flex-col justify-center content-center text-center">
-            <div className="text-lg mb-md">
+            <div className="text-black text-lg mb-md dark:text-white">
               {data.endText ??
                 'Thank you for participating in this test. Your results have been submitted.'}
             </div>

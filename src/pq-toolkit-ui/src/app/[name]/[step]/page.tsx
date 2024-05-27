@@ -11,7 +11,7 @@ import {
   type FullMUSHRATest
 } from '@/lib/schemas/experimentSetup'
 import Link from 'next/link'
-import { useContext } from 'react'
+import { useContext, useState } from 'react'
 import InvalidConfigurationError from '../invalid-configuration-error'
 import { ExperimentContext } from '../layout'
 import Loading from '../loading'
@@ -24,6 +24,7 @@ import {
 } from '@/lib/schemas/experimentState'
 import Header from "@/lib/components/basic/header"
 import Blobs from "../../components/blobs"
+
 
 export const revalidate = 0
 
@@ -38,6 +39,10 @@ const TestPage = ({
   const data = context?.data
   const results = context?.results
   const saveResults = context?.saveResults
+
+  const [feedback, setFeedback] = useState('')
+  const [feedbackSubmitted, setFeedbackSubmitted] = useState(false)
+  const [feedbackStatus, setFeedbackStatus] = useState('')
 
   if (context?.error === true) return <InvalidConfigurationError />
   if (data == null || results == null) return <Loading />
@@ -116,6 +121,31 @@ const TestPage = ({
     }
   }
 
+  const handleFeedbackSubmit = async () => {
+    try {
+      const response = await fetch('/api/submitFeedback', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          feedback,
+          testNumber: step
+        })
+      })
+
+      if (response.ok) {
+        setFeedbackStatus('Feedback submitted successfully')
+        setFeedbackSubmitted(true)
+        setFeedback('')
+      } else {
+        setFeedbackStatus('Failed to submit feedback')
+      }
+    } catch (error) {
+      setFeedbackStatus('Failed to submit feedback')
+    }
+  }
+
   return (
     <div className="min-h-screen bg-gray-100 dark:bg-stone-900">
       <Header />
@@ -131,11 +161,28 @@ const TestPage = ({
         </div>
         <div className="flex content-center bg-white dark:bg-stone-900 rounded-2xl justify-center fadeInUp z-10 p-3 mt-4 md:mt-8">
           <div className="flex flex-col justify-center content-center">
-            <div className="bg-white rounded-md p-lg flex flex-col items-center text-black dark:text-white">
+            <div className="bg-white rounded-md p-lg flex flex-col items-center text-black dark:text-white bg-gray-200/10 backdrop-blur-md rounded-3xl p-8 shadow-2xl">
               <div className="flex flex-col gap-md">
                 <div className="flex flex-col gap-xs">
                   {getTestComponent()}
                 </div>
+                {!feedbackSubmitted && (
+                  <div className="relative w-full mt-4">
+                    <textarea
+                      className="w-full p-2 rounded-md border border-gray-300 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      placeholder="Write your feedback here..."
+                      value={feedback}
+                      onChange={(e) => setFeedback(e.target.value)}
+                    />
+                    <button
+                      onClick={handleFeedbackSubmit}
+                      className="bg-blue-500 rounded-md p-2 font-semibold text-white hover:bg-pink-500 dark:hover:bg-pink-600 absolute top-2 right-2 text-sm"
+                    >
+                      Send
+                    </button>
+                  </div>
+                )}
+                {feedbackStatus && <p className="text-center mt-2">{feedbackStatus}</p>}
                 <div className="flex justify-center mt-md gap-sm">
                   {step > 1 && (
                     <Link href={(step - 1).toString()}>

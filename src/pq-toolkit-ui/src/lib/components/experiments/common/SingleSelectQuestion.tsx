@@ -39,7 +39,7 @@ const SingleSelectQuestion = ({
           <div
             key={`option_${idx}`}
             className={`w-full min-h-[4rem] h-max max-h-[8rem] rounded-md ${
-              option.selected ? 'bg-blue-500' : 'bg-blue-100'
+              option.selected ? 'bg-pink-600' : 'bg-pink-200'
             } flex items-center justify-center cursor-pointer`}
             onClick={() => {
               onSelect(option.idx)

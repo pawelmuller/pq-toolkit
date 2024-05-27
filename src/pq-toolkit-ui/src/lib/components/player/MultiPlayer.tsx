@@ -46,7 +46,7 @@ const MultiPlayer = ({
         player.volume(0.0)
       }
     })
-    setProgress(0) // Reset progress to 0 when a new player is selected
+    setProgress(0) 
   }, [selectedPlayer])
 
   const [progress, setProgress] = useState(0)

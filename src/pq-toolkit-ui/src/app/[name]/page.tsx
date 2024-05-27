@@ -34,7 +34,7 @@ const ExperimentWelcomePage = (props: { params: { name: string } }): JSX.Element
             ) : data == null ? (
               <Loading />
             ) : (
-              <div className="bg-white rounded-md p-lg flex flex-col items-center text-black dark:text-white">
+              <div className="bg-white rounded-md p-lg flex flex-col items-center text-black dark:text-white bg-gray-800/10 backdrop-blur-md rounded-3xl p-8 shadow-2xl">
                 <div className="text-lg">
                   Welcome to experiment <b>{data.name}</b>
                 </div>
