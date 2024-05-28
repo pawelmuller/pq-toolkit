@@ -13,17 +13,25 @@ import AbxEditor from "./AbxEditor";
 import MushraEditor from "./MushraEditor";
 import ApeEditor from "./ApeEditor";
 
+function generateRandomString(): string {
+    const segments = [];
+    for (let i = 0; i < 4; i++) {
+        segments.push(Math.floor(1000 + Math.random() * 9000));
+    }
+    return segments.join('-');
+}
+
 const CreateExperimentForm = ({ selectedExperiment, setSelectedExperiment }: { selectedExperiment: string, setSelectedExperiment: React.Dispatch<React.SetStateAction<string>> }): JSX.Element => {
     useEffect(() => {
-        getExperimentFetch(selectedExperiment, ExperimentSetupSchema).then((response) => { setSetup(response) }).catch(error => {
+        getExperimentFetch(selectedExperiment, ExperimentSetupSchema).then((response) => { setSetup(response) }).catch(() => {
             setSetup({
-                uid: "",
-                name: "",
+                uid: generateRandomString(),
+                name: selectedExperiment,
                 description: "",
                 endText: "",
                 tests: []
             })
-            console.error(error)
+
         })
         getSamplesFetch(selectedExperiment, getSamplesSchema).then((response) => {
             for (const sampleName of response) {
@@ -45,8 +53,8 @@ const CreateExperimentForm = ({ selectedExperiment, setSelectedExperiment }: { s
     }, [selectedExperiment]);
 
     const [setup, setSetup] = useState<ExperimentSetup>({
-        uid: " ",
-        name: " ",
+        uid: generateRandomString(),
+        name: selectedExperiment,
         description: "",
         endText: "",
         tests: []
