@@ -25,7 +25,6 @@ import {
 import Header from "@/lib/components/basic/header"
 import Blobs from "../../components/blobs"
 
-
 export const revalidate = 0
 
 const TestPage = ({
@@ -121,29 +120,19 @@ const TestPage = ({
     }
   }
 
-  const handleFeedbackSubmit = async () => {
-    try {
-      const response = await fetch('/api/submitFeedback', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          feedback,
-          testNumber: step
-        })
-      })
+  const handleFeedbackSubmit = () => {
+    const currentResult = results.results.find(
+      (r) => r.testNumber === currentTest.testNumber
+    )
 
-      if (response.ok) {
-        setFeedbackStatus('Feedback submitted successfully')
-        setFeedbackSubmitted(true)
-        setFeedback('')
-      } else {
-        setFeedbackStatus('Failed to submit feedback')
-      }
-    } catch (error) {
-      setFeedbackStatus('Failed to submit feedback')
+    if (currentResult) {
+      currentResult.feedback = feedback
+      context?.setAnswer(currentResult)
     }
+
+    setFeedbackStatus('Feedback submitted successfully')
+    setFeedbackSubmitted(true)
+    setFeedback('')
   }
 
   return (

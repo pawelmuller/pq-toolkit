@@ -21,7 +21,8 @@ export type Selection = z.infer<typeof SelectionSchema>
  * All test results extend it
  */
 export const BaseResultSchema = z.object({
-  testNumber: z.number()
+  testNumber: z.number(),
+  feedback: z.string().optional()
 })
 
 /**
@@ -29,6 +30,7 @@ export const BaseResultSchema = z.object({
  * Defines a base result of a test
  * All test results extend it
  * @field testNumber - ordinal number of test, must be unique
+ * @field feedback - optional feedback for the test
  */
 export type BaseResult = z.infer<typeof BaseResultSchema>
 
