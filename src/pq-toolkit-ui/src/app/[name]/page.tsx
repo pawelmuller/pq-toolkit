@@ -1,6 +1,5 @@
 'use client'
 
-import Link from 'next/link'
 import { useContext, useEffect, useState } from 'react'
 import { ExperimentContext } from './layout'
 import Loading from './loading'
@@ -15,7 +14,7 @@ const ExperimentWelcomePage = (props: { params: { name: string } }): JSX.Element
   const [errorRequest, setErrorRequest] = useState(false)
 
   useEffect(() => {
-    if (context?.error) {
+    if ((context?.error) ?? false) {
       setErrorRequest(true)
     }
   }, [context?.error])
