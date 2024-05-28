@@ -1,13 +1,13 @@
 import '@testing-library/jest-dom'
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
-import ThemeSwitch from '../themeSwitch'; // Upewnij się, że ścieżka do pliku ThemeSwitch jest poprawna
+import ThemeSwitch from '../themeSwitch';
 import { ThemeProvider, useTheme } from 'next-themes';
 import { type RenderResult } from '@testing-library/react';
 
 jest.mock('next-themes', () => ({
     useTheme: jest.fn(),
-    ThemeProvider: ({ children }: { children: React.ReactNode }) => <div>{children}</div>, // Mock ThemeProvider
+    ThemeProvider: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
 }));
 
 describe('ThemeSwitch', () => {
