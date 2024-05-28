@@ -8,7 +8,7 @@ from fastapi import UploadFile
 from fastapi.responses import StreamingResponse
 from app.core.sample_manager import SampleManager
 from app.utils import PqException
-from random import randint
+from pydantic import ValidationError
 
 
 class ExperimentNotFound(PqException):
@@ -43,6 +43,11 @@ class NoResultsData(PqException):
 class NoMatchingTest(PqException):
     def __init__(self, test_number: str) -> None:
         super().__init__(f"No matching test found for test number {test_number}!")
+
+
+class IncorectInputData(PqException):
+    def __init__(self, test_number: str) -> None:
+        super().__init__(f"Incorect data in test result {test_number}!")
 
 
 def transform_test(test: Test) -> dict:
@@ -151,36 +156,52 @@ def add_experiment_result(session: Session, experiment_name: str, experiment_res
 
     if len(experiment.tests) == 0:
         raise NoTestsFoundForExperiment(experiment_name)
-    test_mapping = [(test.number, test.id) for test in experiment.tests]
+    test_mapping = [(test.number, test.id, test.type) for test in experiment.tests]
 
     results = add_test_results(session, experiment_result_raw_json, test_mapping)
     return get_experiment_tests_results (session, experiment_name, results)      
 
 
-def add_test_results(session: Session, results_data: dict[str, Any], test_mapping: list[tuple])-> str:
+def add_test_results(session: Session, results_data: dict[str, Any], test_mapping: list[tuple[int, int, str]]) -> str:
     results_list = results_data.get('results')
     if not results_list:
         raise NoResultsData
 
-    test_number_to_id = {number: test_id for number, test_id in test_mapping}
-    placeholder = str(randint(1, 100000))
+    test_number_to_info = {number: (test_id, test_type) for number, test_id, test_type in test_mapping}
+    placeholder = str(uuid.uuid4())  # Generate a unique UUID
 
     for result_dict in results_list:
         test_number = result_dict.get('testNumber')
-        test_id = test_number_to_id.get(test_number)
+        test_info = test_number_to_info.get(test_number)
 
-        if test_id is None:
+        if test_info is None:
             raise NoMatchingTest(test_number)
 
-        new_result = ExperimentTestResult(
-            test_id=test_id,
-            test_result=result_dict,
-            experiment_use= placeholder
-        )
+        test_id, test_type = test_info
+        test_type = test_type.value
+        try:
+            if test_type == "AB":
+                PqTestABResult(**result_dict)
+            elif test_type == "ABX":
+                PqTestABXResult(**result_dict)
+            elif test_type == "MUSHRA":
+                PqTestMUSHRAResult(**result_dict)
+            elif test_type == "APE":
+                PqTestAPEResult(**result_dict)
+            else:
+                raise ValueError(f"Unknown test type: {test_type}")
 
+            new_result = ExperimentTestResult(
+                test_id=test_id,
+                test_result=result_dict,
+                experiment_use=placeholder
+            )
+
+            session.add(new_result)
+        except ValidationError:
+            raise IncorectInputData(test_number)
         session.add(new_result)
     session.commit()
-
 
     return placeholder
 
