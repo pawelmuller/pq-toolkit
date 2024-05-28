@@ -1,15 +1,15 @@
 import { type Sample, type ABTest, type ABXTest, type APETest, type BaseTest, type ExperimentSetup, type FullABXTest, type MUSHRATest } from "@/lib/schemas/experimentSetup"
 import { useState } from "react"
 import { FaPlus } from "react-icons/fa"
-import DeleteQuestionComp from "./deleteQuestionComp"
+import DeleteQuestionComp from "../form/deleteQuestionComp"
 
-const AbxEditor = ({
+const AbEditor = ({
     currentTest,
     setCurrentTest,
     fileList,
     setSetup
 }: {
-    currentTest: ABXTest
+    currentTest: ABTest
     setCurrentTest: React.Dispatch<React.SetStateAction<ABTest | ABXTest | FullABXTest | MUSHRATest | APETest | BaseTest>>
     fileList: File[]
     setSetup: React.Dispatch<React.SetStateAction<ExperimentSetup>>
@@ -26,7 +26,6 @@ const AbxEditor = ({
                     ) : (
                         fileList.map((file) => {
                             const isChecked = sampleTest.filter(sample => sample.assetPath === file.name).length > 0;
-
                             const isDisabled = !isChecked && sampleTest.length >= 2
                             return (
                                 <label key={file.name} className="flex items-center relative cursor-pointer mr-2 break-words w-full">
@@ -39,12 +38,12 @@ const AbxEditor = ({
                                         onChange={(e) => {
                                             if (e.target.checked) {
                                                 if (sampleTest.length < 2) {
-                                                    setSampleTest((oldarray) => [...oldarray, { 'sampleId': 's0', 'assetPath': file.name }]);
+                                                    setSampleTest((oldarray) => [...oldarray, { 'sampleId': 's0', 'assetPath': file.name }])
                                                 }
                                             } else {
-                                                const foundJSON = sampleTest.find(item => item.assetPath === file.name);
+                                                const foundJSON = sampleTest.find(item => { return item.assetPath === file.name })
                                                 if (foundJSON !== undefined) {
-                                                    setSampleTest((oldarray) => oldarray.filter(sample => sample.assetPath !== file.name));
+                                                    setSampleTest((oldarray) => oldarray.filter(sample => ![foundJSON.assetPath].includes(sample.assetPath)))
                                                 }
                                             }
                                         }}
@@ -63,7 +62,7 @@ const AbxEditor = ({
                                         {file.name}
                                     </span>
                                 </label>
-                            );
+                            )
                         })
                     )}
                 </div>
@@ -97,7 +96,7 @@ const AbxEditor = ({
                 </button>
             </div>
             <div className="mb-8">
-                {currentTest.questions !== undefined && currentTest.questions !== null ? (
+                {currentTest.questions !== undefined ? (
                     currentTest.questions.map((question, index) => (
                         <div key={index} className="p-4 mb-2 bg-white dark:bg-gray-800 rounded-lg shadow-md flex justify-between items-center">
                             <p className="text-black dark:text-white whitespace-normal break-words w-9/12 lg:w-10/12">{question.text}</p>
@@ -164,4 +163,5 @@ const AbxEditor = ({
         </div>
     )
 }
-export default AbxEditor
+
+export default AbEditor

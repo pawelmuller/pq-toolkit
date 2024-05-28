@@ -5,7 +5,7 @@ import { ExperimentContext } from './layout'
 import Loading from './loading'
 import InvalidConfigurationError from './invalid-configuration-error'
 import Header from "@/lib/components/basic/header"
-import Blobs from "../components/blobs"
+import Blobs from "../../lib/components/basic/blobs"
 
 const ExperimentWelcomePage = (props: { params: { name: string } }): JSX.Element => {
   const { name: experimentName } = props.params

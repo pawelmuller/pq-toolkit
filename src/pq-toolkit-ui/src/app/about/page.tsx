@@ -1,6 +1,6 @@
 'use client'
 import Header from '@/lib/components/basic/header'
-import ScrollToTopButton from '@/app/components/scrollToTopButton'
+import ScrollToTopButton from '@/lib/components/basic/scrollToTopButton'
 
 const About = (): JSX.Element => {
   return (

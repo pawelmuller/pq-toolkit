@@ -8,10 +8,10 @@ import {
 } from '@/lib/schemas/experimentSetup'
 import { getExperimentFetch, getSampleFetch, getSamplesFetch, setUpExperimentFetch, uploadSampleFetch } from '@/lib/utils/fetchers';
 import { getSampleSchema, getSamplesSchema, setUpExperimentSchema, uploadSampleSchema } from "@/lib/schemas/apiResults";
-import AbEditor from "./AbEditor";
-import AbxEditor from "./AbxEditor";
-import MushraEditor from "./MushraEditor";
-import ApeEditor from "./ApeEditor";
+import AbEditor from "../editors/AbEditor";
+import AbxEditor from "../editors/AbxEditor";
+import MushraEditor from "../editors/MushraEditor";
+import ApeEditor from "../editors/ApeEditor";
 
 function generateRandomString(): string {
     const segments = [];

@@ -1,5 +1,4 @@
-// eslint-disable-next-line import/no-restricted-paths
-import ThemeSwitch from '@/app/components/themeSwitch'
+import ThemeSwitch from '@/lib/components/basic/themeSwitch'
 
 const Header = (props: any): JSX.Element => {
     return (
