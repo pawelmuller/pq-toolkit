@@ -9,8 +9,7 @@ import DeleteButton from './deleteButton'
 import CreateExperimentForm from './createExperimentForm'
 import Blobs from './blobs'
 import { TbLogout2 } from "react-icons/tb";
-import { addExperimentSchema, type getExperimentsData } from '@/lib/schemas/experimentGet'
-import { type UserData } from '@/lib/schemas/authenticationData'
+import { addExperimentSchema, type getExperimentsData, type UserData } from "@/lib/schemas/apiResults"
 import { addNewExperimentFetch } from '@/lib/utils/fetchers'
 
 const AdminPage = ({

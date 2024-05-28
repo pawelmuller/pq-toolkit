@@ -4,7 +4,7 @@ import { useEffect, useState } from "react"
 import Header from "@/lib/components/basic/header"
 import Blobs from "./blobs"
 import { loginFetch } from '@/lib/utils/fetchers'
-import { LoginSchema, type UserData } from "@/lib/schemas/authenticationData"
+import { LoginSchema, type UserData } from "@/lib/schemas/apiResults"
 import { type KeyedMutator } from "swr"
 
 const LoginPage = ({

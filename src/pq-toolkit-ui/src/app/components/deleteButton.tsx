@@ -1,4 +1,4 @@
-import { deleteExperimentSchema, type getExperimentsData } from "@/lib/schemas/experimentGet";
+import { deleteExperimentSchema, type getExperimentsData } from "@/lib/schemas/apiResults";
 import { useState } from "react"
 import { FaCheck, FaTrash } from 'react-icons/fa'
 import { FaXmark } from "react-icons/fa6";

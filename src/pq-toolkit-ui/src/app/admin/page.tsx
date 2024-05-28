@@ -5,7 +5,7 @@ import AdminPage from "../components/admin-page"
 import Loading from "../loading"
 import LoginPage from "../components/login-page"
 import { userFetch } from '@/lib/utils/fetchers'
-import { type UserData } from "@/lib/schemas/authenticationData"
+import { type UserData } from "@/lib/schemas/apiResults"
 
 
 const AdminPageNew = (): JSX.Element => {

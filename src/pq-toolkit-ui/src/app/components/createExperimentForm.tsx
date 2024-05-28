@@ -7,7 +7,7 @@ import {
     type ExperimentSetup, ExperimentSetupSchema, type ABTest, type ABXTest, type FullABXTest, type MUSHRATest, type APETest, type BaseTest
 } from '@/lib/schemas/experimentSetup'
 import { getExperimentFetch, getSampleFetch, getSamplesFetch, setUpExperimentFetch, uploadSampleFetch } from '@/lib/utils/fetchers';
-import { getSampleSchema, getSamplesSchema, setUpExperimentSchema, uploadSampleSchema } from "@/lib/schemas/experimentGet";
+import { getSampleSchema, getSamplesSchema, setUpExperimentSchema, uploadSampleSchema } from "@/lib/schemas/apiResults";
 import AbEditor from "./AbEditor";
 import AbxEditor from "./AbxEditor";
 import MushraEditor from "./MushraEditor";
