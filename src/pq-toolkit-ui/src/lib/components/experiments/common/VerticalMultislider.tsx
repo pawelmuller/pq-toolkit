@@ -26,7 +26,7 @@ const VerticalMultislider = ({
   ]
 
   return (
-    <div className="w-full flex flex-row">
+    <div className="w-full flex flex-row ">
       <table className="w-full h-full">
         <tbody>
           <tr>
