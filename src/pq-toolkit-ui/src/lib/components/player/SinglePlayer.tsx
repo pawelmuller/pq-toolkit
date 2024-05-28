@@ -73,7 +73,7 @@ const SinglePlayer = ({
     }
   }, [status])
 
-  const togglePlayPause = () => {
+  const togglePlayPause = (): void => {
     if (status === 'playing') {
       setStatus('paused')
     } else {

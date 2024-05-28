@@ -46,7 +46,7 @@ const MultiPlayer = ({
         player.volume(0.0)
       }
     })
-    setProgress(0) 
+    setProgress(0)
   }, [selectedPlayer])
 
   const [progress, setProgress] = useState(0)
@@ -106,7 +106,7 @@ const MultiPlayer = ({
     }
   }, [status])
 
-  const togglePlayPause = () => {
+  const togglePlayPause = (): void => {
     if (status === 'playing') {
       setStatus('paused')
     } else {
@@ -114,9 +114,9 @@ const MultiPlayer = ({
     }
   }
 
-  const handleSampleSelect = (index: number) => {
+  const handleSampleSelect = (index: number): void => {
     setSelectedPlayer(index)
-    setStatus('stopped') 
+    setStatus('stopped')
     setProgress(0)
   }
 
@@ -148,7 +148,7 @@ const MultiPlayer = ({
               <TableCell key={index} className="pb-sm">
                 <Button
                   key={`asset-selector-${index}`}
-                  onClick={() => handleSampleSelect(index)}
+                  onClick={() => { handleSampleSelect(index) }}
                   variant="contained"
                   sx={{
                     bgcolor: selectedPlayer === index ? '#BE185D' : 'blue.300',
