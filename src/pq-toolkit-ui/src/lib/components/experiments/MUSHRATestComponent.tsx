@@ -14,12 +14,14 @@ const MUSHRATestComponent = ({
   testData,
   initialValues,
   experimentName,
-  setAnswer
+  setAnswer,
+  feedback
 }: {
   testData: FullMUSHRATest
   initialValues?: PartialResult<MUSHRAResult>
   experimentName: string
-  setAnswer: (result: PartialResult<MUSHRAResult>) => void
+  setAnswer: (result: PartialResult<MUSHRAResult>) => void,
+  feedback: string
 }): JSX.Element => {
   const { reference, anchors, samples, question } = testData
 
@@ -27,7 +29,7 @@ const MUSHRATestComponent = ({
     const samplesCombined = [...samples, ...anchors, reference]
     samplesCombined.sort((a, b) =>
       testData.samplesShuffle.findIndex((v) => v === a.sampleId) >
-      testData.samplesShuffle.findIndex((v) => v === b.sampleId)
+        testData.samplesShuffle.findIndex((v) => v === b.sampleId)
         ? 1
         : -1
     )
@@ -79,7 +81,8 @@ const MUSHRATestComponent = ({
       samplesScores: testData.samples.map(({ sampleId }) => ({
         sampleId,
         score: ratings.get(sampleId) ?? -1
-      }))
+      })),
+      feedback
     }
 
     setAnswer(result)
@@ -89,7 +92,8 @@ const MUSHRATestComponent = ({
     testData.testNumber,
     testData.anchors,
     testData.samples,
-    reference.sampleId
+    reference.sampleId,
+    feedback
   ])
 
   const sliderSetRating = (value: number, sampleId: string): void => {
@@ -131,17 +135,17 @@ const MUSHRATestComponent = ({
                 idx === 0
                   ? [getMUSHRAscale()]
                   : [
-                      <VerticalSlider
-                        key={`slider_${idx}`}
-                        rating={ratings.get(sample.sampleId) ?? 0}
-                        setRating={(value) => {
-                          sliderSetRating(value, sample.sampleId)
-                        }}
-                      />,
-                      <div className="text-center text-xl font-bold text-pink-600" key={`rating_${idx}`}>
-                        {ratings.get(sample.sampleId) ?? 0}
-                      </div>
-                    ]
+                    <VerticalSlider
+                      key={`slider_${idx}`}
+                      rating={ratings.get(sample.sampleId) ?? 0}
+                      setRating={(value) => {
+                        sliderSetRating(value, sample.sampleId)
+                      }}
+                    />,
+                    <div className="text-center text-xl font-bold text-pink-600" key={`rating_${idx}`}>
+                      {ratings.get(sample.sampleId) ?? 0}
+                    </div>
+                  ]
             })
             return map
           }, new Map<string, { url: string; footers: JSX.Element[] }>())}

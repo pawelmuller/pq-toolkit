@@ -14,12 +14,14 @@ const APETestComponent = ({
   testData,
   initialValues,
   experimentName,
-  setAnswer
+  setAnswer,
+  feedback
 }: {
   testData: APETest
   initialValues?: PartialResult<APEResult>
   experimentName: string
   setAnswer: (result: PartialResult<APEResult>) => void
+  feedback: string
 }): JSX.Element => {
   // console.log(initialValues)
   const { axis, samples } = testData
@@ -64,16 +66,17 @@ const APETestComponent = ({
           sampleId,
           rating: responses.get(questionId)?.get(sampleId) as number
         }))
-      }))
+      })),
+      feedback
     }
     setAnswer(result)
-  }, [responses, setAnswer, testData.testNumber])
+  }, [responses, setAnswer, testData.testNumber, feedback])
 
   return (
     <div className="bg-white rounded-md p-lg flex flex-col items-center text-black dark:text-white bg-gray-200/10 backdrop-blur-md rounded-3xl p-8 shadow-2xl">
       <div className="flex gap-md mt-md">
         <MultiPlayer
-          assets={samples.reduce<Map<string, {url: string}>>((map, sample, idx) => {
+          assets={samples.reduce<Map<string, { url: string }>>((map, sample, idx) => {
             map.set(
               `Sample ${idx + 1}`,
               {
@@ -81,7 +84,7 @@ const APETestComponent = ({
               }
             )
             return map
-          }, new Map<string, {url: string}>())}
+          }, new Map<string, { url: string }>())}
           selectedPlayerState={selectedPlayerState}
         />
       </div>

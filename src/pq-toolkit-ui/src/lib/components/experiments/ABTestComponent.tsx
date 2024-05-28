@@ -14,12 +14,14 @@ const ABTestComponent = ({
   testData,
   initialValues,
   experimentName,
-  setAnswer
+  setAnswer,
+  feedback
 }: {
   testData: ABTest
   initialValues?: PartialResult<ABResult>
   experimentName: string
-  setAnswer: (result: ABResult) => void
+  setAnswer: (result: ABResult) => void,
+  feedback: string
 }): JSX.Element => {
   const { samples, questions } = testData
 
@@ -51,10 +53,11 @@ const ABTestComponent = ({
       selections: Object.keys(selected).map((questionId) => ({
         questionId,
         sampleId: selected[questionId]
-      }))
+      })),
+      feedback
     }
     setAnswer(result)
-  }, [setAnswer, selected, testData.testNumber])
+  }, [setAnswer, selected, testData.testNumber, feedback])
 
   return (
     <div className="bg-white rounded-md p-lg flex flex-col items-center text-black dark:text-white bg-gray-200/10 backdrop-blur-md rounded-3xl p-8 shadow-2xl">

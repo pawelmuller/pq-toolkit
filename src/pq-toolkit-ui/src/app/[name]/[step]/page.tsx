@@ -40,8 +40,6 @@ const TestPage = ({
   const saveResults = context?.saveResults
 
   const [feedback, setFeedback] = useState('')
-  const [feedbackSubmitted, setFeedbackSubmitted] = useState(false)
-  const [feedbackStatus, setFeedbackStatus] = useState('')
 
   if (context?.error === true) return <InvalidConfigurationError />
   if (data == null || results == null) return <Loading />
@@ -70,6 +68,7 @@ const TestPage = ({
             setAnswer={(result) => {
               context?.setAnswer(result)
             }}
+            feedback={feedback}
           />
         )
       case TestTypeEnum.enum.ABX:
@@ -85,6 +84,7 @@ const TestPage = ({
             setAnswer={(result) => {
               context?.setAnswer(result)
             }}
+            feedback={feedback}
           />
         )
       case TestTypeEnum.enum.MUSHRA:
@@ -100,6 +100,7 @@ const TestPage = ({
             setAnswer={(result) => {
               context?.setAnswer(result)
             }}
+            feedback={feedback}
           />
         )
       case TestTypeEnum.enum.APE:
@@ -115,24 +116,10 @@ const TestPage = ({
             setAnswer={(result) => {
               context?.setAnswer(result)
             }}
+            feedback={feedback}
           />
         )
     }
-  }
-
-  const handleFeedbackSubmit = () => {
-    const currentResult = results.results.find(
-      (r) => r.testNumber === currentTest.testNumber
-    )
-
-    if (currentResult) {
-      currentResult.feedback = feedback
-      context?.setAnswer(currentResult)
-    }
-
-    setFeedbackStatus('Feedback submitted successfully')
-    setFeedbackSubmitted(true)
-    setFeedback('')
   }
 
   return (
@@ -155,23 +142,16 @@ const TestPage = ({
                 <div className="flex flex-col gap-xs">
                   {getTestComponent()}
                 </div>
-                {!feedbackSubmitted && (
+                {(
                   <div className="relative w-full mt-4">
                     <textarea
                       className="w-full p-2 rounded-md border border-gray-300 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
                       placeholder="Write your feedback here..."
                       value={feedback}
-                      onChange={(e) => setFeedback(e.target.value)}
+                      onChange={(e) => { setFeedback(e.target.value) }}
                     />
-                    <button
-                      onClick={handleFeedbackSubmit}
-                      className="bg-blue-500 rounded-md p-2 font-semibold text-white hover:bg-pink-500 dark:hover:bg-pink-600 absolute top-2 right-2 text-sm"
-                    >
-                      Send
-                    </button>
                   </div>
                 )}
-                {feedbackStatus && <p className="text-center mt-2">{feedbackStatus}</p>}
                 <div className="flex justify-center mt-md gap-sm">
                   {step > 1 && (
                     <Link href={(step - 1).toString()}>

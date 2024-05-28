@@ -14,12 +14,14 @@ const ABXTestComponent = ({
   testData,
   initialValues,
   experimentName,
-  setAnswer
+  setAnswer,
+  feedback
 }: {
   testData: FullABXTest
   initialValues?: PartialResult<ABXResult>
   experimentName: string
   setAnswer: (result: PartialResult<ABXResult>) => void
+  feedback: string
 }): JSX.Element => {
   const { samples, questions } = testData
 
@@ -79,7 +81,8 @@ const ABXTestComponent = ({
       selections: Object.keys(questionsSelected).map((questionId) => ({
         questionId,
         sampleId: questionsSelected[questionId]
-      }))
+      })),
+      feedback
     }
     setAnswer(result)
   }, [
@@ -87,7 +90,8 @@ const ABXTestComponent = ({
     setAnswer,
     testData.testNumber,
     testData.xSampleId,
-    xSelected
+    xSelected,
+    feedback
   ])
 
   return (
