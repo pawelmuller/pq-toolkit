@@ -103,7 +103,17 @@ const ApeEditor = ({
                 <button
                     className="px-5 sm:px-8 py-2 bg-pink-500 dark:bg-pink-600 text-white font-semibold rounded-lg shadow-sm hover:bg-pink-600 dark:hover:bg-pink-700 transform hover:scale-105 duration-300 ease-in-out"
                     onClick={() => {
-                        setSetup((oldSetup) => ({ ...oldSetup, tests: oldSetup.tests.filter(test => test.testNumber !== currentTest.testNumber) }))
+                        setSetup((oldSetup) => ({
+                            ...oldSetup,
+                            tests: oldSetup.tests
+                                .filter(test => test.testNumber !== currentTest.testNumber)
+                                .map(test => {
+                                    if (test.testNumber > currentTest.testNumber) {
+                                        return { ...test, testNumber: test.testNumber - 1 };
+                                    }
+                                    return test;
+                                }),
+                        }));
                         setCurrentTest((oldTest) => ({ ...oldTest, testNumber: -1 }))
                     }}
                 >
