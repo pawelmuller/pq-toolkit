@@ -5,7 +5,7 @@ import useSWR from 'swr'
 import Loading from './loading'
 import { validateApiData } from '@/core/apiHandlers/clientApiHandler'
 import Header from '@/lib/components/basic/header'
-import Blobs from './components/blobs'
+import Blobs from '../lib/components/basic/blobs'
 
 const Home = (): JSX.Element => {
   return (

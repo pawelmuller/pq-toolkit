@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react"
 import Header from "@/lib/components/basic/header"
-import Blobs from "./blobs"
+import Blobs from "../basic/blobs"
 import { loginFetch } from '@/lib/utils/fetchers'
 import { LoginSchema, type UserData } from "@/lib/schemas/apiResults"
 import { type KeyedMutator } from "swr"
@@ -62,7 +62,7 @@ const LoginPage = ({
                 <div className="flex content-center bg-gray-50 dark:bg-stone-800 rounded-2xl justify-center fadeInUp z-10 p-3 mt-4 md:mt-8">
                     <div className="flex flex-col justify-center content-center">
                         <div className="mt-2">
-                            <input className={`rounded outline-0 border-2 bg-gray-100 border-gray-300 dark:bg-gray-700 dark:border-gray-500 dark:text-white text-black ${errorRequest ? 'border-red-800' : ''}`} type='password' value={password} onChange={e => {
+                            <input aria-label="Password" className={`rounded outline-0 border-2 bg-gray-100 border-gray-300 dark:bg-gray-700 dark:border-gray-500 dark:text-white text-black ${errorRequest ? 'border-red-800' : ''}`} type='password' value={password} onChange={e => {
                                 setErrorRequest(false)
                                 setPassword(e.target.value)
                             }}></input>

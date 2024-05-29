@@ -24,7 +24,7 @@ import {
   type APEResult
 } from '@/lib/schemas/experimentState'
 import Header from "@/lib/components/basic/header"
-import Blobs from "../../components/blobs"
+import Blobs from "../../../lib/components/basic/blobs"
 
 export const revalidate = 0
 

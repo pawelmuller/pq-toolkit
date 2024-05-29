@@ -5,7 +5,7 @@ import Loading from '../loading'
 import { ExperimentContext } from '../layout'
 import Link from "next/link"
 import Header from "@/lib/components/basic/header"
-import Blobs from "../../components/blobs"
+import Blobs from "../../../lib/components/basic/blobs"
 
 const FinishPage = ({ params }: { params: { name: string } }): JSX.Element => {
   const context = useContext(ExperimentContext)

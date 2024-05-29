@@ -93,14 +93,15 @@ const SinglePlayer = ({
           setProgress(value as number)
         }}
         sx={{ width: '100%', color: '#3b82f6' }}
+        data-testid="progress-slider"
       />
       <Box display="flex" justifyContent="space-between" width="100%" fontSize="0.875rem">
-        <Typography variant="body2">{formatTime(progress)}</Typography>
-        <Typography variant="body2">{formatTime(length)}</Typography>
+        <Typography variant="body2" data-testid="current-time">{formatTime(progress)}</Typography>
+        <Typography variant="body2" data-testid="total-time">{formatTime(length)}</Typography>
       </Box>
       <Box display="flex" gap={1} justifyContent="center">
-        <IconButton onClick={togglePlayPause} sx={{ color: '#3b82f6' }}>
-          {status === 'playing' ? <PauseIcon /> : <PlayArrowIcon />}
+        <IconButton onClick={togglePlayPause} sx={{ color: '#3b82f6' }} data-testid="play-pause-button">
+          {status === 'playing' ? <PauseIcon data-testid="pause-icon" /> : <PlayArrowIcon data-testid="play-icon" />}
         </IconButton>
       </Box>
     </Box>
