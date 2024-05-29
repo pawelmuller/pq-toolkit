@@ -15,6 +15,18 @@ from api_client.exceptions import (
 )
 
 
+class IncorrectLogin(Exception):
+    def __init__(self) -> None:
+        super().__init__("Incorrect login or password!")
+
+
+class ErrorResponse(Exception):
+    def __init__(self, code: int, detail: str) -> None:
+        self.code = code
+        self.detail = detail
+        super().__init__(f"{code}: {detail}")
+
+
 class PqToolkitAPIClient:
     """
     Main class for the Pq Toolkit python client.
@@ -26,10 +38,12 @@ class PqToolkitAPIClient:
         base_port: The port of the API.
     """
 
-    def __init__(self, *, base_host: str = "http://localhost", base_port: int = 3000):
+    def __init__(self, *, base_host: str = "http://localhost", base_port: int = 3000, api_version: str = "v1", login=None, password=None):
         self._base_host = base_host
         self._base_port = base_port
-        self._endpoint = f"{self._base_host}:{self._base_port}/api/v1"
+        self._oauth_token = None
+        self._oauth_id = None
+        self._endpoint = f"{self._base_host}:{self._base_port}/api/{api_version}"
 
         response = self._get("/status",)
         status = response.json().get("status")
@@ -37,10 +51,19 @@ class PqToolkitAPIClient:
             raise ConnectionError(f"Cannot read status from {self._endpoint}")
         logging.info(f"Connected to {self._endpoint}, status: HEALTHY")
 
-    @staticmethod
-    def _request(**kwargs):
+        if login and password:
+            self.log_in(login, password)
+
+    def _request(self, **kwargs):
         try:
+            if self.is_logged_in:
+                if not "headers" in kwargs:
+                    kwargs["headers"] = {}
+                kwargs["headers"]["Authorization"] = self._auth_token
+
             response = requests.request(timeout=2.0, **kwargs)
+            if response.status_code != 200:
+                raise ErrorResponse(response.status_code, response.json()["detail"])
             return response
         except ConnectTimeout:
             print("Connection timed out")
@@ -116,6 +139,29 @@ class PqToolkitAPIClient:
                 raise PqSerializationException(f"Cannot cast the result to {types_to_return}: {e}")
 
         return wrapper
+
+    @property
+    def _auth_token(self):
+        return f"{self._oauth_id} {self._oauth_token}"
+
+    def log_in(self, username, password):
+        data = {
+            "username": username,
+            "password": password
+        }
+        try:
+            resp = self._post("/auth/login", data=data).json()
+        except ErrorResponse as e:
+            raise IncorrectLogin()
+        self._oauth_token = resp["access_token"]
+        self._oauth_id = resp["token_type"]
+
+    def get_user(self):
+        return self._get("/auth/user").json()
+
+    @property
+    def is_logged_in(self):
+        return (self._oauth_id and self._oauth_token)
 
     def get_experiments(self) -> list[str]:
         """
