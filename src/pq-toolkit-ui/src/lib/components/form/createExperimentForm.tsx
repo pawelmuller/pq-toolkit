@@ -5,14 +5,14 @@ import { validateTestSchema } from "@/lib/schemas/utils";
 import { validateApiData } from "@/core/apiHandlers/clientApiHandler";
 import {
     type ExperimentSetup, ExperimentSetupSchema, type ABTest, type ABXTest, type FullABXTest, type MUSHRATest, type APETest, type BaseTest
-} from '@/lib/schemas/experimentSetup'
+} from '@/lib/schemas/experimentSetup';
 import { getExperimentFetch, getSampleFetch, getSamplesFetch, setUpExperimentFetch, uploadSampleFetch } from '@/lib/utils/fetchers';
 import { getSampleSchema, getSamplesSchema, setUpExperimentSchema, uploadSampleSchema } from "@/lib/schemas/apiResults";
 import AbEditor from "../editors/AbEditor";
 import AbxEditor from "../editors/AbxEditor";
 import MushraEditor from "../editors/MushraEditor";
 import ApeEditor from "../editors/ApeEditor";
-
+import { TextEncoder } from 'util';
 function generateRandomString(): string {
     const segments = [];
     for (let i = 0; i < 4; i++) {
@@ -31,8 +31,7 @@ const CreateExperimentForm = ({ selectedExperiment, setSelectedExperiment }: { s
                 endText: "",
                 tests: []
             })
-
-        })
+        });
         getSamplesFetch(selectedExperiment, getSamplesSchema).then((response) => {
             for (const sampleName of response) {
                 getSampleFetch(selectedExperiment, sampleName, getSampleSchema).then(response => {
@@ -58,25 +57,25 @@ const CreateExperimentForm = ({ selectedExperiment, setSelectedExperiment }: { s
         description: "",
         endText: "",
         tests: []
-    })
+    });
     const [currentTest, setCurrentTest] = useState<ABTest | ABXTest | FullABXTest | MUSHRATest | APETest | BaseTest>({
         testNumber: -1,
         type: "AB",
         samples: [],
         questions: []
-    })
+    });
 
-    const [fileList, setFileList] = useState<File[]>([])
-    const [setupUploadedFlag, setSetupUploadedFlag] = useState<boolean>(false)
-    const [setupList, setSetupList] = useState<string[]>([])
-    const [invalidfileList, setInvalidFileList] = useState<string[]>([])
-    const [error, setError] = useState<string | null>(null)
-    const [setupError, setSetupError] = useState<string | null>(null)
-    const [showTooltip, setShowTooltip] = useState<number | null>(null)
-    const [showTooltipSample, setShowTooltipSample] = useState<boolean>(false)
-    const [showTooltipSetup, setShowTooltipSetup] = useState<boolean>(false)
-    const fileRef = useRef(null)
-    const [showInfo, setShowInfo] = useState<boolean>(false)
+    const [fileList, setFileList] = useState<File[]>([]);
+    const [setupUploadedFlag, setSetupUploadedFlag] = useState<boolean>(false);
+    const [setupList, setSetupList] = useState<string[]>([]);
+    const [invalidfileList, setInvalidFileList] = useState<string[]>([]);
+    const [error, setError] = useState<string | null>(null);
+    const [setupError, setSetupError] = useState<string | null>(null);
+    const [showTooltip, setShowTooltip] = useState<number | null>(null);
+    const [showTooltipSample, setShowTooltipSample] = useState<boolean>(false);
+    const [showTooltipSetup, setShowTooltipSetup] = useState<boolean>(false);
+    const fileRef = useRef(null);
+    const [showInfo, setShowInfo] = useState<boolean>(false);
     const [showSaveInfo, setShowSaveInfo] = useState<boolean>(false);
 
     const readSampleFiles = (event: React.ChangeEvent<HTMLInputElement>): void => {
@@ -85,27 +84,26 @@ const CreateExperimentForm = ({ selectedExperiment, setSelectedExperiment }: { s
         if (files !== null) {
             for (let i = 0; i < files.length; i++) {
                 if (files[i].type === 'audio/mpeg') {
-                    const newFile = files.item(i);
+                    const newFile = files[i];
                     if (newFile !== null) {
                         uploadSampleFetch(selectedExperiment, newFile, newFile.name, uploadSampleSchema).then((response) => {
                             setFileList((oldSampleFiles) => {
-                                return [...oldSampleFiles, newFile]
-                            })
-                        }).catch((error) => { console.error(error) })
-
+                                return [...oldSampleFiles, newFile];
+                            });
+                        }).catch((error) => { console.error(error); });
                     }
                 } else {
-                    invalidFiles.push(files[i])
+                    invalidFiles.push(files[i]);
                 }
             }
         }
         if (invalidFiles.length > 0) {
-            setError(`Invalid file(s) detected: ${invalidFiles.join(', ')}`)
+            setError(`Invalid file(s) detected: ${invalidFiles.join(', ')}`);
         } else {
-            setError(null)
+            setError(null);
         }
-        setFileList((oldSampleFiles) => { return oldSampleFiles.filter((value, index, array) => { return array.indexOf(value) === index }) })
-    }
+        setFileList((oldSampleFiles) => { return oldSampleFiles.filter((value, index, array) => { return array.indexOf(value) === index; }); });
+    };
 
     const readFile = (event: React.ChangeEvent<HTMLInputElement>): void => {
         const fileReader = new FileReader();
@@ -113,37 +111,41 @@ const CreateExperimentForm = ({ selectedExperiment, setSelectedExperiment }: { s
         if (files === null) {
             return;
         }
+        setSetupUploadedFlag(true)
+        setSetupList([]);
         if (files[0].type !== 'application/json') {
             setSetupError('Invalid file type. Please upload a JSON file.');
             return;
         }
+
         fileReader.readAsText(files[0], "UTF-8");
         fileReader.onload = (e: ProgressEvent<FileReader>) => {
             if (e.target !== null) {
-                const content = e.target.result as string
+                const content = e.target.result as string;
                 try {
-                    const uploadedData: ExperimentSetup = JSON.parse(content)
-                    const { data, validationError } = validateApiData(uploadedData, ExperimentSetupSchema)
-                    const testValidationErrors: string[] = []
+                    const uploadedData: ExperimentSetup = JSON.parse(content);
+                    const { data, validationError } = validateApiData(uploadedData, ExperimentSetupSchema);
+                    const testValidationErrors: string[] = [];
                     if (validationError !== null) {
-                        setSetupError('Invalid setup file.')
+                        setSetupError('Invalid setup file.');
                     }
                     if (data !== null) {
                         data.tests.forEach(test => {
-                            const validationResult = validateTestSchema(test)
+                            const validationResult = validateTestSchema(test);
                             if (validationResult.validationError != null)
-                                testValidationErrors.push(validationResult.validationError)
-                            else test = validationResult.data
+                                testValidationErrors.push(validationResult.validationError);
+                            else test = validationResult.data;
                         })
                         if (testValidationErrors.length <= 0) {
-                            setSetup(uploadedData)
-                            setSetupError(null)
+                            setSetup(uploadedData);
+                            setSetupList([files[0].name]);
+                            setSetupError(null);
                         } else {
-                            setSetupError('Invalid setup file.')
+                            setSetupError('Invalid setup file.');
                         }
                     }
                 } catch (error) {
-                    setSetupError('Invalid setup file.')
+                    setSetupError('Invalid setup file.');
                 }
             }
         }
@@ -174,36 +176,36 @@ const CreateExperimentForm = ({ selectedExperiment, setSelectedExperiment }: { s
         if (!samplesExist) {
             return false;
         }
-        return true
+        return true;
     }
 
     const handleDragOver = (e: React.DragEvent<HTMLLabelElement>): void => {
-        e.preventDefault()
-        e.stopPropagation()
-        e.currentTarget.classList.add('drag-over')
+        e.preventDefault();
+        e.stopPropagation();
+        e.currentTarget.classList.add('drag-over');
     };
 
     const handleDragEnter = (e: React.DragEvent<HTMLLabelElement>): void => {
-        e.preventDefault()
-        e.stopPropagation()
-        e.currentTarget.classList.add('drag-over')
+        e.preventDefault();
+        e.stopPropagation();
+        e.currentTarget.classList.add('drag-over');
     };
 
     const handleDragLeave = (e: React.DragEvent<HTMLLabelElement>): void => {
-        e.preventDefault()
-        e.stopPropagation()
-        e.currentTarget.classList.remove('drag-over')
+        e.preventDefault();
+        e.stopPropagation();
+        e.currentTarget.classList.remove('drag-over');
     };
 
     const handleDropSamples = (e: React.DragEvent<HTMLLabelElement>): void => {
-        e.preventDefault()
-        e.stopPropagation()
-        e.currentTarget.classList.remove('drag-over')
+        e.preventDefault();
+        e.stopPropagation();
+        e.currentTarget.classList.remove('drag-over');
 
-        const files = e.dataTransfer.files
-        const invalidFiles: string[] = []
-        setFileList([])
-        setInvalidFileList([])
+        const files = e.dataTransfer.files;
+        const invalidFiles: string[] = [];
+        setFileList([]);
+        setInvalidFileList([]);
 
         for (let i = 0; i < files.length; i++) {
             if (files[i].type === 'audio/mpeg') {
@@ -213,48 +215,48 @@ const CreateExperimentForm = ({ selectedExperiment, setSelectedExperiment }: { s
                         return [...oldSampleFiles, newFile];
                     }
                     return oldSampleFiles;
-                })
+                });
             } else {
-                invalidFiles.push(files[i].name)
-                setInvalidFileList(invalidFiles)
+                invalidFiles.push(files[i].name);
+                setInvalidFileList(invalidFiles);
             }
         }
 
         if (invalidFiles.length > 0) {
             setError(`Invalid file(s) detected: ${invalidFiles.join(', ')}`);
         } else {
-            setError(null)
+            setError(null);
         }
 
-        setFileList((oldSampleFiles) => { return oldSampleFiles.filter((value, index, array) => { return array.indexOf(value) === index }) })
+        setFileList((oldSampleFiles) => { return oldSampleFiles.filter((value, index, array) => { return array.indexOf(value) === index }) });
     }
 
     const handleDropSetup = (e: React.DragEvent<HTMLLabelElement>): void => {
-        e.preventDefault()
-        e.stopPropagation()
-        e.currentTarget.classList.remove('drag-over')
-        setSetupList([])
-        setSetupUploadedFlag(true)
+        e.preventDefault();
+        e.stopPropagation();
+        e.currentTarget.classList.remove('drag-over');
+        setSetupList([]);
+        setSetupUploadedFlag(true);
 
-        const fileReader = new FileReader()
-        const files = e.dataTransfer.files
+        const fileReader = new FileReader();
+        const files = e.dataTransfer.files;
 
         if (files[0].type !== 'application/json') {
-            setSetupError('Invalid file type. Please upload a JSON file.')
-            return
+            setSetupError('Invalid file type. Please upload a JSON file.');
+            return;
         }
 
-        fileReader.readAsText(files[0], "UTF-8")
+        fileReader.readAsText(files[0], "UTF-8");
         fileReader.onload = (e: ProgressEvent<FileReader>) => {
             if (e.target !== null) {
-                const content = e.target.result as string
+                const content = e.target.result as string;
                 if (JSON.parse(content).tests === undefined) {
-                    setSetupError('Invalid setup file.')
-                    return
+                    setSetupError('Invalid setup file.');
+                    return;
                 }
-                setSetupList([files[0].name])
-                setSetup(JSON.parse(content))
-                setSetupError(null)
+                setSetupList([files[0].name]);
+                setSetup(JSON.parse(content));
+                setSetupError(null);
             }
         }
     }
@@ -266,6 +268,7 @@ const CreateExperimentForm = ({ selectedExperiment, setSelectedExperiment }: { s
                 <div className="flex flex-row space-x-2 ml-4 self-start">
                     <div className="relative inline-block">
                         <FaSave
+                            aria-label="save-setup"
                             onClick={() => {
                                 void (async () => {
                                     try {
@@ -285,14 +288,17 @@ const CreateExperimentForm = ({ selectedExperiment, setSelectedExperiment }: { s
                                 Overwriting the experiment will delete the results
                             </div>
                         )}
-                    </div><FaXmark onClick={() => { setSelectedExperiment("") }} className="cursor-pointer text-blue-400 dark:text-blue-500 hover:text-pink-500 dark:hover:text-pink-600 transform hover:scale-110 duration-300 ease-in-out" size={40} />
+                    </div>
+                    <FaXmark onClick={() => { setSelectedExperiment("") }} className="cursor-pointer text-blue-400 dark:text-blue-500 hover:text-pink-500 dark:hover:text-pink-600 transform hover:scale-110 duration-300 ease-in-out" size={40} />
                 </div>
             </div>
             <div className="flex flex-col md:flex-row h-full space-y-6 md:space-y-0 md:space-x-6">
                 <div className="flex flex-col border-r-0 border-b-2 md:border-r-2 md:border-b-0 h-full w-full md:w-2/3 p-4">
                     <h3 className="text-sm lg:text-base font-semibold -mb-5">Tests</h3>
                     <div className="flex flex-col space-y-2 mb-6">
-                        <button className="flex items-center self-end bg-blue-400 dark:bg-blue-500 hover:bg-pink-500 dark:hover:bg-pink-600 text-white text-sm font-medium py-1 lg:py-2 px-1 lg:px-2 rounded-full shadow-lg transform transition-all duration-300 hover:scale-110"
+                        <button
+                            aria-label="Add new test"
+                            className="flex items-center self-end bg-blue-400 dark:bg-blue-500 hover:bg-pink-500 dark:hover:bg-pink-600 text-white text-sm font-medium py-1 lg:py-2 px-1 lg:px-2 rounded-full shadow-lg transform transition-all duration-300 hover:scale-110"
                             onClick={() => {
                                 setSetup((oldSetup) => ({
                                     ...oldSetup,
@@ -376,7 +382,7 @@ const CreateExperimentForm = ({ selectedExperiment, setSelectedExperiment }: { s
                                     <p className="mb-1 text-xs text-center text-gray-500 dark:text-gray-400"><span className="font-semibold">Click to upload</span> or drag and drop</p>
                                     <p className="text-xs text-center text-gray-500 dark:text-gray-400">(MP3 files)</p>
                                 </div>
-                                <input id="dropzone-file-samples" ref={fileRef} multiple type="file" onChange={readSampleFiles} className="hidden" />
+                                <input id="dropzone-file-samples" aria-label="dropzone-file-samples" ref={fileRef} multiple type="file" onChange={readSampleFiles} className="hidden" />
                                 {(fileList.length > 0 || invalidfileList.length > 0) && (
                                     <div className="absolute self-end mb-16 mr-2 z-20" onMouseEnter={() => { setShowTooltipSample(true); }} onMouseLeave={() => { setShowTooltipSample(false); }}>
                                         {(error != null) ? (
@@ -419,13 +425,13 @@ const CreateExperimentForm = ({ selectedExperiment, setSelectedExperiment }: { s
                                     <p className="mb-1 text-xs text-center text-gray-500 dark:text-gray-400"><span className="font-semibold">Click to upload</span> or drag and drop</p>
                                     <p className="text-xs text-center text-gray-500 dark:text-gray-400">(JSON files)</p>
                                 </div>
-                                <input id="dropzone-file-setup" ref={fileRef} type="file" onChange={readFile} className="hidden" />
+                                <input id="dropzone-file-setup" aria-label="dropzone-file-setup" ref={fileRef} type="file" onChange={readFile} className="hidden" />
                                 {setupUploadedFlag && (
                                     <div className="absolute self-end mb-16 mr-2 z-20" onMouseEnter={() => { setShowTooltipSetup(true); }} onMouseLeave={() => { setShowTooltipSetup(false); }}>
                                         {(setupError != null) ? (
-                                            <FaExclamationCircle className="text-red-500 transform hover:scale-110 duration-100 ease-in-out" size={24} />
+                                            <FaExclamationCircle aria-label="error-setup" className="text-red-500 transform hover:scale-110 duration-100 ease-in-out" size={24} />
                                         ) : (
-                                            <FaCheckCircle className="text-green-500 transform hover:scale-110 duration-100 ease-in-out" size={24} />
+                                            <FaCheckCircle aria-label="confirm-setup" className="text-green-500 transform hover:scale-110 duration-100 ease-in-out" size={24} />
                                         )}
                                         {showTooltipSetup && (
                                             <div className="absolute right-0 top-full mt-2 w-64 p-2 text-xs text-white bg-gray-800 dark:text-black dark:bg-gray-300 rounded-md shadow-lg z-10">
@@ -517,4 +523,4 @@ const CreateExperimentForm = ({ selectedExperiment, setSelectedExperiment }: { s
     )
 }
 
-export default CreateExperimentForm
+export default CreateExperimentForm;

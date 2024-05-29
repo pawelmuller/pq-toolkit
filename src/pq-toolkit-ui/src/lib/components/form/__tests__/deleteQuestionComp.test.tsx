@@ -106,8 +106,6 @@ describe('DeleteQuestionComp', () => {
             ]
         });
 
-        console.log('newTest.questions:', newTest.questions);
-
         expect(newTest.questions).toHaveLength(2);
         expect(newTest.questions).toEqual([
             { questionId: "q1", text: 'Question 1' },
