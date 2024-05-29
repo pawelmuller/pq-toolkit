@@ -60,7 +60,10 @@ const ABTestComponent = ({
   }, [setAnswer, selected, testData.testNumber, feedback])
 
   return (
-    <div className="bg-white rounded-md p-lg flex flex-col items-center text-black dark:text-white bg-gray-200/10 backdrop-blur-md rounded-3xl p-8 shadow-2xl">
+    <div className="flex flex-col items-center bg-gray-100 dark:bg-gray-700 rounded-xl p-8 shadow-2xl">
+      <h2 className="relative text-center text-3xl md:text-2xl font-semibold -mb-2">
+        AB Test
+      </h2>
       <div className="flex gap-md mt-md">
         {samples.map((sample, idx) => (
           <SinglePlayer
@@ -70,7 +73,7 @@ const ABTestComponent = ({
           />
         ))}
       </div>
-      <div className="flex flex-col gap-sm w-full mt-md">
+      <div className="flex flex-col gap-sm w-full mt-4">
         {questions.map((question, idx) => (
           <SingleSelectQuestion
             key={`question_${idx}`}

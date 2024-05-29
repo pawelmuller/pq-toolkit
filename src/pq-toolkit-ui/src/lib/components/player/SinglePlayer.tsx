@@ -82,8 +82,8 @@ const SinglePlayer = ({
   }
 
   return (
-    <Box display="flex" flexDirection="column" alignItems="center" minWidth="16rem" sx={{ bgcolor: 'blue.100', p: 2, borderRadius: 1 }}>
-      <Typography variant="h6">{name}</Typography>
+    <Box display="flex" flexDirection="column" alignItems="center" minWidth="16rem" sx={{ p: 2, borderRadius: 1 }}>
+      <h1 className='font-semibold text-2xl md:text-xl'>{name}</h1>
       <Slider
         min={0}
         max={length}
@@ -92,14 +92,14 @@ const SinglePlayer = ({
           playerRef.current.seek(value as number)
           setProgress(value as number)
         }}
-        sx={{ width: '100%', color: 'blue' }}
+        sx={{ width: '100%', color: '#3b82f6' }}
       />
       <Box display="flex" justifyContent="space-between" width="100%" fontSize="0.875rem">
         <Typography variant="body2">{formatTime(progress)}</Typography>
         <Typography variant="body2">{formatTime(length)}</Typography>
       </Box>
       <Box display="flex" gap={1} justifyContent="center">
-        <IconButton onClick={togglePlayPause} sx={{ color: 'blue' }}>
+        <IconButton onClick={togglePlayPause} sx={{ color: '#3b82f6' }}>
           {status === 'playing' ? <PauseIcon /> : <PlayArrowIcon />}
         </IconButton>
       </Box>

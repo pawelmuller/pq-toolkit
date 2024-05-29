@@ -95,7 +95,10 @@ const ABXTestComponent = ({
   ])
 
   return (
-    <div className="bg-white rounded-md p-lg flex flex-col items-center text-black dark:text-white bg-gray-200/10 backdrop-blur-md rounded-3xl p-8 shadow-2xl">
+    <div className="flex flex-col items-center bg-gray-100 dark:bg-gray-700 rounded-xl p-8 shadow-2xl">
+      <h2 className="relative text-center text-3xl md:text-2xl font-semibold -mb-2">
+        ABX Test
+      </h2>
       <div className="flex gap-md mt-md">
         <MultiPlayer
           assets={getCombinedSamples()}
