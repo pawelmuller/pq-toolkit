@@ -147,6 +147,18 @@ To add new experiment type most important steps are:
 - add randomizing function to `app/[name]/utils.ts` if needed
 - fill missing types in `app/[name]/layout.tsx`
 
+To edit the design of the experiments most important files are:
+
+- `app\[name]\[step]\page.tsx` - to edit page conatining experiment components, handling buttons: Next, Previous, Finish as well as saving results.
+
+To edit individual components edit files below:
+- `lib\components\experiments\common\VerticalMultislider.tsx` - to edit VerticalMultislider 
+- `lib\components\experiments\common\VerticaSlider.tsx` - to edit Vertical Slider 
+- `lib\components\experiments\common\SingleSelectQuestion.tsx` - to edit single select buttons between two options
+- `lib\components\experiments\player\MultiPlayer.tsx` - to edit player handling multiple samples
+- `lib\components\experiments\player\SinglePlayer.tsx` - to edit player handling one sample
+
+
 ## Colors Used in UI
 
 The UI design incorporates a consistent color scheme to enhance user experience and maintain visual coherence. Here are the main colors used across different elements of the interface, differentiated by light and dark modes:
