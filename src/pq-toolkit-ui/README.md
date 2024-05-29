@@ -146,3 +146,72 @@ To add new experiment type most important steps are:
 - register new component as test type handler at `app/[name]/[step]/page.tsx`
 - add randomizing function to `app/[name]/utils.ts` if needed
 - fill missing types in `app/[name]/layout.tsx`
+
+Based on the Tailwind CSS classes extracted from the provided files, here is the updated documentation section for colors used in the UI:
+
+## Colors Used in UI
+
+The UI design incorporates a consistent color scheme to enhance user experience and maintain visual coherence. Here are the main colors used across different elements of the interface, differentiated by light and dark modes:
+
+### Light Mode
+- **Background Colors:**
+  - `bg-gray-200`
+- **Primary Buttons:**
+  - `bg-blue-400`
+- **Secondary Buttons:**
+  - `bg-gray-300`
+- **Text Colors:**
+  - `text-black`
+  - `text-gray-300`
+  - `text-gray-400`
+  - `text-blue-500`
+  - `text-pink-500`
+  - `text-white`
+- **Borders:**
+  - `border-gray-500`
+  - `border-gray-600`
+- **Hover States:**
+  - `hover:bg-gray-200`
+  - `hover:bg-pink-500`
+  - `hover:scale-105`
+  - `hover:scale-110`
+  - `hover:scale-125`
+  - `hover:text-pink-500`
+- **Disabled States:**
+  - `disabled:bg-gray-700`
+  - `disabled:text-gray-400`
+
+### Dark Mode
+- **Background Colors:**
+  - `dark:bg-blue-500`
+  - `dark:bg-gray-300`
+  - `dark:bg-gray-600`
+  - `dark:bg-gray-700`
+  - `dark:bg-stone-800`
+  - `dark:bg-stone-900`
+- **Primary Buttons:**
+  - `dark:bg-blue-500`
+- **Secondary Buttons:**
+  - `dark:bg-gray-600`
+  - `dark:bg-gray-700`
+- **Text Colors:**
+  - `dark:text-black`
+  - `dark:text-blue-500`
+  - `dark:text-gray-300`
+  - `dark:text-gray-400`
+  - `dark:text-pink-600`
+  - `dark:text-white`
+- **Borders:**
+  - `dark:border-gray-500`
+  - `dark:border-gray-600`
+- **Hover States:**
+  - `dark:hover:bg-bray-800`
+  - `dark:hover:bg-gray-600`
+  - `dark:hover:bg-pink-600`
+  - `dark:hover:border-gray-500`
+  - `dark:hover:text-pink-600`
+- **Disabled States:**
+  - `dark:disabled:bg-gray-700`
+  - `dark:disabled:text-gray-400`
+
+These colors are defined using TailwindCSS classes and are applied consistently across the application to ensure a cohesive and user-friendly interface.
