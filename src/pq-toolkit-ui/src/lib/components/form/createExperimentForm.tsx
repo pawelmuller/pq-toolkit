@@ -215,7 +215,11 @@ const CreateExperimentForm = ({ selectedExperiment, setSelectedExperiment }: { s
                 setFileList((oldSampleFiles) => {
                     const newFile = files.item(i);
                     if (newFile !== null) {
-                        return [...oldSampleFiles, newFile];
+                        uploadSampleFetch(selectedExperiment, newFile, newFile.name, uploadSampleSchema).then((response) => {
+                            setFileList((oldSampleFiles) => {
+                                return [...oldSampleFiles, newFile];
+                            });
+                        }).catch((error) => { console.error(error); });
                     }
                     return oldSampleFiles;
                 });
@@ -232,6 +236,7 @@ const CreateExperimentForm = ({ selectedExperiment, setSelectedExperiment }: { s
         }
 
         setFileList((oldSampleFiles) => { return oldSampleFiles.filter((value, index, array) => { return array.indexOf(value) === index; }); });
+
     };
 
     const handleDropSetup = (e: React.DragEvent<HTMLLabelElement>): void => {
