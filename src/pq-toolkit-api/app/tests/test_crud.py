@@ -8,10 +8,12 @@ from app.crud import (
     ExperimentNotFound,
     ExperimentAlreadyExists,
     ExperimentNotConfigured,
+    IncorectInputData
 
 )
 from app.models import Experiment
 from app.schemas import PqTestResultsList, PqTestABResult, PqTestAPEResult, PqTestABXResult, PqTestMUSHRAResult
+from pydantic import ValidationError
 
 
 
@@ -233,4 +235,101 @@ def test_add_experiment_results(session, create_experiment, upload_config, confi
     assert isinstance(added_test_results.results[0], expected_result_type)
 
 
+def test_update_experiment_config(session, create_experiment, upload_config, experiment_data, updated_experiment_data):
+    experiment_name = "Test Experiment"
+    create_experiment(experiment_name)
+    upload_config(experiment_name, experiment_data)
+    experiment = get_experiment_by_name(session, experiment_name)
+    assert experiment.name == experiment_data["name"]
+    assert experiment.description == experiment_data["description"]
+    assert len(experiment.tests) == 1
+    assert experiment.tests[0].test_number == experiment_data["tests"][0]["test_number"]
+    
+    upload_config(experiment_name, updated_experiment_data)
+    updated_experiment = get_experiment_by_name(session, experiment_name)
+    assert updated_experiment.name == updated_experiment_data["name"]
+    assert updated_experiment.description == updated_experiment_data["description"]
+    assert len(updated_experiment.tests) == 2
+    assert updated_experiment.tests[1].test_number == updated_experiment_data["tests"][1]["test_number"]
 
+
+
+@pytest.mark.parametrize("config_data, test_result, expected_error", [
+    (
+        # Invalid field name in result
+        {
+            "name": "Full Experiment Name",
+            "description": "Experiment Description",
+            "end_text": "Experiment End Text",
+            "tests": [
+                {
+                    "test_number": 1,
+                    "type": "AB",
+                    "samples": [
+                        {"sample_id": "s1", "asset_path": "file_sample_5.mp3"},
+                        {"sample_id": "s2", "asset_path": "file_sample_700.mp3"}
+                    ],
+                    "questions": [
+                        {"question_id": "q1", "text": "Select better quality"},
+                        {"question_id": "q2", "text": "Select more warmth"}
+                    ]
+                }
+            ]
+        },
+        {
+            "results": [
+                {
+                    "testNumber": 1,
+                    "wrongField": [
+                        {"questionId": "q1", "sampleId": "s1"},
+                        {"questionId": "q2", "sampleId": "s2"}
+                    ]
+                }
+            ]
+        },
+        IncorectInputData
+
+    ),
+    (
+        # Missing required field in result
+        {
+            "name": "Full Experiment Name",
+            "description": "Experiment Description",
+            "end_text": "Experiment End Text",
+            "tests": [
+                {
+                    "test_number": 1,
+                    "type": "ABX",
+                    "samples": [
+                        {"sample_id": "s1", "asset_path": "file_sample_5.mp3"},
+                        {"sample_id": "s2", "asset_path": "file_sample_700.mp3"}
+                    ],
+                    "questions": [
+                        {"question_id": "q1", "text": "Select better quality"},
+                        {"question_id": "q2", "text": "Select more warmth"}
+                    ],
+                    "x_sample_id": None
+                }
+            ]
+        },
+        {
+            "results": [
+                {
+                    "testNumber": 1,
+                    "selections": [
+                        {"questionId": "q1", "sampleId": "s1"},
+                        {"questionId": "q2", "sampleId": "s2"}
+                    ]
+                }
+            ]
+        },
+        IncorectInputData
+    )
+])
+def test_add_experiment_results_invalid(session, create_experiment, upload_config, config_data, test_result, expected_error):
+    experiment_name = "Test Experiment"
+    create_experiment(experiment_name)
+    upload_config(experiment_name, config_data)
+    
+    with pytest.raises(expected_error):
+        add_experiment_result(session, experiment_name, test_result)
