@@ -1,10 +1,13 @@
-from api_client import PqToolkitAPIClient
-from api_client.dataclasses import PqExperiment, PqSample, PqQuestion, PqTestAB, PqTestABX, PqTestAPE, PqTestMUSHRA
-from test_utils import generate_random_experiment_name
+from src.api_client import PqToolkitAPIClient
+from src.api_client.dataclasses import PqExperiment, PqSample, PqQuestion, PqTestAB, PqTestABX, PqTestAPE, PqTestMUSHRA
+from tests.test_utils import generate_random_experiment_name
 
 if __name__ == "__main__":
     # Creation of the API client
-    api_client = PqToolkitAPIClient()
+    api_client = PqToolkitAPIClient(base_port=8000)
+    username = "admin"
+    password = "admin"
+    api_client.log_in(username, password)
 
     # Creating new experiment
     experiment_name = generate_random_experiment_name()

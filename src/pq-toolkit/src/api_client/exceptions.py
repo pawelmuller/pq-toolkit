@@ -52,3 +52,8 @@ class PqExperimentSampleUploadException(PqToolkitException):
                         f"to an experiment '{experiment_name}'.")
         self.message = _message
         super().__init__(self.message)
+
+
+class PqSampleNotFoundError(PqToolkitException):
+    def __init__(self):
+        super().__init__("Sample not found!")

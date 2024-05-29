@@ -1,14 +1,18 @@
 import unittest
 
-from api_client import PqToolkitAPIClient
-from api_client.dataclasses import PqExperiment, PqTestAB, PqTestMUSHRA, PqSample, PqQuestion
-from api_client.exceptions import PqExperimentSetupException
-from test_utils import generate_random_experiment_name
+from src.api_client.api_client import PqToolkitAPIClient
+from src.api_client.dataclasses import PqExperiment, PqTestAB, PqTestMUSHRA, PqSample, PqQuestion
+from src.api_client.exceptions import PqExperimentSetupException
+from tests.test_utils import generate_random_experiment_name
 
 
 class TestExperimentsWithAPI(unittest.TestCase):
     def setUp(self):
-        self.client = PqToolkitAPIClient()
+        self.client = PqToolkitAPIClient(
+            base_port=8000,
+            login="admin",
+            password="admin"
+        )
         self.experiments_to_remove = []
 
     def tearDown(self):

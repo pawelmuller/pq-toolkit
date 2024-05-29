@@ -1,7 +1,7 @@
 import unittest
 from unittest.mock import patch
 
-from api_client import PqToolkitAPIClient
+from src.api_client import PqToolkitAPIClient
 
 
 class TestExperiments(unittest.TestCase):
