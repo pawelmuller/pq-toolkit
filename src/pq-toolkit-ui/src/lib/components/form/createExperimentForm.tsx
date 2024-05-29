@@ -27,7 +27,7 @@ const CreateExperimentForm = ({ selectedExperiment, setSelectedExperiment }: { s
             setSetup({
                 uid: generateRandomString(),
                 name: selectedExperiment,
-                description: "",
+                description: " ",
                 endText: "",
                 tests: []
             });
@@ -57,7 +57,7 @@ const CreateExperimentForm = ({ selectedExperiment, setSelectedExperiment }: { s
     const [setup, setSetup] = useState<ExperimentSetup>({
         uid: generateRandomString(),
         name: selectedExperiment,
-        description: "",
+        description: " ",
         endText: "",
         tests: []
     });
@@ -212,17 +212,14 @@ const CreateExperimentForm = ({ selectedExperiment, setSelectedExperiment }: { s
 
         for (let i = 0; i < files.length; i++) {
             if (files[i].type === 'audio/mpeg') {
-                setFileList((oldSampleFiles) => {
-                    const newFile = files.item(i);
-                    if (newFile !== null) {
-                        uploadSampleFetch(selectedExperiment, newFile, newFile.name, uploadSampleSchema).then((response) => {
-                            setFileList((oldSampleFiles) => {
-                                return [...oldSampleFiles, newFile];
-                            });
-                        }).catch((error) => { console.error(error); });
-                    }
-                    return oldSampleFiles;
-                });
+                const newFile = files[i];
+                if (newFile !== null) {
+                    uploadSampleFetch(selectedExperiment, newFile, newFile.name, uploadSampleSchema).then((response) => {
+                        setFileList((oldSampleFiles) => {
+                            return [...oldSampleFiles, newFile];
+                        });
+                    }).catch((error) => { console.error(error); });
+                }
             } else {
                 invalidFiles.push(files[i].name);
                 setInvalidFileList(invalidFiles);
@@ -234,7 +231,6 @@ const CreateExperimentForm = ({ selectedExperiment, setSelectedExperiment }: { s
         } else {
             setError(null);
         }
-
         setFileList((oldSampleFiles) => { return oldSampleFiles.filter((value, index, array) => { return array.indexOf(value) === index; }); });
 
     };
@@ -280,7 +276,7 @@ const CreateExperimentForm = ({ selectedExperiment, setSelectedExperiment }: { s
                             onClick={() => {
                                 void (async () => {
                                     try {
-                                        await setUpExperimentFetch(selectedExperiment, setup, setUpExperimentSchema);
+                                        setUpExperimentFetch(selectedExperiment, setup, setUpExperimentSchema).then(() => { setSelectedExperiment("") }).catch(error => { console.error(error) });
                                     } catch (error) {
                                         console.error(error);
                                     }

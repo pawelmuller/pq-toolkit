@@ -21,7 +21,7 @@ export const authorizedFetch = async (url: RequestInfo | URL): Promise<any> => {
 }
 
 export const userFetch = async (url: RequestInfo | URL): Promise<any> => {
-    const response = await fetch(url, {method:'POST', headers: { 'accept': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('token')}` } })
+    const response = await fetch(url, {headers: { 'accept': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('token')}` } })
 
     if (!response.ok) {
         const error: APIError = {
