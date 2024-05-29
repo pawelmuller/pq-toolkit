@@ -229,7 +229,6 @@ class PqResultsList(BaseModel):
     results: list[str]
 
 
-# TODO: handle errors wherever used
 class PqSuccessResponse(BaseModel):
     success: bool
 

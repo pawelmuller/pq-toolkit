@@ -10,4 +10,3 @@ Docs are available at `localhost:8000/api/docs` (at gateway) or `localhost:8787/
 - PostgreSQL
 - Alembic
 
-#TODO
