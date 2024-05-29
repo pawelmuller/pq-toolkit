@@ -133,7 +133,8 @@ const ExperimentContextProvider = ({
   const saveResults = async (): Promise<void> => {
     await fetch(`/api/v1/experiments/${experimentName}/results`, {
       method: 'POST',
-      body: JSON.stringify(results)
+      body: JSON.stringify(results),
+      headers: { 'Content-Type': 'application/json' }
     })
     removeItem(`experiment-${experimentName}-data`)
     removeItem(`experiment-${experimentName}-results`)
