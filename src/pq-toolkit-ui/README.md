@@ -147,10 +147,6 @@ To add new experiment type most important steps are:
 - add randomizing function to `app/[name]/utils.ts` if needed
 - fill missing types in `app/[name]/layout.tsx`
 
-Based on the Tailwind CSS classes extracted from the provided files, here is the updated documentation section for colors used in the UI:
-
-Of course! Here's the updated documentation section with color swatches included next to each color description:
-
 ## Colors Used in UI
 
 The UI design incorporates a consistent color scheme to enhance user experience and maintain visual coherence. Here are the main colors used across different elements of the interface, differentiated by light and dark modes:
@@ -175,9 +171,6 @@ The UI design incorporates a consistent color scheme to enhance user experience 
 - **Hover States:**
   - `hover:bg-gray-200` ![#E5E7EB](https://via.placeholder.com/15/E5E7EB/000000?text=+)
   - `hover:bg-pink-500` ![#EC4899](https://via.placeholder.com/15/EC4899/000000?text=+)
-  - `hover:scale-105`
-  - `hover:scale-110`
-  - `hover:scale-125`
   - `hover:text-pink-500` ![#EC4899](https://via.placeholder.com/15/EC4899/000000?text=+)
 - **Disabled States:**
   - `disabled:bg-gray-700` ![#374151](https://via.placeholder.com/15/374151/FFFFFF?text=+)
@@ -215,3 +208,25 @@ The UI design incorporates a consistent color scheme to enhance user experience 
 - **Disabled States:**
   - `dark:disabled:bg-gray-700` ![#374151](https://via.placeholder.com/15/374151/FFFFFF?text=+)
   - `dark:disabled:text-gray-400` ![#9CA3AF](https://via.placeholder.com/15/9CA3AF/000000?text=+)
+
+### Gradients
+- **Light Mode:**
+  - `bg-gradient-to-r from-cyan-500 via-pink-500 to-purple-500` 
+    ![Cyan to Pink to Purple](https://via.placeholder.com/100x15/06B6D4-EC4899-8B5CF6/000000?text=+)
+  - `bg-gradient-to-r from-indigo-500 to-cyan-600` 
+    ![Indigo to Cyan](https://via.placeholder.com/100x15/6366F1/0891B2/000000?text=+)
+  - `bg-gradient-to-r from-cyan-600 to-pink-500` 
+    ![Cyan to Pink](https://via.placeholder.com/100x15/0891B2/EC4899/000000?text=+)
+  - `bg-gradient-to-r from-pink-500 to-violet-500` 
+    ![Pink to Violet](https://via.placeholder.com/100x15/EC4899/8B5CF6/000000?text=+)
+  - `bg-gradient-to-r from-pink-500 to-pink-700` 
+    ![Pink](https://via.placeholder.com/100x15/EC4899/BE185D/000000?text=+)
+  - `bg-gradient-to-r from-cyan-600 via-pink-700 to-violet-600` 
+    ![Cyan to Pink to Violet](https://via.placeholder.com/100x15/0891B2-BE185D-7C3AED/000000?text=+)
+- **Dark Mode:**
+  - `dark:from-indigo-500 dark:to-cyan-600` 
+    ![Indigo to Cyan](https://via.placeholder.com/100x15/6366F1/0891B2/000000?text=+)
+  - `dark:from-pink-500 dark:via-pink-600 dark:to-violet-500` 
+    ![Pink to Violet](https://via.placeholder.com/100x15/EC4899/DB2777/8B5CF6/000000?text=+)
+
+These colors are defined using TailwindCSS classes and are applied consistently across the application to ensure a cohesive and user-friendly interface.
