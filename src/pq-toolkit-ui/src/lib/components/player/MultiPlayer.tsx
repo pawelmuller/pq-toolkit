@@ -122,7 +122,7 @@ const MultiPlayer = ({
   }
 
   return (
-    <Box display="flex" flexDirection="column" alignItems="center" minWidth="16rem" sx={{ bgcolor: 'blue.100', p: 2, borderRadius: 1 }}>
+    <Box display="flex" flexDirection="column" alignItems="center" minWidth="16rem" sx={{ p: 2, borderRadius: 1 }}>
       <Slider
         min={0}
         max={length}
@@ -131,7 +131,7 @@ const MultiPlayer = ({
           seekAllPlayers(value as number)
           setProgress(value as number)
         }}
-        sx={{ width: '100%', color: 'blue' }}
+        sx={{ width: '100%', color: '#3b82f6' }}
         data-testid="progress-slider"
       />
       <Box display="flex" justifyContent="space-between" width="100%" fontSize="0.875rem">
@@ -139,7 +139,7 @@ const MultiPlayer = ({
         <Typography variant="body2">{formatTime(length)}</Typography>
       </Box>
       <Box display="flex" gap={1} justifyContent="center">
-        <IconButton onClick={togglePlayPause} sx={{ color: 'blue' }} data-testid="play-pause-button">
+        <IconButton onClick={togglePlayPause} sx={{ color: '#3b82f6' }} data-testid="play-pause-button">
           {status === 'playing' ? <PauseIcon data-testid="pause-icon" /> : <PlayArrowIcon data-testid="play-icon" />}
         </IconButton>
       </Box>
@@ -153,11 +153,11 @@ const MultiPlayer = ({
                   onClick={() => { handleSampleSelect(index) }}
                   variant="contained"
                   sx={{
-                    bgcolor: selectedPlayer === index ? '#BE185D' : 'blue.300',
+                    bgcolor: selectedPlayer === index ? '#db2777' : '#3b82f6',
                     color: 'white',
                     fontWeight: 'bold',
                     '&:hover': {
-                      bgcolor: '#DB2777'
+                      bgcolor: '#db2777'
                     }
                   }}
                   data-testid={`sample-button-${index}`}

@@ -73,7 +73,10 @@ const APETestComponent = ({
   }, [responses, setAnswer, testData.testNumber, feedback])
 
   return (
-    <div className="bg-white rounded-md p-lg flex flex-col items-center text-black dark:text-white bg-gray-200/10 backdrop-blur-md rounded-3xl p-8 shadow-2xl">
+    <div className="flex flex-col items-center bg-gray-100 dark:bg-gray-700 rounded-xl p-8 shadow-2xl">
+      <h2 className="relative text-center text-3xl md:text-2xl font-semibold -mb-2">
+        APE Test
+      </h2>
       <div className="flex gap-md mt-md">
         <MultiPlayer
           assets={samples.reduce<Map<string, { url: string }>>((map, sample, idx) => {
@@ -88,10 +91,10 @@ const APETestComponent = ({
           selectedPlayerState={selectedPlayerState}
         />
       </div>
-      <div className="flex flex-col gap-sm w-full mt-md">
+      <div className="flex flex-col gap-sm w-full mt-4">
         {axis.map(({ text, questionId }) => (
           <div className="mb-sm" key={`q${questionId}`}>
-            {text}
+            <div className="font-semibold text-2xl md:text-lg mb-1">{text}</div>
             <OrderSlider
               key={`slider_${questionId}`}
               currentSample={selectedPlayerState[0]}
