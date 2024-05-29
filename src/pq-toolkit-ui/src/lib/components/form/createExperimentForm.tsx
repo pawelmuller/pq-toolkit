@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react"
+import React, { useEffect, useState, useRef } from "react";
 import { FaXmark } from "react-icons/fa6";
 import { FaPlus, FaInfoCircle, FaExclamationTriangle, FaSave, FaExclamationCircle, FaCheckCircle } from "react-icons/fa";
 import { validateTestSchema } from "@/lib/schemas/utils";
@@ -12,7 +12,7 @@ import AbEditor from "../editors/AbEditor";
 import AbxEditor from "../editors/AbxEditor";
 import MushraEditor from "../editors/MushraEditor";
 import ApeEditor from "../editors/ApeEditor";
-import { TextEncoder } from 'util';
+
 function generateRandomString(): string {
     const segments = [];
     for (let i = 0; i < 4; i++) {
@@ -30,25 +30,28 @@ const CreateExperimentForm = ({ selectedExperiment, setSelectedExperiment }: { s
                 description: "",
                 endText: "",
                 tests: []
-            })
+            });
         });
         getSamplesFetch(selectedExperiment, getSamplesSchema).then((response) => {
             for (const sampleName of response) {
                 getSampleFetch(selectedExperiment, sampleName, getSampleSchema).then(response => {
-                    const encoder = new TextEncoder();
-                    const responseData: ArrayBuffer = encoder.encode(response).buffer;
-                    const newFile = new File([responseData], sampleName);
-                    setFileList((oldSampleFiles) => {
-                        const fileExists = oldSampleFiles.some(file => file.name === newFile.name);
-                        if (!fileExists) {
-                            return [...oldSampleFiles, newFile];
-                        } else {
-                            return oldSampleFiles;
-                        }
-                    });
-                }).catch(error => { console.error(error) })
+                    const responseData = new Blob([response], { type: 'application/json' });
+                    const reader = new FileReader();
+                    reader.onload = () => {
+                        const newFile = new File([reader.result as ArrayBuffer], sampleName);
+                        setFileList((oldSampleFiles) => {
+                            const fileExists = oldSampleFiles.some(file => file.name === newFile.name);
+                            if (!fileExists) {
+                                return [...oldSampleFiles, newFile];
+                            } else {
+                                return oldSampleFiles;
+                            }
+                        });
+                    };
+                    reader.readAsArrayBuffer(responseData);
+                }).catch(error => { console.error(error) });
             }
-        }).catch(error => { console.error(error) })
+        }).catch(error => { console.error(error) });
     }, [selectedExperiment]);
 
     const [setup, setSetup] = useState<ExperimentSetup>({
@@ -117,7 +120,6 @@ const CreateExperimentForm = ({ selectedExperiment, setSelectedExperiment }: { s
             setSetupError('Invalid file type. Please upload a JSON file.');
             return;
         }
-
         fileReader.readAsText(files[0], "UTF-8");
         fileReader.onload = (e: ProgressEvent<FileReader>) => {
             if (e.target !== null) {
@@ -135,11 +137,12 @@ const CreateExperimentForm = ({ selectedExperiment, setSelectedExperiment }: { s
                             if (validationResult.validationError != null)
                                 testValidationErrors.push(validationResult.validationError);
                             else test = validationResult.data;
-                        })
+                        });
                         if (testValidationErrors.length <= 0) {
                             setSetup(uploadedData);
                             setSetupList([files[0].name]);
                             setSetupError(null);
+                            setSetupUploadedFlag(true);
                         } else {
                             setSetupError('Invalid setup file.');
                         }
@@ -148,8 +151,8 @@ const CreateExperimentForm = ({ selectedExperiment, setSelectedExperiment }: { s
                     setSetupError('Invalid setup file.');
                 }
             }
-        }
-    }
+        };
+    };
 
     const areAllFilesProvided = (test: ABTest | ABXTest | FullABXTest | MUSHRATest | APETest | BaseTest, fileList: File[]): boolean => {
         if (Object.prototype.hasOwnProperty.call(test, 'reference')) {
@@ -177,7 +180,7 @@ const CreateExperimentForm = ({ selectedExperiment, setSelectedExperiment }: { s
             return false;
         }
         return true;
-    }
+    };
 
     const handleDragOver = (e: React.DragEvent<HTMLLabelElement>): void => {
         e.preventDefault();
@@ -228,8 +231,8 @@ const CreateExperimentForm = ({ selectedExperiment, setSelectedExperiment }: { s
             setError(null);
         }
 
-        setFileList((oldSampleFiles) => { return oldSampleFiles.filter((value, index, array) => { return array.indexOf(value) === index }) });
-    }
+        setFileList((oldSampleFiles) => { return oldSampleFiles.filter((value, index, array) => { return array.indexOf(value) === index; }); });
+    };
 
     const handleDropSetup = (e: React.DragEvent<HTMLLabelElement>): void => {
         e.preventDefault();
@@ -258,8 +261,8 @@ const CreateExperimentForm = ({ selectedExperiment, setSelectedExperiment }: { s
                 setSetup(JSON.parse(content));
                 setSetupError(null);
             }
-        }
-    }
+        };
+    };
 
     return (
         <div className="flex flex-col self-center fadeInUpFast 2xl:self-start text-black dark:text-white bg-gray-50 dark:bg-stone-800 rounded-3xl shadow-lg 2xl:shadow-2xl w-full max-w-4xl z-10 p-6 overflow-hidden">
@@ -280,8 +283,8 @@ const CreateExperimentForm = ({ selectedExperiment, setSelectedExperiment }: { s
                             }}
                             className="cursor-pointer text-blue-400 dark:text-blue-500 hover:text-pink-500 dark:hover:text-pink-600 transform hover:scale-110 duration-300 ease-in-out"
                             size={35}
-                            onMouseEnter={() => { setShowSaveInfo(true) }}
-                            onMouseLeave={() => { setShowSaveInfo(false) }}
+                            onMouseEnter={() => { setShowSaveInfo(true); }}
+                            onMouseLeave={() => { setShowSaveInfo(false); }}
                         />
                         {showSaveInfo && (
                             <div className="absolute right-0 top-full mt-2 w-64 p-2 text-xs text-white bg-gray-800 dark:text-black dark:bg-gray-300 rounded-md shadow-lg z-10">
@@ -289,7 +292,7 @@ const CreateExperimentForm = ({ selectedExperiment, setSelectedExperiment }: { s
                             </div>
                         )}
                     </div>
-                    <FaXmark onClick={() => { setSelectedExperiment("") }} className="cursor-pointer text-blue-400 dark:text-blue-500 hover:text-pink-500 dark:hover:text-pink-600 transform hover:scale-110 duration-300 ease-in-out" size={40} />
+                    <FaXmark onClick={() => { setSelectedExperiment(""); }} className="cursor-pointer text-blue-400 dark:text-blue-500 hover:text-pink-500 dark:hover:text-pink-600 transform hover:scale-110 duration-300 ease-in-out" size={40} />
                 </div>
             </div>
             <div className="flex flex-col md:flex-row h-full space-y-6 md:space-y-0 md:space-x-6">
@@ -325,15 +328,15 @@ const CreateExperimentForm = ({ selectedExperiment, setSelectedExperiment }: { s
                                 <div
                                     key={index}
                                     className="relative cursor-pointer p-2 text-white font-semibold bg-blue-400 dark:bg-blue-500 hover:bg-pink-500 dark:hover:bg-pink-600 transform hover:scale-105 duration-300 ease-in-out rounded-md"
-                                    onClick={() => { setCurrentTest(test) }}
+                                    onClick={() => { setCurrentTest(test); }}
                                 >
                                     <div className="flex items-center">
-                                        <span>{test.testNumber}</span>
+                                        <span>Test #{test.testNumber}</span>
                                         {!areAllFilesProvided(test, fileList) && (
                                             <div
                                                 className="relative flex items-center ml-2"
-                                                onMouseEnter={() => { setShowTooltip(index) }}
-                                                onMouseLeave={() => { setShowTooltip(null) }}
+                                                onMouseEnter={() => { setShowTooltip(index); }}
+                                                onMouseLeave={() => { setShowTooltip(null); }}
                                             >
                                                 <FaExclamationTriangle className="text-yellow-400 transform hover:scale-125 duration-100 ease-in-out" />
                                                 {showTooltip === index && (
@@ -353,7 +356,7 @@ const CreateExperimentForm = ({ selectedExperiment, setSelectedExperiment }: { s
                         <input
                             className="rounded outline-0 border-2 bg-gray-100 border-gray-300 dark:bg-gray-700 dark:border-gray-500 text-black dark:text-white w-full"
                             value={setup.description}
-                            onChange={(e) => { setSetup((oldSetup) => ({ ...oldSetup, description: e.target.value })) }}
+                            onChange={(e) => { setSetup((oldSetup) => ({ ...oldSetup, description: e.target.value })); }}
                         />
                     </div>
                     <h4 className="font-semibold text-sm lg:text-base mb-2">End Credits</h4>
@@ -361,7 +364,7 @@ const CreateExperimentForm = ({ selectedExperiment, setSelectedExperiment }: { s
                         <input
                             className="rounded outline-0 border-2 bg-gray-100 border-gray-300 dark:bg-gray-700 dark:border-gray-500 text-black dark:text-white w-full"
                             value={setup.endText}
-                            onChange={(e) => { setSetup((oldSetup) => ({ ...oldSetup, endText: e.target.value })) }}
+                            onChange={(e) => { setSetup((oldSetup) => ({ ...oldSetup, endText: e.target.value })); }}
                         />
                     </div>
                     <div className="mt-auto">
@@ -462,7 +465,7 @@ const CreateExperimentForm = ({ selectedExperiment, setSelectedExperiment }: { s
                                 Type of Experiment
                                 <FaInfoCircle
                                     className="ml-2 text-blue-400 dark:text-blue-500 hover:text-pink-500 dark:hover:text-pink-600 transform hover:scale-110 duration-100 ease-in-out cursor-pointer"
-                                    onClick={() => { setShowInfo(!showInfo) }}
+                                    onClick={() => { setShowInfo(!showInfo); }}
                                 />
                             </h4>
                             {showInfo && (
@@ -520,7 +523,7 @@ const CreateExperimentForm = ({ selectedExperiment, setSelectedExperiment }: { s
                 )}
             </div>
         </div>
-    )
-}
+    );
+};
 
 export default CreateExperimentForm;
