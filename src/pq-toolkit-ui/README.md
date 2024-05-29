@@ -212,21 +212,13 @@ The UI design incorporates a consistent color scheme to enhance user experience 
 ### Gradients
 - **Light Mode:**
   - `bg-gradient-to-r from-cyan-500 via-pink-500 to-purple-500` 
-    ![Cyan to Pink to Purple](https://via.placeholder.com/100x15/06B6D4-EC4899-8B5CF6/000000?text=+)
   - `bg-gradient-to-r from-indigo-500 to-cyan-600` 
-    ![Indigo to Cyan](https://via.placeholder.com/100x15/6366F1/0891B2/000000?text=+)
   - `bg-gradient-to-r from-cyan-600 to-pink-500` 
-    ![Cyan to Pink](https://via.placeholder.com/100x15/0891B2/EC4899/000000?text=+)
   - `bg-gradient-to-r from-pink-500 to-violet-500` 
-    ![Pink to Violet](https://via.placeholder.com/100x15/EC4899/8B5CF6/000000?text=+)
   - `bg-gradient-to-r from-pink-500 to-pink-700` 
-    ![Pink](https://via.placeholder.com/100x15/EC4899/BE185D/000000?text=+)
   - `bg-gradient-to-r from-cyan-600 via-pink-700 to-violet-600` 
-    ![Cyan to Pink to Violet](https://via.placeholder.com/100x15/0891B2-BE185D-7C3AED/000000?text=+)
 - **Dark Mode:**
   - `dark:from-indigo-500 dark:to-cyan-600` 
-    ![Indigo to Cyan](https://via.placeholder.com/100x15/6366F1/0891B2/000000?text=+)
-  - `dark:from-pink-500 dark:via-pink-600 dark:to-violet-500` 
-    ![Pink to Violet](https://via.placeholder.com/100x15/EC4899/DB2777/8B5CF6/000000?text=+)
+  - `dark:from-pink-500 dark:via-pink-600 dark:to-violet-500`
 
 These colors are defined using TailwindCSS classes and are applied consistently across the application to ensure a cohesive and user-friendly interface.
