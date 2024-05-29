@@ -61,7 +61,7 @@ describe('CreateExperimentForm', () => {
         const addButton = await screen.findByLabelText('Add new test');
         fireEvent.click(addButton);
 
-        expect(screen.getByText('1')).toBeInTheDocument();
+        expect(screen.getByText('Test #1')).toBeInTheDocument();
     });
 
     test('handles sample file upload', async () => {

@@ -1,6 +1,5 @@
 'use client'
 import { Slider, styled } from '@mui/material'
-import zIndex from '@mui/material/styles/zIndex'
 import React from 'react'
 
 // Custom styling for the slider with a blue to red gradient through purple

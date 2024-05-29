@@ -59,14 +59,14 @@ const OrderSlider = ({
         className="custom-slider w-full absolute accent-blue-500 outline-0"
         type="range"
         value={responses.get(currentSampleId)}
-        onChange={() => {}}
+        onChange={() => { }}
       />
       {Array.from(responses.entries()).map(([key], index) => (
         <input
           key={`slider_${key}`}
-          className={`w-full absolute appearance-none bg-transparent outline-0 ${currentSample !== index ? 
-            'accent-gray-400 left-0' : 'accent-blue-500 left-1'
-          }`}
+          className={`w-full absolute appearance-none bg-transparent outline-0 ${currentSample !== index ?
+            'accent-gray-400' : 'accent-blue-500'
+            }`}
           style={{ zIndex: Zindices[index] }}
           type="range"
           min="1"
