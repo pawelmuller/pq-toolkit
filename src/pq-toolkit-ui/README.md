@@ -149,69 +149,69 @@ To add new experiment type most important steps are:
 
 Based on the Tailwind CSS classes extracted from the provided files, here is the updated documentation section for colors used in the UI:
 
+Of course! Here's the updated documentation section with color swatches included next to each color description:
+
 ## Colors Used in UI
 
 The UI design incorporates a consistent color scheme to enhance user experience and maintain visual coherence. Here are the main colors used across different elements of the interface, differentiated by light and dark modes:
 
 ### Light Mode
 - **Background Colors:**
-  - `bg-gray-200`
+  - `bg-gray-200` ![#E5E7EB](https://via.placeholder.com/15/E5E7EB/000000?text=+)
 - **Primary Buttons:**
-  - `bg-blue-400`
+  - `bg-blue-400` ![#3B82F6](https://via.placeholder.com/15/3B82F6/000000?text=+)
 - **Secondary Buttons:**
-  - `bg-gray-300`
+  - `bg-gray-300` ![#D1D5DB](https://via.placeholder.com/15/D1D5DB/000000?text=+)
 - **Text Colors:**
-  - `text-black`
-  - `text-gray-300`
-  - `text-gray-400`
-  - `text-blue-500`
-  - `text-pink-500`
-  - `text-white`
+  - `text-black` ![#000000](https://via.placeholder.com/15/000000/FFFFFF?text=+)
+  - `text-gray-300` ![#D1D5DB](https://via.placeholder.com/15/D1D5DB/000000?text=+)
+  - `text-gray-400` ![#9CA3AF](https://via.placeholder.com/15/9CA3AF/000000?text=+)
+  - `text-blue-500` ![#3B82F6](https://via.placeholder.com/15/3B82F6/000000?text=+)
+  - `text-pink-500` ![#EC4899](https://via.placeholder.com/15/EC4899/000000?text=+)
+  - `text-white` ![#FFFFFF](https://via.placeholder.com/15/FFFFFF/000000?text=+)
 - **Borders:**
-  - `border-gray-500`
-  - `border-gray-600`
+  - `border-gray-500` ![#6B7280](https://via.placeholder.com/15/6B7280/000000?text=+)
+  - `border-gray-600` ![#4B5563](https://via.placeholder.com/15/4B5563/000000?text=+)
 - **Hover States:**
-  - `hover:bg-gray-200`
-  - `hover:bg-pink-500`
+  - `hover:bg-gray-200` ![#E5E7EB](https://via.placeholder.com/15/E5E7EB/000000?text=+)
+  - `hover:bg-pink-500` ![#EC4899](https://via.placeholder.com/15/EC4899/000000?text=+)
   - `hover:scale-105`
   - `hover:scale-110`
   - `hover:scale-125`
-  - `hover:text-pink-500`
+  - `hover:text-pink-500` ![#EC4899](https://via.placeholder.com/15/EC4899/000000?text=+)
 - **Disabled States:**
-  - `disabled:bg-gray-700`
-  - `disabled:text-gray-400`
+  - `disabled:bg-gray-700` ![#374151](https://via.placeholder.com/15/374151/FFFFFF?text=+)
+  - `disabled:text-gray-400` ![#9CA3AF](https://via.placeholder.com/15/9CA3AF/000000?text=+)
 
 ### Dark Mode
 - **Background Colors:**
-  - `dark:bg-blue-500`
-  - `dark:bg-gray-300`
-  - `dark:bg-gray-600`
-  - `dark:bg-gray-700`
-  - `dark:bg-stone-800`
-  - `dark:bg-stone-900`
+  - `dark:bg-blue-500` ![#3B82F6](https://via.placeholder.com/15/3B82F6/000000?text=+)
+  - `dark:bg-gray-300` ![#D1D5DB](https://via.placeholder.com/15/D1D5DB/000000?text=+)
+  - `dark:bg-gray-600` ![#4B5563](https://via.placeholder.com/15/4B5563/000000?text=+)
+  - `dark:bg-gray-700` ![#374151](https://via.placeholder.com/15/374151/FFFFFF?text=+)
+  - `dark:bg-stone-800` ![#1C1917](https://via.placeholder.com/15/1C1917/FFFFFF?text=+)
+  - `dark:bg-stone-900` ![#111827](https://via.placeholder.com/15/111827/FFFFFF?text=+)
 - **Primary Buttons:**
-  - `dark:bg-blue-500`
+  - `dark:bg-blue-500` ![#3B82F6](https://via.placeholder.com/15/3B82F6/000000?text=+)
 - **Secondary Buttons:**
-  - `dark:bg-gray-600`
-  - `dark:bg-gray-700`
+  - `dark:bg-gray-600` ![#4B5563](https://via.placeholder.com/15/4B5563/000000?text=+)
+  - `dark:bg-gray-700` ![#374151](https://via.placeholder.com/15/374151/FFFFFF?text=+)
 - **Text Colors:**
-  - `dark:text-black`
-  - `dark:text-blue-500`
-  - `dark:text-gray-300`
-  - `dark:text-gray-400`
-  - `dark:text-pink-600`
-  - `dark:text-white`
+  - `dark:text-black` ![#000000](https://via.placeholder.com/15/000000/FFFFFF?text=+)
+  - `dark:text-blue-500` ![#3B82F6](https://via.placeholder.com/15/3B82F6/000000?text=+)
+  - `dark:text-gray-300` ![#D1D5DB](https://via.placeholder.com/15/D1D5DB/000000?text=+)
+  - `dark:text-gray-400` ![#9CA3AF](https://via.placeholder.com/15/9CA3AF/000000?text=+)
+  - `dark:text-pink-600` ![#DB2777](https://via.placeholder.com/15/DB2777/000000?text=+)
+  - `dark:text-white` ![#FFFFFF](https://via.placeholder.com/15/FFFFFF/000000?text=+)
 - **Borders:**
-  - `dark:border-gray-500`
-  - `dark:border-gray-600`
+  - `dark:border-gray-500` ![#6B7280](https://via.placeholder.com/15/6B7280/000000?text=+)
+  - `dark:border-gray-600` ![#4B5563](https://via.placeholder.com/15/4B5563/000000?text=+)
 - **Hover States:**
-  - `dark:hover:bg-bray-800`
-  - `dark:hover:bg-gray-600`
-  - `dark:hover:bg-pink-600`
-  - `dark:hover:border-gray-500`
-  - `dark:hover:text-pink-600`
+  - `dark:hover:bg-bray-800` ![#1F2937](https://via.placeholder.com/15/1F2937/FFFFFF?text=+)
+  - `dark:hover:bg-gray-600` ![#4B5563](https://via.placeholder.com/15/4B5563/000000?text=+)
+  - `dark:hover:bg-pink-600` ![#DB2777](https://via.placeholder.com/15/DB2777/000000?text=+)
+  - `dark:hover:border-gray-500` ![#6B7280](https://via.placeholder.com/15/6B7280/000000?text=+)
+  - `dark:hover:text-pink-600` ![#DB2777](https://via.placeholder.com/15/DB2777/000000?text=+)
 - **Disabled States:**
-  - `dark:disabled:bg-gray-700`
-  - `dark:disabled:text-gray-400`
-
-These colors are defined using TailwindCSS classes and are applied consistently across the application to ensure a cohesive and user-friendly interface.
+  - `dark:disabled:bg-gray-700` ![#374151](https://via.placeholder.com/15/374151/FFFFFF?text=+)
+  - `dark:disabled:text-gray-400` ![#9CA3AF](https://via.placeholder.com/15/9CA3AF/000000?text=+)
