@@ -4,7 +4,7 @@ import MultiPlayer from '../MultiPlayer'
 
 // Mockowanie metod Howl
 jest.mock('howler', () => {
-  const actualHowler = jest.requireActual('howler');
+  const actualHowler = jest.requireActual('howler')
   return {
     Howl: jest.fn().mockImplementation((options) => ({
       ...options,
@@ -13,11 +13,11 @@ jest.mock('howler', () => {
       seek: jest.fn().mockReturnValue(0),
       stop: jest.fn(),
       volume: jest.fn(),
-      duration: jest.fn().mockReturnValue(120),
+      duration: jest.fn().mockReturnValue(120)
     })),
     Howler: actualHowler.Howler
-  };
-});
+  }
+})
 
 describe('MultiPlayer', () => {
   it('renders a multi sample player', () => {

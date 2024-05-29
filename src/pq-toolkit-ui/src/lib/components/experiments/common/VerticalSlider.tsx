@@ -6,7 +6,7 @@ import React from 'react'
 const CustomSlider = styled(Slider)({
   '& .MuiSlider-rail': {
     background: 'linear-gradient(to bottom, #3b82f6, #22d3ee, #f472b6)',
-    opacity: 1,
+    opacity: 1
   },
   '& .MuiSlider-track': {
     background: 'linear-gradient(to bottom, #3b82f6, #22d3ee, #f472b6)',
@@ -16,19 +16,19 @@ const CustomSlider = styled(Slider)({
     backgroundColor: '#fff',
     border: '0px solid currentColor',
     '&:hover, &.Mui-focusVisible, &.Mui-active': {
-      boxShadow: '0px 0px 0px 6px #ec4899',
+      boxShadow: '0px 0px 0px 6px #ec4899'
     },
     zIndex: '20'
   },
   '& .MuiSlider-vertical': {
-    width: '8px',
+    width: '8px'
   },
   '& .MuiSlider-mark': {
     backgroundColor: 'currentColor',
     width: '4px',
     height: '4px',
-    borderRadius: '50%',
-  },
+    borderRadius: '50%'
+  }
 })
 
 const VerticalSlider = ({

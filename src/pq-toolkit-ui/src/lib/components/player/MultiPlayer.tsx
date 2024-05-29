@@ -8,7 +8,17 @@ import {
   useState
 } from 'react'
 import { Howl } from 'howler'
-import { IconButton, Slider, Typography, Box, Button, Table, TableBody, TableCell, TableRow } from '@mui/material'
+import {
+  IconButton,
+  Slider,
+  Typography,
+  Box,
+  Button,
+  Table,
+  TableBody,
+  TableCell,
+  TableRow
+} from '@mui/material'
 import PlayArrowIcon from '@mui/icons-material/PlayArrow'
 import PauseIcon from '@mui/icons-material/Pause'
 import { formatTime } from './utils/playerUtils'
@@ -122,7 +132,13 @@ const MultiPlayer = ({
   }
 
   return (
-    <Box display="flex" flexDirection="column" alignItems="center" minWidth="16rem" sx={{ p: 2, borderRadius: 1 }}>
+    <Box
+      display="flex"
+      flexDirection="column"
+      alignItems="center"
+      minWidth="16rem"
+      sx={{ p: 2, borderRadius: 1 }}
+    >
       <Slider
         min={0}
         max={length}
@@ -134,23 +150,41 @@ const MultiPlayer = ({
         sx={{ width: '100%', color: '#3b82f6' }}
         data-testid="progress-slider"
       />
-      <Box display="flex" justifyContent="space-between" width="100%" fontSize="0.875rem">
+      <Box
+        display="flex"
+        justifyContent="space-between"
+        width="100%"
+        fontSize="0.875rem"
+      >
         <Typography variant="body2">{formatTime(progress)}</Typography>
         <Typography variant="body2">{formatTime(length)}</Typography>
       </Box>
       <Box display="flex" gap={1} justifyContent="center">
-        <IconButton onClick={togglePlayPause} sx={{ color: '#3b82f6' }} data-testid="play-pause-button">
-          {status === 'playing' ? <PauseIcon data-testid="pause-icon" /> : <PlayArrowIcon data-testid="play-icon" />}
+        <IconButton
+          onClick={togglePlayPause}
+          sx={{ color: '#3b82f6' }}
+          data-testid="play-pause-button"
+        >
+          {status === 'playing' ? (
+            <PauseIcon data-testid="pause-icon" />
+          ) : (
+            <PlayArrowIcon data-testid="play-icon" />
+          )}
         </IconButton>
       </Box>
-      <Table className="mt-sm border-separate" sx={{ borderSpacing: '0.75rem' }}>
+      <Table
+        className="mt-sm border-separate"
+        sx={{ borderSpacing: '0.75rem' }}
+      >
         <TableBody>
           <TableRow>
             {Array.from(assets.keys()).map((name, index) => (
               <TableCell key={index} className="pb-sm">
                 <Button
                   key={`asset-selector-${index}`}
-                  onClick={() => { handleSampleSelect(index) }}
+                  onClick={() => {
+                    handleSampleSelect(index)
+                  }}
                   variant="contained"
                   sx={{
                     bgcolor: selectedPlayer === index ? '#db2777' : '#3b82f6',

@@ -23,8 +23,8 @@ import {
   type MUSHRAResult,
   type APEResult
 } from '@/lib/schemas/experimentState'
-import Header from "@/lib/components/basic/header"
-import Blobs from "../../../lib/components/basic/blobs"
+import Header from '@/lib/components/basic/header'
+import Blobs from '../../../lib/components/basic/blobs'
 
 export const revalidate = 0
 
@@ -130,7 +130,9 @@ const TestPage = ({
         <div className="relative text-center mb-sm">
           <Blobs />
           <div className="fadeInUp">
-            <h1 className="relative text-5xl md:text-6xl font-bold">Perceptual Qualities Toolkit</h1>
+            <h1 className="relative text-5xl md:text-6xl font-bold">
+              Perceptual Qualities Toolkit
+            </h1>
             <h2 className="relative text-2xl md:text-3xl font-semibold mt-sm">
               Test #{step}
             </h2>
@@ -140,19 +142,19 @@ const TestPage = ({
           <div className="flex flex-col justify-center content-center scale-75 md:scale-100">
             <div className="flex flex-col items-center text-gray-700 dark:text-gray-100 bg-gray-50 dark:bg-stone-800 rounded-3xl p-8 shadow-xl">
               <div className="flex flex-col gap-md">
-                <div className="flex flex-col gap-xs">
-                  {getTestComponent()}
-                </div>
-                {(
+                <div className="flex flex-col gap-xs">{getTestComponent()}</div>
+                {
                   <div className="relative w-full mt-2 self-center">
                     <textarea
                       className="w-full p-2 rounded-md border-2 bg-gray-100 border-gray-300 dark:bg-gray-700 dark:border-gray-500 text-black dark:text-white  focus:outline-none focus:ring-2 focus:ring-pink-500 dark:focus:ring-pink-600"
                       placeholder="Write your feedback here..."
                       value={feedback}
-                      onChange={(e) => { setFeedback(e.target.value) }}
+                      onChange={(e) => {
+                        setFeedback(e.target.value)
+                      }}
                     />
                   </div>
-                )}
+                }
                 <div className="flex justify-center gap-sm">
                   {step > 1 && (
                     <Link href={(step - 1).toString()}>

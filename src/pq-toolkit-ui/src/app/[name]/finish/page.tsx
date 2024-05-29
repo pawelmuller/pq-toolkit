@@ -3,9 +3,9 @@ import { useContext } from 'react'
 import InvalidConfigurationError from '../invalid-configuration-error'
 import Loading from '../loading'
 import { ExperimentContext } from '../layout'
-import Link from "next/link"
-import Header from "@/lib/components/basic/header"
-import Blobs from "../../../lib/components/basic/blobs"
+import Link from 'next/link'
+import Header from '@/lib/components/basic/header'
+import Blobs from '../../../lib/components/basic/blobs'
 
 const FinishPage = ({ params }: { params: { name: string } }): JSX.Element => {
   const context = useContext(ExperimentContext)
@@ -21,7 +21,9 @@ const FinishPage = ({ params }: { params: { name: string } }): JSX.Element => {
         <div className="relative text-center mb-sm">
           <Blobs />
           <div className="fadeInUp">
-            <h1 className="relative text-5xl md:text-6xl font-bold">Perceptual Qualities Toolkit</h1>
+            <h1 className="relative text-5xl md:text-6xl font-bold">
+              Perceptual Qualities Toolkit
+            </h1>
             <h2 className="relative text-2xl md:text-3xl font-semibold mt-sm -ml-2">
               Thank You
             </h2>

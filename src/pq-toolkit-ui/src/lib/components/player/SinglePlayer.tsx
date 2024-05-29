@@ -82,8 +82,14 @@ const SinglePlayer = ({
   }
 
   return (
-    <Box display="flex" flexDirection="column" alignItems="center" minWidth="16rem" sx={{ p: 2, borderRadius: 1 }}>
-      <h1 className='font-semibold text-2xl md:text-xl'>{name}</h1>
+    <Box
+      display="flex"
+      flexDirection="column"
+      alignItems="center"
+      minWidth="16rem"
+      sx={{ p: 2, borderRadius: 1 }}
+    >
+      <h1 className="font-semibold text-2xl md:text-xl">{name}</h1>
       <Slider
         min={0}
         max={length}
@@ -95,13 +101,30 @@ const SinglePlayer = ({
         sx={{ width: '100%', color: '#3b82f6' }}
         data-testid="progress-slider"
       />
-      <Box display="flex" justifyContent="space-between" width="100%" fontSize="0.875rem">
-        <Typography variant="body2" data-testid="current-time">{formatTime(progress)}</Typography>
-        <Typography variant="body2" data-testid="total-time">{formatTime(length)}</Typography>
+      <Box
+        display="flex"
+        justifyContent="space-between"
+        width="100%"
+        fontSize="0.875rem"
+      >
+        <Typography variant="body2" data-testid="current-time">
+          {formatTime(progress)}
+        </Typography>
+        <Typography variant="body2" data-testid="total-time">
+          {formatTime(length)}
+        </Typography>
       </Box>
       <Box display="flex" gap={1} justifyContent="center">
-        <IconButton onClick={togglePlayPause} sx={{ color: '#3b82f6' }} data-testid="play-pause-button">
-          {status === 'playing' ? <PauseIcon data-testid="pause-icon" /> : <PlayArrowIcon data-testid="play-icon" />}
+        <IconButton
+          onClick={togglePlayPause}
+          sx={{ color: '#3b82f6' }}
+          data-testid="play-pause-button"
+        >
+          {status === 'playing' ? (
+            <PauseIcon data-testid="pause-icon" />
+          ) : (
+            <PlayArrowIcon data-testid="play-icon" />
+          )}
         </IconButton>
       </Box>
     </Box>

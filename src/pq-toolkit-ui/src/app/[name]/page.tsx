@@ -4,17 +4,19 @@ import { useContext, useEffect, useState } from 'react'
 import { ExperimentContext } from './layout'
 import Loading from './loading'
 import InvalidConfigurationError from './invalid-configuration-error'
-import Header from "@/lib/components/basic/header"
-import Blobs from "../../lib/components/basic/blobs"
+import Header from '@/lib/components/basic/header'
+import Blobs from '../../lib/components/basic/blobs'
 
-const ExperimentWelcomePage = (props: { params: { name: string } }): JSX.Element => {
+const ExperimentWelcomePage = (props: {
+  params: { name: string }
+}): JSX.Element => {
   const { name: experimentName } = props.params
   const context = useContext(ExperimentContext)
   const data = context?.data
   const [errorRequest, setErrorRequest] = useState(false)
 
   useEffect(() => {
-    if ((context?.error) ?? false) {
+    if (context?.error ?? false) {
       setErrorRequest(true)
     }
   }, [context?.error])
@@ -34,16 +36,21 @@ const ExperimentWelcomePage = (props: { params: { name: string } }): JSX.Element
               <Loading />
             ) : (
               <div className="flex flex-col items-center text-black dark:text-white bg-gray-50 dark:bg-stone-800 rounded-3xl p-6 shadow-xl whitespace-normal w-full max-w-xs sm:max-w-md md:max-w-xl">
-                <div className='w-full'>
+                <div className="w-full">
                   <h1 className="text-lg md:text-xl w-full whitespace-normal break-words">
                     Welcome to experiment <b>{data.name}</b>
                   </h1>
-                  <h2 className="mt-sm text-sm font-normal md:text-base whitespace-normal break-words w-full">{data.description}</h2>
+                  <h2 className="mt-sm text-sm font-normal md:text-base whitespace-normal break-words w-full">
+                    {data.description}
+                  </h2>
                 </div>
                 <div className="mt-md">
-                  <div className="bg-clip-text text-base md:text-lg font-bold text-transparent bg-gradient-to-r from-cyan-500  to-pink-500 cursor-pointer" onClick={() => {
-                    window.location.href = `/${experimentName}/1`
-                  }}>
+                  <div
+                    className="bg-clip-text text-base md:text-lg font-bold text-transparent bg-gradient-to-r from-cyan-500  to-pink-500 cursor-pointer"
+                    onClick={() => {
+                      window.location.href = `/${experimentName}/1`
+                    }}
+                  >
                     Start
                   </div>
                 </div>

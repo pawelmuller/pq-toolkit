@@ -8,7 +8,12 @@ interface APIError {
 }
 
 const fetcher = async (url: RequestInfo | URL): Promise<unknown> => {
-  const res = await fetch(url, { headers: { 'accept': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('token')}` } })
+  const res = await fetch(url, {
+    headers: {
+      accept: 'application/json',
+      Authorization: `Bearer ${localStorage.getItem('token')}`
+    }
+  })
 
   if (!res.ok) {
     const error: APIError = {

@@ -3,7 +3,7 @@ import { render, screen, fireEvent } from '@testing-library/react'
 import SinglePlayer from '../SinglePlayer'
 
 jest.mock('howler', () => {
-  const original = jest.requireActual('howler');
+  const original = jest.requireActual('howler')
   return {
     ...original,
     Howl: jest.fn().mockImplementation((config) => ({
@@ -13,9 +13,9 @@ jest.mock('howler', () => {
       stop: jest.fn(),
       seek: jest.fn(() => 0),
       duration: jest.fn(() => 100)
-    })),
-  };
-});
+    }))
+  }
+})
 
 describe('SinglePlayer', () => {
   it('renders a single sample player', () => {

@@ -39,7 +39,9 @@ const SingleSelectQuestion = ({
           <div
             key={`option_${idx}`}
             className={`w-full min-h-[4rem] h-max max-h-[8rem] rounded-md font-semibold text-lg md:text-base text-white transform hover:scale-105 duration-300 ease-in-out ${
-              option.selected ? 'bg-pink-500 dark:bg-pink-600' : 'bg-pink-200 dark:bg-pink-300 hover:bg-pink-500 dark:hover:bg-pink-600'
+              option.selected
+                ? 'bg-pink-500 dark:bg-pink-600'
+                : 'bg-pink-200 dark:bg-pink-300 hover:bg-pink-500 dark:hover:bg-pink-600'
             } flex items-center justify-center cursor-pointer`}
             onClick={() => {
               onSelect(option.idx)

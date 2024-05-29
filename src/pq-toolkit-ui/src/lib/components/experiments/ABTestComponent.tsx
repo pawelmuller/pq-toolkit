@@ -20,7 +20,7 @@ const ABTestComponent = ({
   testData: ABTest
   initialValues?: PartialResult<ABResult>
   experimentName: string
-  setAnswer: (result: ABResult) => void,
+  setAnswer: (result: ABResult) => void
   feedback: string
 }): JSX.Element => {
   const { samples, questions } = testData
