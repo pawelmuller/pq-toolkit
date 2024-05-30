@@ -8,26 +8,16 @@ import requests
 from pydantic import PydanticSchemaGenerationError, BaseModel, ValidationError
 from requests import ConnectTimeout
 
-from src.api_client.dataclasses import PqExperiment, PqTestResultsList
-from src.api_client.exceptions import (
-    PqSerializationException, PqExperimentAlreadyExistsException, PqExperimentSetupException,
-    PqExperimentSampleUploadException, PqSampleNotFoundError
+from pqtoolkit.dataclasses import PqExperiment, PqTestResultsList
+from pqtoolkit.exceptions import (
+    PqSerializationException,
+    PqExperimentAlreadyExistsException,
+    PqExperimentSetupException,
+    PqExperimentSampleUploadException,
+    NotAuthorisedError,
+    DetailedError,
+    IncorrectLogin,
 )
-
-
-class IncorrectLogin(Exception):
-    def __init__(self) -> None:
-        super().__init__("Incorrect login or password!")
-
-
-class NotAuthorisedError(Exception):
-    def __init__(self):
-        super().__init__("Not authorized, log in first")
-
-
-class DetailedError(Exception):
-    def __init__(self, content):
-        super().__init__(str(content))
 
 
 class PqToolkitAPIClient:
@@ -41,14 +31,24 @@ class PqToolkitAPIClient:
         base_port: The port of the API.
     """
 
-    def __init__(self, *, base_host: str = "http://localhost", base_port: int = 8000, api_version: str = "v1", login=None, password=None):
+    def __init__(
+        self,
+        *,
+        base_host: str = "http://localhost",
+        base_port: int = 8000,
+        api_version: str = "v1",
+        login=None,
+        password=None,
+    ):
         self._base_host = base_host
         self._base_port = base_port
         self._oauth_token = None
         self._oauth_id = None
         self._endpoint = f"{self._base_host}:{self._base_port}/api/{api_version}"
 
-        response = self._get("/status",)
+        response = self._get(
+            "/status",
+        )
         status = response.json().get("status")
         if status != "HEALTHY":
             raise ConnectionError(f"Cannot read status from {self._endpoint}")
@@ -60,7 +60,7 @@ class PqToolkitAPIClient:
     def _request(self, **kwargs):
         try:
             if self.is_logged_in:
-                if not "headers" in kwargs:
+                if "headers" not in kwargs:
                     kwargs["headers"] = {}
                 kwargs["headers"]["Authorization"] = self._auth_token
 
@@ -96,7 +96,9 @@ class PqToolkitAPIClient:
                             is_collection = True
                             type_to_return = iterable_type.__args__[0]
                             break
-                        if inspect.isclass(iterable_type) and issubclass(iterable_type, BaseModel):
+                        if inspect.isclass(iterable_type) and issubclass(
+                            iterable_type, BaseModel
+                        ):
                             break
             else:
                 type_to_return = types_to_return
@@ -120,13 +122,17 @@ class PqToolkitAPIClient:
             types_to_return = type_hints.get("return")
 
             if not types_to_return:
-                raise PqSerializationException(f"Function {func.__name__} has not ben annotated with any return type")
+                raise PqSerializationException(
+                    f"Function {func.__name__} has not ben annotated with any return type"
+                )
 
             type_to_return, is_collection = _determine_return_type(types_to_return)
 
             if not issubclass(type_to_return, BaseModel):
-                raise PqSerializationException(f"Function {func.__name__} has not ben annotated with Pydantic's "
-                                               f"BaseModel subclass or an Union with its subclass.")
+                raise PqSerializationException(
+                    f"Function {func.__name__} has not ben annotated with Pydantic's "
+                    f"BaseModel subclass or an Union with its subclass."
+                )
 
             result = func(*args, **kwargs)
 
@@ -137,7 +143,9 @@ class PqToolkitAPIClient:
                 casted_result = _parse_response(result, is_collection, type_to_return)
                 return casted_result
             except (RuntimeError, PydanticSchemaGenerationError, ValidationError) as e:
-                raise PqSerializationException(f"Cannot cast the result to {types_to_return}: {e}")
+                raise PqSerializationException(
+                    f"Cannot cast the result to {types_to_return}: {e}"
+                )
 
         return wrapper
 
@@ -146,10 +154,7 @@ class PqToolkitAPIClient:
         return f"{self._oauth_id} {self._oauth_token}"
 
     def log_in(self, username, password):
-        data = {
-            "username": username,
-            "password": password
-        }
+        data = {"username": username, "password": password}
         resp = self._post("/auth/login", data=data)
 
         match resp.status_code:
@@ -166,7 +171,7 @@ class PqToolkitAPIClient:
 
     @property
     def is_logged_in(self):
-        return (self._oauth_id and self._oauth_token)
+        return self._oauth_id and self._oauth_token
 
     def get_experiments(self) -> list[str]:
         """
@@ -216,13 +221,15 @@ class PqToolkitAPIClient:
         Raises:
             PqExperimentAlreadyExistsException: If the experiment of given name already exists.
         """
-        response = self._post(f"/experiments", json={"name": f"{experiment_name}"})
+        response = self._post("/experiments", json={"name": f"{experiment_name}"})
         match response.status_code:
             case 200:
                 experiments = response.json().get("experiments")
                 return experiments
             case 409:
-                raise PqExperimentAlreadyExistsException(experiment_name=experiment_name)
+                raise PqExperimentAlreadyExistsException(
+                    experiment_name=experiment_name
+                )
             case 401:
                 raise NotAuthorisedError()
             case _:
@@ -239,7 +246,7 @@ class PqToolkitAPIClient:
             experiments: A list of strings representing names of the experiments.
         """
 
-        response = self._delete(f"/experiments", json={"name": f"{experiment_name}"})
+        response = self._delete("/experiments", json={"name": f"{experiment_name}"})
         match response.status_code:
             case 200:
                 experiments = response.json().get("experiments")
@@ -264,10 +271,19 @@ class PqToolkitAPIClient:
         """
 
         if not isinstance(experiment_setup, PqExperiment):
-            raise PqExperimentSetupException(experiment_name=experiment_name,
-                                             message="The experiment settings must be a PqExperiment")
+            raise PqExperimentSetupException(
+                experiment_name=experiment_name,
+                message="The experiment settings must be a PqExperiment",
+            )
         model_dict = experiment_setup.model_dump_json(by_alias=True, exclude_none=True)
-        files_struct = {"file": ("setup.json", model_dict, "application/json", {"Content-Disposition": "form-data"})}
+        files_struct = {
+            "file": (
+                "setup.json",
+                model_dict,
+                "application/json",
+                {"Content-Disposition": "form-data"},
+            )
+        }
         response = self._post(f"/experiments/{experiment_name}", files=files_struct)
 
         match response.status_code:
@@ -277,13 +293,17 @@ class PqToolkitAPIClient:
                     raise PqExperimentSetupException(experiment_name=experiment_name)
             case 400:
                 message = response.json().get("message")
-                raise PqExperimentSetupException(experiment_name=experiment_name, message=message)
+                raise PqExperimentSetupException(
+                    experiment_name=experiment_name, message=message
+                )
             case 401:
                 raise NotAuthorisedError()
             case _:
                 raise DetailedError(response.json())
 
-    def upload_sample(self, *, experiment_name: str, sample_name: str, sample_binary: bytes | BinaryIO):
+    def upload_sample(
+        self, *, experiment_name: str, sample_name: str, sample_binary: bytes | BinaryIO
+    ):
         """
         Method allows to upload a sample to the experiment.
 
@@ -296,18 +316,32 @@ class PqToolkitAPIClient:
             PqExperimentSampleUploadException: When the API returns an error.
         """
 
-        files_struct = {"file": (sample_name, sample_binary, "audio/mpeg", {"Content-Disposition": "form-data"})}
-        response = self._post(f"/experiments/{experiment_name}/samples", files=files_struct)
+        files_struct = {
+            "file": (
+                sample_name,
+                sample_binary,
+                "audio/mpeg",
+                {"Content-Disposition": "form-data"},
+            )
+        }
+        response = self._post(
+            f"/experiments/{experiment_name}/samples", files=files_struct
+        )
 
         match response.status_code:
             case 200:
                 is_success = response.json().get("success")
                 if not is_success:
-                    raise PqExperimentSampleUploadException(experiment_name=experiment_name, sample_name=sample_name)
+                    raise PqExperimentSampleUploadException(
+                        experiment_name=experiment_name, sample_name=sample_name
+                    )
             case 400:
                 message = response.json().get("message")
-                raise PqExperimentSampleUploadException(experiment_name=experiment_name, sample_name=sample_name,
-                                                        message=message)
+                raise PqExperimentSampleUploadException(
+                    experiment_name=experiment_name,
+                    sample_name=sample_name,
+                    message=message,
+                )
             case 401:
                 raise NotAuthorisedError()
             case _:
@@ -330,7 +364,9 @@ class PqToolkitAPIClient:
         return []
 
     @_serialize_with_pydantic
-    def get_experiment_test_results(self, *, experiment_name: str, result_name: str) -> PqTestResultsList | None:
+    def get_experiment_test_results(
+        self, *, experiment_name: str, result_name: str
+    ) -> PqTestResultsList | None:
         """
         Method allows to get a list of experiments' results' names.
 
