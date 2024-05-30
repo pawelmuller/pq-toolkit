@@ -1,36 +1,36 @@
 # Documentation for PQToolkit exceptions
 
-::: api_client.exceptions.PqToolkitException
+::: pqtoolkit.exceptions.PqToolkitException
     handler: python
     options:
       show_root_heading: true
       show_source: true
 
-::: api_client.exceptions.PqSerializationException
+::: pqtoolkit.exceptions.PqSerializationException
     handler: python
     options:
       show_root_heading: true
       show_source: true
 
-::: api_client.exceptions.PqValidationException
+::: pqtoolkit.exceptions.PqValidationException
     handler: python
     options:
       show_root_heading: true
       show_source: true
 
-::: api_client.exceptions.PqExperimentAlreadyExistsException
+::: pqtoolkit.exceptions.PqExperimentAlreadyExistsException
     handler: python
     options:
       show_root_heading: true
       show_source: true
 
-::: api_client.exceptions.PqExperimentSetupException
+::: pqtoolkit.exceptions.PqExperimentSetupException
     handler: python
     options:
       show_root_heading: true
       show_source: true
 
-::: api_client.exceptions.PqExperimentSampleUploadException
+::: pqtoolkit.exceptions.PqExperimentSampleUploadException
     handler: python
     options:
       show_root_heading: true

@@ -41,7 +41,7 @@ plugins:
     default_handler: python
     handlers:
       python:
-        paths: [../src/pq-toolkit/src]
+        paths: [../src/pq-toolkit]
         options:
           show_root_heading: true
           show_source: true

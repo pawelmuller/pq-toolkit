@@ -10,7 +10,7 @@ Firstly, you should obtain all project dependencies:
 
 ```
 > cd src/pq-toolkit
-> pip install -r requirements.txt
+> poetry install
 ---> 100%
 Installed
 ```

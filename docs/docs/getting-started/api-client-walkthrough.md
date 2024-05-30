@@ -7,7 +7,7 @@ All the communication with the backend is organised by the API Client.
 This is how to create its instance:
 
 ```{ .py .copy }
-from api_client import PqToolkitAPIClient
+from pqtoolkit import PqToolkitAPIClient
 
 
 api_client = PqToolkitAPIClient()
@@ -24,7 +24,7 @@ Experiments are the basic elements allowing to perform tests.
 You can create one the following way: 
 
 ```{ .py .copy }
-from api_client import PqToolkitAPIClient
+from pqtoolkit import PqToolkitAPIClient
 
 
 api_client = PqToolkitAPIClient()
@@ -40,7 +40,7 @@ You need to create the appropriate setup class, depending on which test you want
 === "AB"
 
     ```{ .py .copy }
-    from api_client.dataclasses import PqExperiment, PqTestAB, PqSample, PqQuestion
+    from pqtoolkit.dataclasses import PqExperiment, PqTestAB, PqSample, PqQuestion
 
 
     experiment_setup = PqExperiment(
@@ -65,7 +65,7 @@ You need to create the appropriate setup class, depending on which test you want
 === "ABX"
 
     ```{ .py .copy }
-    from api_client.dataclasses import PqExperiment, PqTestABX, PqSample, PqQuestion
+    from pqtoolkit.dataclasses import PqExperiment, PqTestABX, PqSample, PqQuestion
 
 
     experiment_setup = PqExperiment(
@@ -90,7 +90,7 @@ You need to create the appropriate setup class, depending on which test you want
 === "APE"
 
     ```{ .py .copy }
-    from api_client.dataclasses import PqExperiment, PqTestAPE, PqSample, PqQuestion
+    from pqtoolkit.dataclasses import PqExperiment, PqTestAPE, PqSample, PqQuestion
 
 
     experiment_setup = PqExperiment(
@@ -116,7 +116,7 @@ You need to create the appropriate setup class, depending on which test you want
 === "MUSHRA"
 
     ```{ .py .copy }
-    from api_client.dataclasses import PqExperiment, PqTestMUSHRA, PqSample
+    from pqtoolkit.dataclasses import PqExperiment, PqTestMUSHRA, PqSample
 
 
     experiment_setup = PqExperiment(
@@ -149,7 +149,7 @@ You need to create the appropriate setup class, depending on which test you want
     When setting up an experiment:
 
     ```{ .py .copy }
-    from api_client.dataclasses import PqExperiment, PqTestAB, PqTestMUSHRA  # and other
+    from pqtoolkit.dataclasses import PqExperiment, PqTestAB, PqTestMUSHRA  # and other
 
 
     experiment_setup = PqExperiment(
@@ -167,7 +167,7 @@ You need to create the appropriate setup class, depending on which test you want
 Having created the setup object, the only thing left is to upload the configuration to an experiment:
 
 ```{ .py .copy }
-from api_client import PqToolkitAPIClient
+from pqtoolkit import PqToolkitAPIClient
 
 
 api_client = PqToolkitAPIClient()
@@ -187,7 +187,7 @@ api_client.setup_experiment(
 Once you configured an experiment you should proceed to uploading samples, so the test could serve them to UI.
 
 ```{ .py .copy }
-from api_client import PqToolkitAPIClient
+from pqtoolkit import PqToolkitAPIClient
 
 
 api_client = PqToolkitAPIClient()
@@ -206,7 +206,7 @@ with open(sample_path, 'rb') as file:
 This method will allow you to obtain all experiments' names, so you can fetch them later individually.
 
 ```{ .py .copy }
-from api_client import PqToolkitAPIClient
+from pqtoolkit import PqToolkitAPIClient
 
 
 api_client = PqToolkitAPIClient()
@@ -218,7 +218,7 @@ experiments = api_client.get_experiments()
 You can fetch detailed information about given experiment like this:
 
 ```{ .py .copy }
-from api_client import PqToolkitAPIClient
+from pqtoolkit import PqToolkitAPIClient
 
 
 api_client = PqToolkitAPIClient()
@@ -229,7 +229,7 @@ experiment = api_client.get_experiment(experiment_name="Your_fancy_experiment_na
 ## Getting experiment results list
 Like in experiments, you can get all experiment's results list to be able to fetch one's answers later on.
 ```{ .py .copy }
-from api_client import PqToolkitAPIClient
+from pqtoolkit import PqToolkitAPIClient
 
 
 api_client = PqToolkitAPIClient()
@@ -241,7 +241,7 @@ experiment_results = api_client.get_experiment_results(experiment_name="Your_fan
 This is how you obtain answers from a result:
 
 ```{ .py .copy }
-from api_client import PqToolkitAPIClient
+from pqtoolkit import PqToolkitAPIClient
 
 
 api_client = PqToolkitAPIClient()
@@ -256,7 +256,7 @@ experiment_result = api_client.get_experiment_test_results(
 When you're done testing you can remove the experiment from the platform like this:
 
 ```{ .py .copy }
-from api_client import PqToolkitAPIClient
+from pqtoolkit import PqToolkitAPIClient
 
 
 api_client = PqToolkitAPIClient()

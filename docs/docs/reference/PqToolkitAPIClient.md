@@ -1,6 +1,6 @@
 # Documentation for `PqToolkitAPIClient`
 
-::: api_client.PqToolkitAPIClient
+::: pqtoolkit.PqToolkitAPIClient
     handler: python
     options:
       members:

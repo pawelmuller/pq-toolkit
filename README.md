@@ -11,11 +11,12 @@ Project members:
 - Grzegorz Rusinek
 
 ### Further developed by
- - ZPRP 24L course members:
-   - Igor Matynia
-   - Jakub Woźniak
-   - Jan Kowalczewski
- - #TODO WIMU
+
+- ZPRP 24L course members:
+  - Igor Matynia
+  - Jakub Woźniak
+  - Jan Kowalczewski
+- #TODO WIMU
 
 ## Project structure
 
@@ -31,25 +32,13 @@ Project members:
 This project consists of test creation Python plugin and web application
 testing platform.
 
-### How to use Python plugin:
-The project runs on [Python](https://www.python.org) 3.10+.
+### How to use Python plugin
 
-#### Installation
+Installation details are available in [pq-toolkit README](src/pq-toolkit/README.md), as well as in the [docs](docs/README.md).
 
-Firstly, you should obtain all project dependencies.
-Consider using Python's [virtual environments](https://docs.python.org/3/tutorial/venv.html#virtual-environments-and-packages) to keep your installation nice and clean.
+The Python plugin can be used to interact with the PQ Toolkit API backend the same way as the web application and can also be used to read test results.
 
-```bash
-cd src/pq-toolkit
-pip install -r requirements.txt
-```
-
-That's it! You're ready to go!
-
-More detailed walkthrough can be found in project's docs directory.
-
-
-### How to use testing web application:
+### How to start web application
 
 1. Deployment:
    - Go to `src/deployments`
@@ -64,7 +53,10 @@ More detailed walkthrough can be found in project's docs directory.
 4. For users `/[experiment-name]`
 5. Getting results using Python script
 
-More information available in `src/pq-toolkit-ui/README.md`.
+Available flavors:
+- prod
+- stage
+- dev
 
 ## WIMU notes
 
