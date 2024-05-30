@@ -62,15 +62,14 @@ Changes regarding design proposal:
 - xml files, xmlbuilder2 -> json files + zod validation
 
 Known issues:
-- crude UI
-- missing feedback components (e.g. comment for each sample)
+- Error handling
+- Loading screen improvement (darkmode)
 
 Potential improvements:
 - authorization for admin endpoints/panel
-- better UI
-- more options for test configurations (new tests or more helper components like feedback fields)
+- more options for test configurations (new tests or more helper components)
 - separate backend for data handling, storage on larger scale (relational database)
 - automatic mkdocs deployment
-
-Project was on schedule up to Christmas, then slight delays in finishing remaining test types
-and polishing features.
+- dashboard in admin panel allowing to overview results
+- eneble sample hearing in experiment configurator
+- inbuilt experiment configuration creator (.json file)
