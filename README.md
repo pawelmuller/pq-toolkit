@@ -45,6 +45,7 @@ The Python plugin can be used to interact with the PQ Toolkit API backend the sa
 1. Deployment:
    - Go to `src/deployments`
    - Fill in required configuration in `.env.*` files according to your specification
+   - Go to `src/`
    - Build docker image by running `make build-[flavor]`
    - Deploy docker image by running `make start-[flavor]`
    - (To stop an image use `make stop-[flavor]`)
@@ -59,6 +60,17 @@ Available flavors:
 - prod
 - stage
 - dev
+
+### How to create revisions
+
+1. Make sure you have `.env.prod` file in `src/deployments` directory
+2. Go to `src/`
+3. Run `make alembic-shell`
+4. Execute alembic commands in the shell
+5. Exit the shell
+6. Run `make alembic-stop`
+
+All the revisions are automatically applied at startup.
 
 ## WIMU notes
 

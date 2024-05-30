@@ -10,3 +10,6 @@ format:
 .PHONY: test
 test:
 	pytest tests
+
+.PHONY: alembic-shell
+alembic-shell:

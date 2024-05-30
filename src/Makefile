@@ -30,10 +30,14 @@ build-clean-stage: ## Build the staging docker image.
 start-stage: ## Start the staging docker container.
 	docker compose -f deployments/docker-compose.stage.yml --env-file deployments/.env.stage up -d
 
+.PHONY: start-stage-debug
+start-stage-debug: ## Start the development docker container and attach
+	docker compose -f deployments/docker-compose.stage.yml --env-file deployments/.env.stage up
+
 .PHONY: stop-stage
 stop-stage: ## Stop the staging docker container.
 	docker compose -f deployments/docker-compose.stage.yml --env-file deployments/.env.stage down
-  
+
 .PHONY: build-prod
 build-prod: ## Build the production docker image.
 	docker compose -f deployments/docker-compose.prod.yml --env-file deployments/.env.prod build
@@ -53,3 +57,12 @@ start-prod-debug: ## Start the production docker container.
 .PHONY: stop-prod
 stop-prod: ## Stop the production docker container.
 	docker compose -f deployments/docker-compose.prod.yml --env-file deployments/.env.prod down
+
+.PHONY: alembic-shell
+alembic-shell: ## Start the alembic shell
+	docker compose -f deployments/docker-compose.alembic.yml --env-file deployments/.env.prod run pq-toolkit-api-dev
+
+.PHONY: alembic-stop
+alembic-stop:
+	docker compose -f deployments/docker-compose.alembic.yml --env-file deployments/.env.prod down
+
