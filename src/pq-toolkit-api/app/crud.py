@@ -81,6 +81,7 @@ def transform_experiment(experiment: Experiment) -> PqExperiment:
             "description": experiment.description,
             "endText": experiment.end_text,
             "tests": tests,
+            "uid": experiment.id
         }
     )
 
@@ -125,7 +126,7 @@ def add_experiment(session: Session, experiment_name: str):
         raise ExperimentAlreadyExists(experiment_name)
 
 
-def transform_test_upload(test: PqTestBase, experiment_id: int) -> Test:
+def transform_test_upload(test: PqTestBase) -> Test:
     test_dict = test.model_dump()
     test_dict.pop("test_number")
     test_dict.pop("type")
@@ -146,7 +147,7 @@ def upload_experiment_config(
     experiment_db.description = experiment_upload.description
     experiment_db.end_text = experiment_upload.end_text
     tests = [
-        transform_test_upload(test, experiment_db.id)
+        transform_test_upload(test)
         for test in experiment_upload.tests
     ]
     experiment_db.tests = tests

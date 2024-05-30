@@ -1,3 +1,6 @@
+import uuid
+from uuid import UUID
+
 from sqlalchemy import Column, JSON
 from sqlmodel import SQLModel, Field, Relationship
 
@@ -19,7 +22,7 @@ class Sample(SQLModel, table=True):
 
 
 class Experiment(SQLModel, table=True):
-    id: int | None = Field(default=None, primary_key=True)
+    id: UUID | None = Field(default_factory=uuid.uuid4, primary_key=True)
     name: str = Field(index=True, unique=True)
     full_name: str | None = Field(default=None)
     description: str | None = Field(default=None)
@@ -30,11 +33,11 @@ class Experiment(SQLModel, table=True):
 
 
 class Test(SQLModel, table=True):
-    id: int | None = Field(default=None, primary_key=True)
+    id: int | None = Field(default_factory=None, primary_key=True)
     number: int
     type: PqTestTypes
     test_setup: dict = Field(sa_column=Column(JSON))
-    experiment_id: int = Field(foreign_key="experiment.id")
+    experiment_id: UUID = Field(foreign_key="experiment.id")
 
     experiment: Experiment = Relationship(back_populates="tests")
     experiment_test_results: list["ExperimentTestResult"] = Relationship(
