@@ -54,6 +54,7 @@ Sample .env files are provided as `.env.<name>.sample`
 ## Technology stack
 
 <details>
+
 This project utilizes Typescript for full type safety, there are no .js files, all type definitions
 are provided in place.
 
@@ -78,6 +79,7 @@ Other used dependencies:
 ## Project structure
 
 <details>
+
 This project has modular structure allowing for easy expansion with additional test types or modification
 of existing tests.
 
@@ -100,12 +102,14 @@ Basic structure:
 ## Examples
 
 <details>
+
 There is example configuration for experiment in `public/examples` folder with 2 configurations
 and samples required to start it. It can be used after uploading via admin panel.
 </details>
 
 ## Testing
 <details>
+
 This project uses Jest for testing, to run test suite use `npm run test` command
 or `npm run test:watch` to run tests and watch for changes (useful when debugging test).
 
@@ -120,6 +124,7 @@ inability to test audio in Jest (and handling audio is main scope of this projec
 ## TypeDoc
 
 <details>
+
 There is TypeDoc documentation available for experiment schemas.
 It has to be build by running `npm run build-docs`, then it's available
 in `doc` directory.
@@ -131,6 +136,7 @@ Tooltip hints are also available in compatible IDEs.
 ## SwaggerUI
 
 <details>
+
 For API endpoints documentation start the service and visit the `/api/v1/api-docs` endpoint.
 
 </details>
@@ -221,6 +227,7 @@ To edit commonly used components such as:
 
 #### pq-toolkit-ui/src/lib/components/editors
 <details>
+
 To edit page responsible for configurating individual experiments:
 
 - `lib\components\editors\AbEditor.tsx`
@@ -293,6 +300,7 @@ To add new experiment type most important steps are:
 
 ## Colors Used in UI
 <details>
+
 The UI design incorporates a consistent color scheme to enhance user experience and maintain visual coherence. Here are the main colors used across different elements of the interface, differentiated by light and dark modes:
 
 ### Light Mode
