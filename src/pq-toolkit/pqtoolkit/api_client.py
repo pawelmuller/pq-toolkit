@@ -29,6 +29,9 @@ class PqToolkitAPIClient:
     Parameters:
         base_host: The host of the API.
         base_port: The port of the API.
+        api_version: Version of api, defaults to v1
+        login: login for authorization (Optional)
+        password: password for authorization (Optional)
     """
 
     def __init__(
@@ -37,8 +40,8 @@ class PqToolkitAPIClient:
         base_host: str = "http://localhost",
         base_port: int = 8000,
         api_version: str = "v1",
-        login=None,
-        password=None,
+        login: str = None,
+        password: str = None,
     ):
         self._base_host = base_host
         self._base_port = base_port
@@ -153,8 +156,17 @@ class PqToolkitAPIClient:
     def _auth_token(self):
         return f"{self._oauth_id} {self._oauth_token}"
 
-    def log_in(self, username, password):
-        data = {"username": username, "password": password}
+    def log_in(self, login: str, password: str):
+        """Logs in the user, obtains a valid token for authorization
+
+        Args:
+            login (str): user name
+            password (str): password
+
+        Raises:
+            IncorrectLogin: When wrong credidentials are provided
+        """
+        data = {"username": login, "password": password}
         resp = self._post("/auth/login", data=data)
 
         match resp.status_code:
@@ -166,11 +178,21 @@ class PqToolkitAPIClient:
         self._oauth_token = resp["access_token"]
         self._oauth_id = resp["token_type"]
 
-    def get_user(self):
+    def get_user(self) -> dict:
+        """Reutrns user information
+
+        Returns:
+            dict: user information dict
+        """
         return self._get("/auth/user").json()
 
     @property
-    def is_logged_in(self):
+    def is_logged_in(self) -> bool:
+        """Checks if api client has obtained authorization token already
+
+        Returns:
+            bool: Is authorized
+        """
         return self._oauth_id and self._oauth_token
 
     def get_experiments(self) -> list[str]:

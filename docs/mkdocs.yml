@@ -5,7 +5,7 @@ nav:
   - 'Getting started':
     - 'Prerequisites': getting-started/prerequisites.md
     - 'API Client walkthrough': getting-started/api-client-walkthrough.md
-  - 'Raw reference':
+  - 'Python API client reference':
     - 'PqToolkitAPIClient': reference/PqToolkitAPIClient.md
     - 'Exceptions': reference/exceptions.md
     - 'Dataclasses': reference/dataclasses.md

@@ -17,6 +17,10 @@ api_client = PqToolkitAPIClient()
 
     Initiating the API client will test whether the given host and port are correct.
 
+!!! tip
+
+    You can also pass the username and password in the constructor to be immediatelly logged in, otherwise you need to call the `log_in` method to use restricted endpoints
+
 
 ## Creating new experiment
 Experiments are the basic elements allowing to perform tests.
@@ -28,6 +32,7 @@ from pqtoolkit import PqToolkitAPIClient
 
 
 api_client = PqToolkitAPIClient()
+api_client.log_in('my username', 'my password')
 experiments = api_client.create_experiment(experiment_name="Your_fancy_experiment_name")
 ```
 
@@ -170,7 +175,7 @@ Having created the setup object, the only thing left is to upload the configurat
 from pqtoolkit import PqToolkitAPIClient
 
 
-api_client = PqToolkitAPIClient()
+api_client = PqToolkitAPIClient(login='my login', password='my password')
 api_client.setup_experiment(
     experiment_name="Your_fancy_experiment_name", 
     experiment_setup=experiment_setup)
@@ -190,7 +195,7 @@ Once you configured an experiment you should proceed to uploading samples, so th
 from pqtoolkit import PqToolkitAPIClient
 
 
-api_client = PqToolkitAPIClient()
+api_client = PqToolkitAPIClient(login='my login', password='my password')
 sample_path = "./file_sample_5.mp3"
 with open(sample_path, 'rb') as file:
     api_client.upload_sample(experiment_name="Your_fancy_experiment_name", sample_name="file_sample_5.mp3", sample_binary=file)
@@ -232,7 +237,7 @@ Like in experiments, you can get all experiment's results list to be able to fet
 from pqtoolkit import PqToolkitAPIClient
 
 
-api_client = PqToolkitAPIClient()
+api_client = PqToolkitAPIClient(login='my login', password='my password')
 experiment_results = api_client.get_experiment_results(experiment_name="Your_fancy_experiment_name")
 ```
 
@@ -244,7 +249,7 @@ This is how you obtain answers from a result:
 from pqtoolkit import PqToolkitAPIClient
 
 
-api_client = PqToolkitAPIClient()
+api_client = PqToolkitAPIClient(login='my login', password='my password')
 experiment_result = api_client.get_experiment_test_results(
     experiment_name=experiment_name,
     result_name="Some result name"  # Use get_experiment_results() to get available results
@@ -259,7 +264,7 @@ When you're done testing you can remove the experiment from the platform like th
 from pqtoolkit import PqToolkitAPIClient
 
 
-api_client = PqToolkitAPIClient()
+api_client = PqToolkitAPIClient(login='my login', password='my password')
 experiments = api_client.delete_experiment(experiment_name="Your_fancy_experiment_name")
 )
 ```

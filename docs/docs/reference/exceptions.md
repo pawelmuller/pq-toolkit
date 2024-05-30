@@ -1,5 +1,23 @@
 # Documentation for PQToolkit exceptions
 
+::: pqtoolkit.exceptions.NotAuthorisedError
+    handler: python
+    options:
+      show_root_heading: true
+      show_source: true
+
+::: pqtoolkit.exceptions.IncorrectLogin
+    handler: python
+    options:
+      show_root_heading: true
+      show_source: true
+
+::: pqtoolkit.exceptions.DetailedError
+    handler: python
+    options:
+      show_root_heading: true
+      show_source: true
+
 ::: pqtoolkit.exceptions.PqToolkitException
     handler: python
     options:
