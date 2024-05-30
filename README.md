@@ -10,13 +10,15 @@ Project members:
 - Paweł Müller
 - Grzegorz Rusinek
 
-### Further developed by
-
-- ZPRP 24L course members:
-  - Igor Matynia
-  - Jakub Woźniak
-  - Jan Kowalczewski
-- #TODO WIMU
+### Contributions
+ - ZPRP 24L course members:
+   - Igor Matynia
+   - Jakub Woźniak
+   - Jan Kowalczewski
+ - WIMU 24L course members:
+   - Mikołaj Olczak
+   - Kondracki Wojciech
+   - Krzysztof Miśków
 
 ## Project structure
 
