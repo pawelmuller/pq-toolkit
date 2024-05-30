@@ -246,7 +246,7 @@ Most important files responsible for editing the design of the experiments:
   - `lib\components\experiments\common\SingleSelectQuestion.tsx` - to edit single select buttons between two options
 
 </details>
-</details>
+
 
 #### pq-toolkit-ui/src/lib/components/login
 <details>
@@ -259,6 +259,7 @@ Most important files responsible for editing the design of the experiments:
 
   - `lib\components\experiments\player\MultiPlayer.tsx` - to edit player handling multiple samples
   - `lib\components\experiments\player\SinglePlayer.tsx` - to edit player handling one sample
+</details>
 </details>
 
 ## pq-toolkit-ui/src/styles
