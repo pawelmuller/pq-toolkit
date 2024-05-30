@@ -8,7 +8,7 @@ from app.crud import (
     ExperimentNotFound,
     ExperimentAlreadyExists,
     ExperimentNotConfigured,
-    IncorectInputData
+    IncorrectInputData
 
 )
 from app.models import Experiment
@@ -244,7 +244,7 @@ def test_update_experiment_config(session, create_experiment, upload_config, exp
     assert experiment.description == experiment_data["description"]
     assert len(experiment.tests) == 1
     assert experiment.tests[0].test_number == experiment_data["tests"][0]["test_number"]
-    
+
     upload_config(experiment_name, updated_experiment_data)
     updated_experiment = get_experiment_by_name(session, experiment_name)
     assert updated_experiment.name == updated_experiment_data["name"]
@@ -287,7 +287,7 @@ def test_update_experiment_config(session, create_experiment, upload_config, exp
                 }
             ]
         },
-        IncorectInputData
+        IncorrectInputData
 
     ),
     (
@@ -323,13 +323,13 @@ def test_update_experiment_config(session, create_experiment, upload_config, exp
                 }
             ]
         },
-        IncorectInputData
+        IncorrectInputData
     )
 ])
 def test_add_experiment_results_invalid(session, create_experiment, upload_config, config_data, test_result, expected_error):
     experiment_name = "Test Experiment"
     create_experiment(experiment_name)
     upload_config(experiment_name, config_data)
-    
+
     with pytest.raises(expected_error):
         add_experiment_result(session, experiment_name, test_result)
