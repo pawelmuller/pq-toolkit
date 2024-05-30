@@ -8,6 +8,8 @@ UI for conducting audio quality tests using selected methodologies
 ## Development server:
 <details>
 
+<summary>Expand</summary>
+
 To deploy development server go to `pq-toolkit-ui` and run
 
 ```bash
@@ -29,6 +31,8 @@ All scripts are available via `npm run <name>` command.
 
 ## Deployment
 <details>
+
+<summary>Expand</summary>
 
 ### Requirements
 
@@ -55,6 +59,8 @@ Sample .env files are provided as `.env.<name>.sample`
 
 <details>
 
+<summary>Expand</summary>
+
 This project utilizes Typescript for full type safety, there are no .js files, all type definitions
 are provided in place.
 
@@ -80,6 +86,8 @@ Other used dependencies:
 
 <details>
 
+<summary>Expand</summary>
+
 This project has modular structure allowing for easy expansion with additional test types or modification
 of existing tests.
 
@@ -103,12 +111,16 @@ Basic structure:
 
 <details>
 
+<summary>Expand</summary>
+
 There is example configuration for experiment in `public/examples` folder with 2 configurations
 and samples required to start it. It can be used after uploading via admin panel.
 </details>
 
 ## Testing
 <details>
+
+<summary>Expand</summary>
 
 This project uses Jest for testing, to run test suite use `npm run test` command
 or `npm run test:watch` to run tests and watch for changes (useful when debugging test).
@@ -125,6 +137,8 @@ inability to test audio in Jest (and handling audio is main scope of this projec
 
 <details>
 
+<summary>Expand</summary>
+
 There is TypeDoc documentation available for experiment schemas.
 It has to be build by running `npm run build-docs`, then it's available
 in `doc` directory.
@@ -137,6 +151,8 @@ Tooltip hints are also available in compatible IDEs.
 
 <details>
 
+<summary>Expand</summary>
+
 For API endpoints documentation start the service and visit the `/api/v1/api-docs` endpoint.
 
 </details>
@@ -144,9 +160,13 @@ For API endpoints documentation start the service and visit the `/api/v1/api-doc
 ## Development guide
 <details>
 
+<summary>Expand</summary>
+
 This is reference of components and flows used to access experiments for future developers. 
 ## pq-toolkit-ui/src/app
 <details>
+
+<summary>Expand</summary>
 
 
 Good entry point is Next.js documentation, where app router is described.
@@ -201,6 +221,8 @@ File `app\admin\[name]\page.tsx` is responsible for new experiment configuration
 ## pq-toolkit-ui/src/core
 <details>
 
+<summary>Expand</summary>
+
 Files responsible for some of the core functionalities:
 - `pq-toolkit-ui/src/core/apiHandlers` - functions around API
 - `pq-toolkit-ui/src/core/components/FileUploader.tsx` - resposible for file uploader component
@@ -217,6 +239,8 @@ Files responsible for some of the core functionalities:
 #### pq-toolkit-ui/src/lib/components/basic
 <details>
 
+<summary>Expand</summary>
+
 To edit commonly used components such as:
 - `pq-toolkit-ui/src/lib/components/basic/blobs.tsx` - responsible for background animations
 - `pq-toolkit-ui/src/lib/components/basic/deleteButton.tsx`
@@ -228,6 +252,8 @@ To edit commonly used components such as:
 #### pq-toolkit-ui/src/lib/components/editors
 <details>
 
+<summary>Expand</summary>
+
 To edit page responsible for configurating individual experiments:
 
 - `lib\components\editors\AbEditor.tsx`
@@ -238,6 +264,8 @@ To edit page responsible for configurating individual experiments:
 
 #### pq-toolkit-ui/src/lib/components/experiments
 <details>
+
+<summary>Expand</summary>
 
 Most important files responsible for editing the design of the experiments:  
 
@@ -258,19 +286,27 @@ Most important files responsible for editing the design of the experiments:
 #### pq-toolkit-ui/src/lib/components/login
 <details>
 
+<summary>Expand</summary>
+
   - `lib\components\experiments\player\login-page.tsx` - to edit login page
 </details>
 
 #### pq-toolkit-ui/src/lib/components/player
 <details>
 
+<summary>Expand</summary>
+
   - `lib\components\experiments\player\MultiPlayer.tsx` - to edit player handling multiple samples
   - `lib\components\experiments\player\SinglePlayer.tsx` - to edit player handling one sample
 </details>
 </details>
 
+<summary>Expand</summary>
+
 ## pq-toolkit-ui/src/styles
 <details>
+
+<summary>Expand</summary>
 
 Holding css files responsible for look style:
 
@@ -282,6 +318,8 @@ Holding css files responsible for look style:
 ## Adding new experiment
 
 <details>
+
+<summary>Expand</summary>
 
 All the types are available at `lib/schemas` and are created using zod schemas to allow
 for easy validation.
@@ -300,6 +338,8 @@ To add new experiment type most important steps are:
 
 ## Colors Used in UI
 <details>
+
+<summary>Expand</summary>
 
 The UI design incorporates a consistent color scheme to enhance user experience and maintain visual coherence. Here are the main colors used across different elements of the interface, differentiated by light and dark modes:
 
