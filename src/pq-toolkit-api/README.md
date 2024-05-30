@@ -2,13 +2,16 @@
 
 ## API Docs
 
-Docs are available at `localhost:8000/api/docs` (at gateway) or `localhost:8787/docs` (at container)
+Swagger API docs are available at `localhost:8000/api/docs`
 
 ## Technology stack
 
 - FastAPI
-- PostgreSQL
-- Alembic
+- PostgreSQL database
+- Alembic migrations
+- Swagger api docs
+- sqlmodel orm
+- ruff linter
 
 ## Setting up environment
 
