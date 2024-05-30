@@ -13,8 +13,12 @@ router = APIRouter()
 
 
 @router.post("/login")
-def login(session: SessionDep, form_data: Annotated[OAuth2PasswordRequestForm, Depends()]) -> AccessToken:
-    user = authenticate(session=session, username=form_data.username, hashed_password=form_data.password)
+def login(
+    session: SessionDep, form_data: Annotated[OAuth2PasswordRequestForm, Depends()]
+) -> AccessToken:
+    user = authenticate(
+        session=session, username=form_data.username, hashed_password=form_data.password
+    )
     if not user:
         raise HTTPException(status_code=400, detail="Incorrect username or password")
     if not user.is_active:
@@ -24,6 +28,9 @@ def login(session: SessionDep, form_data: Annotated[OAuth2PasswordRequestForm, D
 
 @router.get("/user")
 def get_user(admin: CurrentAdmin) -> Admin:
-    return Admin(id=admin.id, email=admin.email, is_active=admin.is_active, username=admin.username)
-
-
+    return Admin(
+        id=admin.id,
+        email=admin.email,
+        is_active=admin.is_active,
+        username=admin.username,
+    )

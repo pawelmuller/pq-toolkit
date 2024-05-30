@@ -16,15 +16,17 @@ def sample_manager_localhost():
         port=9000,
         access_key="minioadmin",
         secret_key="minioadmin",
-        sample_bucket_name="testbucket"
+        sample_bucket_name="testbucket",
     )
 
 
 def test_manager_init(sample_manager_localhost: SampleManager):
-    manager = sample_manager_localhost
+    pass
 
 
-def test_manager_complete(example_byte_stream: tuple[BytesIO, str], sample_manager_localhost: SampleManager):
+def test_manager_complete(
+    example_byte_stream: tuple[BytesIO, str], sample_manager_localhost: SampleManager
+):
     byte_stream_out, message = example_byte_stream
     manager = sample_manager_localhost
 

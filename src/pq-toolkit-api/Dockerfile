@@ -1,12 +1,15 @@
-FROM python:3.10-slim
+FROM python:3.11-slim
+
+RUN pip install poetry
 
 WORKDIR /app/
 
 ENV PYTHONPATH=/app
+ARG ENVIRONMENT=production
 
-COPY requirements.txt ./
+COPY pyproject.toml poetry.lock ./
 
-RUN pip install --no-cache-dir -r requirements.txt
+RUN POETRY_VIRTUALENVS_CREATE=false poetry install $(test "$ENVIRONMENT" == production && echo "--only=main") --no-interaction --no-ansi
 
 COPY . .
 

@@ -1,13 +1,23 @@
+import uuid
+
 from sqlalchemy.exc import NoResultFound, IntegrityError
 
 from app.models import Experiment, Test, ExperimentTestResult, Admin
-from app.schemas import *
-from typing import Any
 from sqlmodel import Session, select
 from fastapi import UploadFile
 from fastapi.responses import StreamingResponse
 from app.core.sample_manager import SampleManager
-from app.schemas import PqTestABResult, PqTestABXResult, PqTestMUSHRAResult, PqTestAPEResult
+from app.schemas import (
+    PqTestABResult,
+    PqTestABXResult,
+    PqTestMUSHRAResult,
+    PqTestAPEResult,
+    PqExperiment,
+    PqExperimentsList,
+    PqTestBase,
+    PqTestTypes,
+    PqTestResultsList,
+)
 from app.utils import PqException
 from pydantic import ValidationError
 
@@ -19,12 +29,16 @@ class ExperimentNotFound(PqException):
 
 class ExperimentAlreadyExists(PqException):
     def __init__(self, experiment_name: str) -> None:
-        super().__init__(f"Experiment {experiment_name} already exists!", error_code=409)
+        super().__init__(
+            f"Experiment {experiment_name} already exists!", error_code=409
+        )
 
 
 class ExperimentNotConfigured(PqException):
     def __init__(self, experiment_name: str) -> None:
-        super().__init__(f"Experiment {experiment_name} not configured!", error_code=404)
+        super().__init__(
+            f"Experiment {experiment_name} not configured!", error_code=404
+        )
 
 
 class ExperimentAlreadyConfigured(PqException):
@@ -39,7 +53,7 @@ class NoTestsFoundForExperiment(PqException):
 
 class NoResultsData(PqException):
     def __init__(self) -> None:
-        super().__init__(f"No results data provided!", error_code=404)
+        super().__init__("No results data provided!", error_code=404)
 
 
 class NoMatchingTest(PqException):
@@ -61,7 +75,14 @@ def transform_test(test: Test) -> dict:
 
 def transform_experiment(experiment: Experiment) -> PqExperiment:
     tests = [transform_test(test) for test in experiment.tests]
-    return PqExperiment.model_validate({"name": experiment.full_name, "description": experiment.description, "endText": experiment.end_text, "tests": tests})
+    return PqExperiment.model_validate(
+        {
+            "name": experiment.full_name,
+            "description": experiment.description,
+            "endText": experiment.end_text,
+            "tests": tests,
+        }
+    )
 
 
 def get_experiments(session: Session) -> PqExperimentsList:
@@ -111,7 +132,9 @@ def transform_test_upload(test: PqTestBase, experiment_id: int) -> Test:
     return Test(number=test.test_number, type=test.type, test_setup=test_dict)
 
 
-def upload_experiment_config(session: Session, experiment_name: str, json_file: UploadFile):
+def upload_experiment_config(
+    session: Session, experiment_name: str, json_file: UploadFile
+):
     experiment_upload = PqExperiment.model_validate_json(json_file.file.read())
     experiment_db = get_db_experiment_by_name(session, experiment_name)
     for test in experiment_db.tests:
@@ -122,24 +145,33 @@ def upload_experiment_config(session: Session, experiment_name: str, json_file: 
     experiment_db.full_name = experiment_upload.name
     experiment_db.description = experiment_upload.description
     experiment_db.end_text = experiment_upload.end_text
-    tests = [transform_test_upload(test, experiment_db.id) for test in experiment_upload.tests]
+    tests = [
+        transform_test_upload(test, experiment_db.id)
+        for test in experiment_upload.tests
+    ]
     experiment_db.tests = tests
     experiment_db.configured = True
     session.commit()
 
 
-def get_experiment_sample(manager: SampleManager, experiment_name: str, sample_name: str) -> StreamingResponse:
+def get_experiment_sample(
+    manager: SampleManager, experiment_name: str, sample_name: str
+) -> StreamingResponse:
     sample_generator = manager.get_sample(experiment_name, sample_name)
     return StreamingResponse(sample_generator, media_type="audio/mpeg")
 
 
-def upload_experiment_sample(manager: SampleManager, experiment_name: str, audio_file: UploadFile):
+def upload_experiment_sample(
+    manager: SampleManager, experiment_name: str, audio_file: UploadFile
+):
     sample_name = audio_file.filename
     sample_data = audio_file.file
     manager.upload_sample(experiment_name, sample_name, sample_data)
 
 
-def delete_experiment_sample(manager: SampleManager, experiment_name: str, sample_name: str):
+def delete_experiment_sample(
+    manager: SampleManager, experiment_name: str, sample_name: str
+):
     manager.remove_sample(experiment_name, sample_name)
 
 
@@ -155,7 +187,9 @@ def add_experiment_result(session: Session, experiment_name: str, result_list: d
     return get_experiment_tests_results(session, experiment_name, result_name)
 
 
-def add_test_results(session: Session, results_data: dict, experiment: Experiment) -> str:
+def add_test_results(
+    session: Session, results_data: dict, experiment: Experiment
+) -> str:
     results = results_data.get("results")
     if results is None:
         raise NoResultsData()
@@ -170,9 +204,7 @@ def add_test_results(session: Session, results_data: dict, experiment: Experimen
         verify_test_result(result, test_info[1])
 
         new_result = ExperimentTestResult(
-            test_id=test_info[0],
-            test_result=result,
-            experiment_use=placeholder
+            test_id=test_info[0], test_result=result, experiment_use=placeholder
         )
         session.add(new_result)
     session.commit()
@@ -180,7 +212,9 @@ def add_test_results(session: Session, results_data: dict, experiment: Experimen
     return placeholder
 
 
-def transform_test_result(result: ExperimentTestResult, test_type: PqTestTypes) -> PqTestABResult | PqTestABXResult | PqTestMUSHRAResult | PqTestAPEResult:
+def transform_test_result(
+    result: ExperimentTestResult, test_type: PqTestTypes
+) -> PqTestABResult | PqTestABXResult | PqTestMUSHRAResult | PqTestAPEResult:
     if test_type == PqTestTypes.AB:
         return PqTestABResult(**result.test_result)
     elif test_type == PqTestTypes.ABX:
@@ -205,7 +239,9 @@ def verify_test_result(result: dict, test_type: PqTestTypes):
         raise IncorrectInputData(str(e))
 
 
-def get_experiment_tests_results(session: Session, experiment_name, result_name=None) -> PqTestResultsList:
+def get_experiment_tests_results(
+    session: Session, experiment_name, result_name=None
+) -> PqTestResultsList:
     experiment = get_db_experiment_by_name(session, experiment_name)
     results = []
     for test in experiment.tests:

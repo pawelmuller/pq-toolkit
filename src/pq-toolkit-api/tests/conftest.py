@@ -6,16 +6,19 @@ from io import BytesIO
 from app.crud import upload_experiment_config
 import json
 
+
 @pytest.fixture(name="engine")
 def engine_fixture():
     engine = create_engine("sqlite:///:memory:")
     SQLModel.metadata.create_all(engine)
     return engine
 
+
 @pytest.fixture(name="session")
 def session_fixture(engine):
     with Session(engine) as session:
         yield session
+
 
 @pytest.fixture
 def experiment_data():
@@ -28,10 +31,11 @@ def experiment_data():
                 "test_number": 1,
                 "type": "AB",
                 "samples": [{"sample_id": "s1", "asset_path": "file_sample_5.mp3"}],
-                "questions": [{"question_id": "q1", "text": "Select better quality"}]
+                "questions": [{"question_id": "q1", "text": "Select better quality"}],
             }
-        ]
+        ],
     }
+
 
 @pytest.fixture
 def updated_experiment_data():
@@ -44,16 +48,17 @@ def updated_experiment_data():
                 "test_number": 1,
                 "type": "AB",
                 "samples": [{"sample_id": "s1", "asset_path": "file_sample_5.mp3"}],
-                "questions": [{"question_id": "q1", "text": "Select better quality"}]
+                "questions": [{"question_id": "q1", "text": "Select better quality"}],
             },
             {
                 "test_number": 2,
                 "type": "ABX",
                 "samples": [{"sample_id": "s2", "asset_path": "file_sample_700.mp3"}],
-                "questions": [{"question_id": "q2", "text": "Select more warmth"}]
-            }
-        ]
+                "questions": [{"question_id": "q2", "text": "Select more warmth"}],
+            },
+        ],
     }
+
 
 @pytest.fixture
 def create_experiment(session):
@@ -62,11 +67,16 @@ def create_experiment(session):
         session.add(experiment)
         session.commit()
         return experiment
+
     return _create_experiment
+
 
 @pytest.fixture
 def upload_config(session):
     def _upload_config(experiment_name, config_data):
-        json_file = UploadFile(filename="config.json", file=BytesIO(json.dumps(config_data).encode()))
+        json_file = UploadFile(
+            filename="config.json", file=BytesIO(json.dumps(config_data).encode())
+        )
         upload_experiment_config(session, experiment_name, json_file)
+
     return _upload_config

@@ -37,7 +37,9 @@ class Test(SQLModel, table=True):
     experiment_id: int = Field(foreign_key="experiment.id")
 
     experiment: Experiment = Relationship(back_populates="tests")
-    experiment_test_results: list["ExperimentTestResult"] = Relationship(back_populates="test")
+    experiment_test_results: list["ExperimentTestResult"] = Relationship(
+        back_populates="test"
+    )
 
 
 class ExperimentTestResult(SQLModel, table=True):

@@ -17,6 +17,7 @@ class PqTestTypes(Enum):
     """
     Class representing types of tests handled by PQToolkit.
     """
+
     AB: str = "AB"
     ABX: str = "ABX"
     APE: str = "APE"
@@ -31,10 +32,13 @@ class PqSample(BaseModel):
         sample_id: An ID of the sample.
         asset_path: Path to the sample.
     """
-    sample_id: str = Field(alias="sampleId",
-                           validation_alias=AliasChoices("sampleId", "sample_id"))
-    asset_path: str = Field(alias="assetPath",
-                            validation_alias=AliasChoices("assetPath", "asset_path"))
+
+    sample_id: str = Field(
+        alias="sampleId", validation_alias=AliasChoices("sampleId", "sample_id")
+    )
+    asset_path: str = Field(
+        alias="assetPath", validation_alias=AliasChoices("assetPath", "asset_path")
+    )
 
 
 class PqQuestion(BaseModel):
@@ -45,8 +49,10 @@ class PqQuestion(BaseModel):
         question_id: An ID of the question.
         text: Text of the question.
     """
-    question_id: str = Field(alias="questionId",
-                             validation_alias=AliasChoices("questionId", "question_id"))
+
+    question_id: str = Field(
+        alias="questionId", validation_alias=AliasChoices("questionId", "question_id")
+    )
     text: str
 
 
@@ -58,10 +64,12 @@ class PqTestBase(BaseModel):
         test_number: A number of the test.
         type: A type of the test.
     """
+
     model_config = ConfigDict(use_enum_values=True, validate_default=True)
 
-    test_number: int = Field(alias="testNumber",
-                             validation_alias=AliasChoices("testNumber", "test_number"))
+    test_number: int = Field(
+        alias="testNumber", validation_alias=AliasChoices("testNumber", "test_number")
+    )
     type: PqTestTypes
 
 
@@ -75,6 +83,7 @@ class PqTestAB(PqTestBase):
         samples: list of samples associated with the test
         questions: list of questions for the test
     """
+
     samples: list[PqSample]
     questions: list[PqQuestion]
     type: PqTestTypes = PqTestTypes.AB
@@ -91,8 +100,12 @@ class PqTestABX(PqTestBase):
         samples: list of samples associated with the test
         questions: list of questions for the test
     """
-    x_sample_id: str | None = Field(None, alias="xSampleId",
-                                    validation_alias=AliasChoices("xSampleId", "x_sample_id"))
+
+    x_sample_id: str | None = Field(
+        None,
+        alias="xSampleId",
+        validation_alias=AliasChoices("xSampleId", "x_sample_id"),
+    )
     samples: list[PqSample]
     questions: list[PqQuestion] | None = None
     type: PqTestTypes = PqTestTypes.ABX
@@ -110,6 +123,7 @@ class PqTestMUSHRA(PqTestBase):
         anchors: list of anchor samples associated with the test
         samples: list of samples associated with the test
     """
+
     reference: PqSample
     question: str | None = None
     anchors: list[PqSample]
@@ -127,21 +141,25 @@ class PqTestAPE(PqTestBase):
         axis: A list of axis questions
         samples: list of samples associated with the test
     """
+
     axis: list[PqQuestion]
     samples: list[PqSample]
     type: PqTestTypes = PqTestTypes.APE
 
 
 class PqTestBaseResult(BaseModel):
-    test_number: int = Field(alias="testNumber",
-                             validation_alias=AliasChoices("testNumber", "test_number"))
+    test_number: int = Field(
+        alias="testNumber", validation_alias=AliasChoices("testNumber", "test_number")
+    )
 
 
 class PqSelection(BaseModel):
-    question_id: str = Field(alias="questionId",
-                             validation_alias=AliasChoices("questionId", "question_id"))
-    sample_id: str = Field(alias="sampleId",
-                           validation_alias=AliasChoices("sampleId", "sample_id"))
+    question_id: str = Field(
+        alias="questionId", validation_alias=AliasChoices("questionId", "question_id")
+    )
+    sample_id: str = Field(
+        alias="sampleId", validation_alias=AliasChoices("sampleId", "sample_id")
+    )
 
 
 class PqTestABResult(PqTestBaseResult):
@@ -180,8 +198,9 @@ class PqTestAPEResult(PqTestBaseResult):
 
 
 class PqTestResultsList(BaseModel):
-    results: list[PqTestABResult | PqTestABXResult |
-                  PqTestMUSHRAResult | PqTestAPEResult]
+    results: list[
+        PqTestABResult | PqTestABXResult | PqTestMUSHRAResult | PqTestAPEResult
+    ]
 
 
 class PqExperiment(BaseModel):
@@ -194,6 +213,7 @@ class PqExperiment(BaseModel):
         description: Experiment description.
         tests: A list of test objects
     """
+
     uid: UUID4 | str = uuid.uuid4()
     name: str
     description: str
@@ -202,7 +222,9 @@ class PqExperiment(BaseModel):
 
     @field_validator("tests", mode="before")  # noqa
     @classmethod
-    def validate_tests(cls, v: list) -> list[PqTestMUSHRA | PqTestAPE | PqTestABX | PqTestAB]:
+    def validate_tests(
+        cls, v: list
+    ) -> list[PqTestMUSHRA | PqTestAPE | PqTestABX | PqTestAB]:
         tests_list = []
         for test in v:
             object_type = type(test)

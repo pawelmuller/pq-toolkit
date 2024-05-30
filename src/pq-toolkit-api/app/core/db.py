@@ -1,12 +1,13 @@
 from sqlalchemy.exc import NoResultFound
 from sqlmodel import Session, create_engine, SQLModel, select
 
-from app import crud
 from app.core.config import settings
-from app.models import Admin, Sample, Experiment, Test, ExperimentTestResult
+from app.models import Admin
 
 
-engine = create_engine(str(settings.SQLALCHEMY_DATABASE_URI), echo=(settings.ENVIRONMENT == "local"))
+engine = create_engine(
+    str(settings.SQLALCHEMY_DATABASE_URI), echo=(settings.ENVIRONMENT == "local")
+)
 
 
 def init_db(session: Session) -> None:
@@ -14,7 +15,9 @@ def init_db(session: Session) -> None:
         SQLModel.metadata.create_all(engine)
     # Create initial data
     try:
-        session.exec(select(Admin).where(Admin.username == settings.FIRST_SUPERUSER_NAME)).one()
+        session.exec(
+            select(Admin).where(Admin.username == settings.FIRST_SUPERUSER_NAME)
+        ).one()
     except NoResultFound:
         admin = Admin(
             username=settings.FIRST_SUPERUSER_NAME,

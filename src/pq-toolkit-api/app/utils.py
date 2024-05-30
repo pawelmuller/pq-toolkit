@@ -1,6 +1,4 @@
-from io import BytesIO
 from app.schemas import PqErrorResponse
-from urllib3.response import HTTPResponse
 
 
 class PqException(Exception):

@@ -1,12 +1,9 @@
 from minio import Minio
 import minio
 import minio.datatypes
-from pydantic import AnyUrl
 from io import IOBase
 from urllib3.response import HTTPResponse
 from pydantic_settings import BaseSettings
-from collections import deque
-from app.schemas import *
 from app.utils import PqException
 
 
@@ -17,7 +14,9 @@ class SampleDoesNotExistError(PqException):
 
 class IllegalNamingError(PqException):
     def __init__(self, illegal_character: str) -> None:
-        super().__init__(f"Experiment or sample contains illegal character: {illegal_character}")
+        super().__init__(
+            f"Experiment or sample contains illegal character: {illegal_character}"
+        )
 
 
 class S3Error(PqException):
@@ -26,11 +25,18 @@ class S3Error(PqException):
 
 
 class SampleManager:
-    """Wrapper class for a MinIO client. Manages sample recording files.
-    """
+    """Wrapper class for a MinIO client. Manages sample recording files."""
+
     _SEPARATOR = "/"
 
-    def __init__(self, endpoint: str, port: int, access_key: str, secret_key: str, sample_bucket_name: str = "samples") -> None:
+    def __init__(
+        self,
+        endpoint: str,
+        port: int,
+        access_key: str,
+        secret_key: str,
+        sample_bucket_name: str = "samples",
+    ) -> None:
         """Creates manager object
 
         Args:
@@ -45,7 +51,7 @@ class SampleManager:
             endpoint=f"{endpoint}:{port}",
             access_key=access_key,
             secret_key=secret_key,
-            secure=False
+            secure=False,
         )
         self._ensure_bucket_exists()
 
@@ -58,7 +64,9 @@ class SampleManager:
             secret_key=settings.MINIO_ROOT_PASSWORD,
         )
 
-    def _object_name_from_experiment_and_sample(self, experiment_name: str, sample_name: str) -> str:
+    def _object_name_from_experiment_and_sample(
+        self, experiment_name: str, sample_name: str
+    ) -> str:
         if self._SEPARATOR in experiment_name or self._SEPARATOR in sample_name:
             raise IllegalNamingError(self._SEPARATOR)
         return f"{experiment_name}{self._SEPARATOR}{sample_name}"
@@ -69,7 +77,7 @@ class SampleManager:
 
     def _check_object_exists(self, object_name: str) -> bool:
         try:
-            stat = self._client.stat_object(self._sample_bucket_name, object_name)
+            self._client.stat_object(self._sample_bucket_name, object_name)
             return True
         except minio.error.S3Error:
             return False
@@ -84,15 +92,25 @@ class SampleManager:
         Returns:
             boolean: existence
         """
-        object_name = self._object_name_from_experiment_and_sample(experiment_name, sample_name)
+        object_name = self._object_name_from_experiment_and_sample(
+            experiment_name, sample_name
+        )
         return self._check_object_exists(object_name)
 
-    def upload_sample(self, experiment_name: str, sample_name: str, sample_data: IOBase):
+    def upload_sample(
+        self, experiment_name: str, sample_name: str, sample_data: IOBase
+    ):
         object_name = self._object_name_from_experiment_and_sample(
-            experiment_name, sample_name)
+            experiment_name, sample_name
+        )
         try:
-            self._client.put_object(self._sample_bucket_name,
-                                    object_name, sample_data, length=-1, part_size=10*1024*1024)
+            self._client.put_object(
+                self._sample_bucket_name,
+                object_name,
+                sample_data,
+                length=-1,
+                part_size=10 * 1024 * 1024,
+            )
         except minio.error.S3Error as e:
             raise S3Error(e.code)
 
@@ -106,16 +124,20 @@ class SampleManager:
             response.close()
             response.release_conn()
 
-    def get_sample(self, experiment_name: str, sample_name: str, chunk_size: int = 1024*1024):
+    def get_sample(
+        self, experiment_name: str, sample_name: str, chunk_size: int = 1024 * 1024
+    ):
         object_name = self._object_name_from_experiment_and_sample(
-            experiment_name, sample_name)
+            experiment_name, sample_name
+        )
 
         if not self.check_sample_exists(experiment_name, sample_name):
             raise SampleDoesNotExistError(object_name)
 
         try:
             response: HTTPResponse = self._client.get_object(
-                self._sample_bucket_name, object_name)
+                self._sample_bucket_name, object_name
+            )
         except minio.error.S3Error as e:
             raise S3Error(e.code)
 
@@ -123,7 +145,8 @@ class SampleManager:
 
     def remove_sample(self, experiment_name: str, sample_name: str):
         object_name = self._object_name_from_experiment_and_sample(
-            experiment_name, sample_name)
+            experiment_name, sample_name
+        )
 
         if not self.check_sample_exists(experiment_name, sample_name):
             raise SampleDoesNotExistError(object_name)
@@ -135,7 +158,8 @@ class SampleManager:
 
         bucket_objects_iterator = self._client.list_objects(
             bucket_name=self._sample_bucket_name,
-            prefix=experiment_name + self._SEPARATOR)
+            prefix=experiment_name + self._SEPARATOR,
+        )
 
         for obj in bucket_objects_iterator:
             obj: minio.datatypes.Object
