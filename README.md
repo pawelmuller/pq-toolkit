@@ -102,6 +102,6 @@ Potential improvements:
 ## ZPRP-24L notes
 
 Known issues:
-
+- Feedback is not included in test results
 
 The project progressed on schedule with minor delays while connecting the backend to the frontend. However, in the end, the project was completed only with a delay of a few days. Which is still before the deadline
