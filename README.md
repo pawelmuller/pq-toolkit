@@ -72,6 +72,10 @@ Available flavors:
 
 All the revisions are automatically applied at startup.
 
+## 2024L notes
+
+Initially, the project was planned for 3 people, but at the beginning we received information that it would be for 6 people, 3 people each from two different fields and subjects. This caused a slight disruption in the plans, but in order to control the situation as quickly as possible and minimize the number of problems, we decided to divide the work between backend - ZPRP group and fronted WIMU group. This allowed us to complete the project efficiently despite the large number of people involved.
+
 ## WIMU notes
 
 Changes regarding design proposal:
