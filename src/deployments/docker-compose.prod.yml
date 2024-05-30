@@ -15,7 +15,7 @@ services:
       timeout: 5s
       retries: 10
     volumes:
-      - postgres-data:/var/lib/postgresql/data
+      - $POSTGRES_VOLUME:/var/lib/postgresql/data
 
   # FastAPI backend
   pq-toolkit-api:
@@ -37,8 +37,6 @@ services:
       MINIO_STORAGE_USE_HTTPS: $MINIO_STORAGE_USE_HTTPS
       PQ_API_PORT: 8787
     command: sh -c "./prestart.sh && python3 main.py"
-    volumes:
-      - ../pq-toolkit-api/app:/app/app
 
   # Frontend
   pq-toolkit-ui:
@@ -48,8 +46,6 @@ services:
       args:
         NEXT_PUBLIC_API_URL: "htshts"
     image: pq-toolkit-ui
-    volumes:
-      - ../pq-toolkit-ui/src:/app/src
     depends_on:
       - pq-toolkit-api
     environment:
@@ -59,7 +55,7 @@ services:
   pq-sample-storage-minio:
     image: minio/minio
     volumes:
-      - minio_storage:/data
+      - $MINIO_VOLUME:/data
     environment:
       MINIO_ROOT_USER: $MINIO_ROOT_USER
       MINIO_ROOT_PASSWORD: $MINIO_ROOT_PASSWORD
@@ -82,16 +78,3 @@ services:
       PQ_UI_SERVER: pq-toolkit-ui
       PQ_UI_PORT: 3000
 
-volumes:
-  minio_storage:
-    driver: local
-    driver_opts:
-      type: none
-      o: bind
-      device: $MINIO_VOLUME
-  postgres-data:
-    driver: local
-    driver_opts:
-      type: none
-      o: bind
-      device: $POSTGRES_VOLUME

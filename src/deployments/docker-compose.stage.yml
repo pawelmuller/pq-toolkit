@@ -37,8 +37,6 @@ services:
       MINIO_STORAGE_USE_HTTPS: $MINIO_STORAGE_USE_HTTPS
       PQ_API_PORT: 8787
     command: sh -c "./prestart.sh && python3 main.py"
-    volumes:
-      - ../pq-toolkit-api/app:/app/app
 
   # Frontend
   pq-toolkit-ui:
@@ -48,8 +46,6 @@ services:
       args:
         NEXT_PUBLIC_API_URL: "htshts"
     image: pq-toolkit-ui
-    volumes:
-      - ../pq-toolkit-ui/src:/app/src
     depends_on:
       - pq-toolkit-api
     environment:
