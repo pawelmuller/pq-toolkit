@@ -6,13 +6,29 @@ UI for conducting audio quality tests using selected methodologies
 (AB, ABX, APE, MUSHRA).
 
 ## Development server:
+<details>
+
+To deploy development server go to `pq-toolkit-ui` and run
 
 ```bash
 npm install
 npm run dev
 ```
+## Available scripts
+All scripts are available via `npm run <name>` command.
+
+- `dev` - runs development server
+- `build` - builds for deployment
+- `start` - runs deployment server
+- `lint` - runs linter
+- `lint:fix` - runs linter and fixes all autofixable problems
+- `test` - runs test suite
+- `test:watch` - runs test suite and watches for changes
+- `build-docs` - build typedoc docs
+</details>
 
 ## Deployment
+<details>
 
 ### Requirements
 
@@ -32,22 +48,12 @@ Available environments:
 
 Remember to create .env file for used environment.
 Sample .env files are provided as `.env.<name>.sample`
+</details>
 
-## Available scripts
-
-All scripts are available via `npm run <name>` command.
-
-- `dev` - runs development server
-- `build` - builds for deployment
-- `start` - runs deployment server
-- `lint` - runs linter
-- `lint:fix` - runs linter and fixes all autofixable problems
-- `test` - runs test suite
-- `test:watch` - runs test suite and watches for changes
-- `build-docs` - build typedoc docs
 
 ## Technology stack
 
+<details>
 This project utilizes Typescript for full type safety, there are no .js files, all type definitions
 are provided in place.
 
@@ -67,9 +73,11 @@ Other used dependencies:
 
 - [sweetalert2](https://sweetalert2.github.io/) - confirmation modal
 - [react-icons](https://react-icons.github.io/react-icons/) - icons
+</details>
 
 ## Project structure
 
+<details>
 This project has modular structure allowing for easy expansion with additional test types or modification
 of existing tests.
 
@@ -81,18 +89,23 @@ Basic structure:
 - `src`
   - `app` - app router, contains all routes (api and frontend)
     - `api` - api routes for backend functionality
+    - `about` - pages with information about experiments
     - other - frontend routes
   - `core` - core functionality, e.g. api handlers, global components
   - `lib` - all components, schemas used in app
   - `styles` - base style definitions in .css files (mainly typography)
 
+</details>
+
 ## Examples
 
+<details>
 There is example configuration for experiment in `public/examples` folder with 2 configurations
 and samples required to start it. It can be used after uploading via admin panel.
+</details>
 
 ## Testing
-
+<details>
 This project uses Jest for testing, to run test suite use `npm run test` command
 or `npm run test:watch` to run tests and watch for changes (useful when debugging test).
 
@@ -102,23 +115,33 @@ Code coverage is available in `coverage` directory after running test suite.
 
 Note that test coverage is lacking due to no test harness for Howler.js and
 inability to test audio in Jest (and handling audio is main scope of this project).
+</details>
 
 ## TypeDoc
 
+<details>
 There is TypeDoc documentation available for experiment schemas.
 It has to be build by running `npm run build-docs`, then it's available
 in `doc` directory.
 
 Documentation describes all types needed to setup experiment and save results.
 Tooltip hints are also available in compatible IDEs.
+</details>
 
 ## SwaggerUI
 
+<details>
 For API endpoints documentation start the service and visit the `/api/v1/api-docs` endpoint.
 
-## Development guide
+</details>
 
-This is reference of components and flows used to access experiments for future developers.
+## Development guide
+<details>
+
+This is reference of components and flows used to access experiments for future developers. 
+## pq-toolkit-ui/src/app
+<details>
+
 
 Good entry point is Next.js documentation, where app router is described.
 Then starting point of user flow is `app/page.tsx` file, where list of all experiments is shown.
@@ -135,6 +158,123 @@ Main steps taken in `app/[name]/layout.tsx` are:
 - initializing or loading save results state (again to preserve for refreshing)
 - creating methods for updating results and saving them in API
 
+File `app\[name]\[step]\page.tsx` is responsible for:
+  - page conatining experiment components, handling buttons: Next, Previous, Finish as well as saving results.
+
+File `app\[name]\finish\page.tsx` is responsible for:
+  - page apearing after test is finished with custom thank you note and go back to home page button.
+
+File `app\invalid-configuration-error.tsx` is responsible for:
+  - page apearing after error with the configuration of an experiment occured.
+
+File `app\error.tsx` is responsible for:
+  - page apearing after any other error occured.
+
+File `app\loading.tsx` is responsible for:
+  - page apearing, when moving to a page, that is not loaded yet.
+
+Folder `app\about` holds files responsible for pages holding information about different types of exeperiments:
+ - `app\about\ab\page.tsx`
+ - `app\about\abx\page.tsx`
+ - `app\about\ape\page.tsx`
+ - `app\about\mushra\page.tsx`
+
+File `app\admin\page.tsx` is responsible for admin panel containing:
+  - list of configured experiments
+  - option to add new experiments
+  - option to remove experiment
+
+File `app\admin\[name]\page.tsx` is responsible for new experiment configuration. It contains:
+  - list of saved configurations
+  - option to add new configuration as .json file
+  - option to load new samples
+
+
+</details>
+
+## pq-toolkit-ui/src/core
+<details>
+
+Files responsible for some of the core functionalities:
+- `pq-toolkit-ui/src/core/apiHandlers` - functions around API
+- `pq-toolkit-ui/src/core/components/FileUploader.tsx` - resposible for file uploader component
+- `pq-toolkit-ui/src/core/hooks/useStorage.ts` - Hook for safely using localStorage and sessionStorage in Next.js
+
+
+</details>
+
+## pq-toolkit-ui/src/lib
+<details>
+
+### pq-toolkit-ui/src/lib/components
+
+#### pq-toolkit-ui/src/lib/components/basic
+<details>
+
+To edit commonly used components such as:
+- `pq-toolkit-ui/src/lib/components/basic/blobs.tsx` - responsible for background animations
+- `pq-toolkit-ui/src/lib/components/basic/deleteButton.tsx`
+- `pq-toolkit-ui/src/lib/components/basic/header.tsx` - responsible for left top corner icon
+- `pq-toolkit-ui/src/lib/components/basic/scrollToTopButton.tsx`
+- `pq-toolkit-ui/src/lib/components/basic/themeSwitch.tsx` - responsible for changing between dark and light theme
+</details>
+
+#### pq-toolkit-ui/src/lib/components/editors
+<details>
+To edit page responsible for configurating individual experiments:
+
+- `lib\components\editors\AbEditor.tsx`
+- `lib\components\editors\AbxEditor.tsx`
+- `lib\components\editors\ApeEditor.tsx`
+- `lib\components\editors\MushraEditor.tsx`
+</details>
+
+#### pq-toolkit-ui/src/lib/components/experiments
+<details>
+
+Most important files responsible for editing the design of the experiments:  
+
+- To edit test page layout and components used:
+  - `lib\components\experiments\ABTestComponent.tsx`
+  - `lib\components\experiments\ABXTestComponent.tsx`
+  - `lib\components\experiments\APETestComponent.tsx`
+  - `lib\components\experiments\MUSHRATestComponent.tsx`
+
+- To edit individual components edit files below:
+  - `lib\components\experiments\common\VerticalMultislider.tsx` - to edit VerticalMultislider 
+  - `lib\components\experiments\common\VerticaSlider.tsx` - to edit Vertical Slider 
+  - `lib\components\experiments\common\SingleSelectQuestion.tsx` - to edit single select buttons between two options
+
+</details>
+</details>
+
+#### pq-toolkit-ui/src/lib/components/login
+<details>
+
+  - `lib\components\experiments\player\login-page.tsx` - to edit login page
+</details>
+
+#### pq-toolkit-ui/src/lib/components/player
+<details>
+
+  - `lib\components\experiments\player\MultiPlayer.tsx` - to edit player handling multiple samples
+  - `lib\components\experiments\player\SinglePlayer.tsx` - to edit player handling one sample
+</details>
+
+## pq-toolkit-ui/src/styles
+<details>
+
+Holding css files responsible for look style:
+
+- `pq-toolkit-ui\src\styles\base.css`
+- `pq-toolkit-ui\src\styles\globals.css`
+- `pq-toolkit-ui\src\styles\typography.css`
+</details>
+
+## Adding new experiment
+
+<details>
+
 All the types are available at `lib/schemas` and are created using zod schemas to allow
 for easy validation.
 
@@ -147,20 +287,11 @@ To add new experiment type most important steps are:
 - add randomizing function to `app/[name]/utils.ts` if needed
 - fill missing types in `app/[name]/layout.tsx`
 
-To edit the design of the experiments most important files are:
-
-- `app\[name]\[step]\page.tsx` - to edit page conatining experiment components, handling buttons: Next, Previous, Finish as well as saving results.
-
-To edit individual components edit files below:
-- `lib\components\experiments\common\VerticalMultislider.tsx` - to edit VerticalMultislider 
-- `lib\components\experiments\common\VerticaSlider.tsx` - to edit Vertical Slider 
-- `lib\components\experiments\common\SingleSelectQuestion.tsx` - to edit single select buttons between two options
-- `lib\components\experiments\player\MultiPlayer.tsx` - to edit player handling multiple samples
-- `lib\components\experiments\player\SinglePlayer.tsx` - to edit player handling one sample
-
+</details>
+</details>
 
 ## Colors Used in UI
-
+<details>
 The UI design incorporates a consistent color scheme to enhance user experience and maintain visual coherence. Here are the main colors used across different elements of the interface, differentiated by light and dark modes:
 
 ### Light Mode
@@ -234,3 +365,5 @@ The UI design incorporates a consistent color scheme to enhance user experience 
   - `dark:from-pink-500 dark:via-pink-600 dark:to-violet-500`
 
 These colors are defined using TailwindCSS classes and are applied consistently across the application to ensure a cohesive and user-friendly interface.
+
+</details>
