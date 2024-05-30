@@ -6,7 +6,6 @@ services:
     image: postgres
     shm_size: 128m
     environment:
-      POSTGRES_USER: $POSTGRES_USER
       POSTGRES_PASSWORD: $POSTGRES_PASSWORD
       POSTGRES_DB: $POSTGRES_DB
     healthcheck:
@@ -36,7 +35,7 @@ services:
         condition: service_healthy
     environment:
       PROJECT_NAME: $PROJECT_NAME
-      POSTGRES_USER: $POSTGRES_USER
+      POSTGRES_USER: postgres
       POSTGRES_PASSWORD: $POSTGRES_PASSWORD
       POSTGRES_DB: $POSTGRES_DB
       POSTGRES_SERVER: pq-toolkit-db
@@ -46,7 +45,7 @@ services:
       MINIO_ROOT_PASSWORD: $MINIO_ROOT_PASSWORD
       MINIO_ENDPOINT: $MINIO_ENDPOINT
       MINIO_STORAGE_USE_HTTPS: $MINIO_STORAGE_USE_HTTPS
-      PQ_API_PORT: $PQ_API_PORT
+      PQ_API_PORT: 8787
     command: sh -c "./prestart.sh && python3 main.py"
     volumes:
       - ../pq-toolkit-api/app:/app/app
@@ -64,7 +63,7 @@ services:
     depends_on:
       - pq-toolkit-api
     environment:
-      NEXT_PUBLIC_API_URL: $PUBLIC_API_URL
+      NEXT_PUBLIC_API_URL: $PUBLIC_API_URL:$GATEWAY_PORT
 
   # MinIO buckets
   pq-sample-storage-minio:
@@ -83,16 +82,15 @@ services:
       context: pq-gateway
       dockerfile: Dockerfile
     ports:
-      - $GATEWAY_PORT:$GATEWAY_PORT
+      - $GATEWAY_PORT:8000
     depends_on:
       - pq-toolkit-api
       - pq-toolkit-ui
     environment:
-      PQ_API_SERVER: $PQ_API_SERVER
-      PQ_API_PORT: $PQ_API_PORT
-      PQ_UI_SERVER: $PQ_UI_SERVER
-      PQ_UI_PORT: $PQ_UI_PORT
-      GATEWAY_PORT: $GATEWAY_PORT
+      PQ_API_SERVER: pq-toolkit-api
+      PQ_API_PORT: 8787
+      PQ_UI_SERVER: pq-toolkit-ui
+      PQ_UI_PORT: 3000
 
 volumes:
   minio_storage:

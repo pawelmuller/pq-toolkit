@@ -64,7 +64,7 @@ services:
     depends_on:
       - pq-toolkit-api
     environment:
-      NEXT_PUBLIC_API_URL: $PUBLIC_API_URL
+      NEXT_PUBLIC_API_URL: $PUBLIC_API_URL:$GATEWAY_PORT
 
   # MinIO buckets
   pq-sample-storage-minio:
@@ -83,16 +83,15 @@ services:
       context: pq-gateway
       dockerfile: Dockerfile
     ports:
-      - $GATEWAY_PORT:$GATEWAY_PORT
+      - $GATEWAY_PORT:8000
     depends_on:
       - pq-toolkit-api
       - pq-toolkit-ui
     environment:
-      PQ_API_SERVER: $PQ_API_SERVER
-      PQ_API_PORT: $PQ_API_PORT
-      PQ_UI_SERVER: $PQ_UI_SERVER
-      PQ_UI_PORT: $PQ_UI_PORT
-      GATEWAY_PORT: $GATEWAY_PORT
+      PQ_API_SERVER: pq-toolkit-api
+      PQ_API_PORT: 8787
+      PQ_UI_SERVER: pq-toolkit-ui
+      PQ_UI_PORT: 3000
 
 volumes:
   minio_storage:

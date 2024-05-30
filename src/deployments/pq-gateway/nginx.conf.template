@@ -1,7 +1,7 @@
 # nginx.conf
 
 server {
-    listen ${GATEWAY_PORT};
+    listen 8000;
     server_name 0.0.0.0;
 
     location /api/ {
