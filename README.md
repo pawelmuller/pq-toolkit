@@ -52,9 +52,8 @@ The Python plugin can be used to interact with the PQ Toolkit API backend the sa
 2. Uploading experiments
    - Using Python script
    - Using admin panel available at `/admin`
-3. Verifying configuration using admin panel (`/admin/[experiment-name]`)
-4. For users `/[experiment-name]`
-5. Getting results using Python script
+3. For users `/[experiment-name]`
+4. Getting results using Python script
 
 Available flavors:
 - prod
@@ -79,11 +78,9 @@ Initially, the project was planned for 3 people, but at the beginning we receive
 Potential improvements:
  - additional functionality for the admin allowing for easy analysis of test results
  - CI/CD implementation
- - authorization for admin endpoints/panel
  - more options for test configurations (new tests or more helper components)
  - automatic mkdocs deployment
- - eneble sample hearing in experiment configurator
- - inbuilt experiment configuration creator (.json file)
+ - implementation of sample playback functionality in the experiment configurator
 
  The project progressed on schedule with minor delays while connecting the backend to the frontend. However, in the end, the project was completed only with a delay of a few days. Which is still before the deadline
 
@@ -94,9 +91,7 @@ Known issues:
 - Error handling
 - Loading screen improvement (darkmode)
 
-
 ## ZPRP-24L notes
 
 Known issues:
 - Feedback is not included in test results
-
