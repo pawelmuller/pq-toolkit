@@ -25,3 +25,6 @@ nbproject/
 *.iml
 *.ipr
 *.iws
+
+**/.venv
+volume

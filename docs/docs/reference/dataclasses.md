@@ -2,28 +2,28 @@
 This classes are useful when working with tests (e.g. setting them up).
 
 
-::: api_client.dataclasses.PqExperiment
+::: pqtoolkit.dataclasses.PqExperiment
 
 
-::: api_client.dataclasses.PqTestBase
+::: pqtoolkit.dataclasses.PqTestBase
 
 
-::: api_client.dataclasses.PqTestAB
+::: pqtoolkit.dataclasses.PqTestAB
 
 
-::: api_client.dataclasses.PqTestABX
+::: pqtoolkit.dataclasses.PqTestABX
 
 
-::: api_client.dataclasses.PqTestAPE
+::: pqtoolkit.dataclasses.PqTestAPE
 
 
-::: api_client.dataclasses.PqTestMUSHRA
+::: pqtoolkit.dataclasses.PqTestMUSHRA
 
 
-::: api_client.dataclasses.PqTestTypes
+::: pqtoolkit.dataclasses.PqTestTypes
 
 
-::: api_client.dataclasses.PqSample
+::: pqtoolkit.dataclasses.PqSample
 
 
-::: api_client.dataclasses.PqQuestion
+::: pqtoolkit.dataclasses.PqQuestion
