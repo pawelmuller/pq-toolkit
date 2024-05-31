@@ -56,7 +56,7 @@ More detailed walkthrough can be found in project's docs directory.
 
 More information available in `src/pq-toolkit-ui/README.md`.
 
-## WIMU notes
+## WIMU 24L notes
 
 Known issues:
 - Error handling
