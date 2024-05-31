@@ -98,7 +98,6 @@ Basic structure:
 - `public` - static assets
 - `src`
   - `app` - app router, contains all routes (api and frontend)
-    - `api` - api routes for backend functionality
     - `about` - pages with information about experiments
     - other - frontend routes
   - `core` - core functionality, e.g. api handlers, global components
@@ -210,12 +209,6 @@ File `app\admin\page.tsx` is responsible for admin panel containing:
   - option to add new experiments
   - option to remove experiment
 
-File `app\admin\[name]\page.tsx` is responsible for new experiment configuration. It contains:
-  - list of saved configurations
-  - option to add new configuration as .json file
-  - option to load new samples
-
-
 </details>
 
 ## pq-toolkit-ui/src/core
@@ -225,7 +218,6 @@ File `app\admin\[name]\page.tsx` is responsible for new experiment configuration
 
 Files responsible for some of the core functionalities:
 - `pq-toolkit-ui/src/core/apiHandlers` - functions around API
-- `pq-toolkit-ui/src/core/components/FileUploader.tsx` - resposible for file uploader component
 - `pq-toolkit-ui/src/core/hooks/useStorage.ts` - Hook for safely using localStorage and sessionStorage in Next.js
 
 

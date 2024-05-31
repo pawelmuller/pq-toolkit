@@ -58,18 +58,12 @@ More information available in `src/pq-toolkit-ui/README.md`.
 
 ## WIMU notes
 
-Changes regarding design proposal:
-- xml files, xmlbuilder2 -> json files + zod validation
-
 Known issues:
 - Error handling
 - Loading screen improvement (darkmode)
 
 Potential improvements:
-- authorization for admin endpoints/panel
 - more options for test configurations (new tests or more helper components)
-- separate backend for data handling, storage on larger scale (relational database)
 - automatic mkdocs deployment
 - dashboard in admin panel allowing to overview results
-- eneble sample hearing in experiment configurator
-- inbuilt experiment configuration creator (.json file)
+- implementation of sample playback functionality in the experiment configurator
