@@ -78,11 +78,25 @@ Initially, the project was planned for 3 people, but at the beginning we receive
 
 Potential improvements:
  - additional functionality for the admin allowing for easy analysis of test results
- - adding new types of tests and their support to the backend and frontend
  - CI/CD implementation
+ - authorization for admin endpoints/panel
+ - more options for test configurations (new tests or more helper components)
+ - automatic mkdocs deployment
+ - eneble sample hearing in experiment configurator
+ - inbuilt experiment configuration creator (.json file)
+
+ The project progressed on schedule with minor delays while connecting the backend to the frontend. However, in the end, the project was completed only with a delay of a few days. Which is still before the deadline
+
+
+## WIMU-24L notes
+
+Known issues:
+- Error handling
+- Loading screen improvement (darkmode)
+
+
+## ZPRP-24L notes
 
 Known issues:
 - Feedback is not included in test results
-- Sample manager tests are not ideal, they should be improved
 
-The project progressed on schedule with minor delays while connecting the backend to the frontend. However, in the end, the project was completed only with a delay of a few days. Which is still before the deadline
