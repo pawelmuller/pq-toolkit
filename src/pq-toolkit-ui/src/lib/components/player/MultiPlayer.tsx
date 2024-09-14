@@ -1,4 +1,5 @@
 'use client'
+
 import {
   type Dispatch,
   type SetStateAction,
@@ -7,7 +8,19 @@ import {
   useState
 } from 'react'
 import { Howl } from 'howler'
-import { PauseButton, PlayButton, StopButton } from './ControlButtons'
+import {
+  IconButton,
+  Slider,
+  Typography,
+  Box,
+  Button,
+  Table,
+  TableBody,
+  TableCell,
+  TableRow
+} from '@mui/material'
+import PlayArrowIcon from '@mui/icons-material/PlayArrow'
+import PauseIcon from '@mui/icons-material/Pause'
 import { formatTime } from './utils/playerUtils'
 import { max } from '@floating-ui/utils'
 
@@ -34,7 +47,6 @@ const MultiPlayer = ({
 
   const getPlayerLength = (player: Howl): number => player.duration() ?? 0
 
-  // This won't cause changing hooks on re-render because it's specific for each component
   const [selectedPlayer, setSelectedPlayer] = selectedPlayerState
 
   useEffect(() => {
@@ -45,6 +57,7 @@ const MultiPlayer = ({
         player.volume(0.0)
       }
     })
+    setProgress(0)
   }, [selectedPlayer])
 
   const [progress, setProgress] = useState(0)
@@ -102,80 +115,109 @@ const MultiPlayer = ({
       allPlayers.forEach((player) => player.stop())
       stopUpdating()
     }
-  }, [playersRef, status])
+  }, [status])
+
+  const togglePlayPause = (): void => {
+    if (status === 'playing') {
+      setStatus('paused')
+    } else {
+      setStatus('playing')
+    }
+  }
+
+  const handleSampleSelect = (index: number): void => {
+    setSelectedPlayer(index)
+    setStatus('stopped')
+    setProgress(0)
+  }
 
   return (
-    <div className="flex flex-col items-center min-w-[16rem]">
-      <input
-        type="range"
-        min="0"
+    <Box
+      display="flex"
+      flexDirection="column"
+      alignItems="center"
+      minWidth="16rem"
+      sx={{ p: 2, borderRadius: 1 }}
+    >
+      <Slider
+        min={0}
         max={length}
         value={progress}
-        onChange={(e) => {
-          seekAllPlayers(parseInt(e.target.value))
-          setProgress(parseInt(e.target.value))
+        onChange={(e, value) => {
+          seekAllPlayers(value as number)
+          setProgress(value as number)
         }}
-        className="w-full appearance-none bg-blue-100 rounded-full"
+        sx={{ width: '100%', color: '#3b82f6' }}
+        data-testid="progress-slider"
       />
-      <div className="w-full flex justify-end text-sm font-light">
-        {formatTime(progress)}/{formatTime(length)}
-      </div>
-      <div className="flex gap-sm justify-center">
-        <PlayButton
-          onClick={() => {
-            setStatus('playing')
-          }}
-        />
-        <PauseButton
-          onClick={() => {
-            setStatus('paused')
-          }}
-        />
-        <StopButton
-          onClick={() => {
-            setStatus('stopped')
-          }}
-        />
-      </div>
-      <table className="mt-sm border-separate [border-spacing:0.75rem]">
-        <tbody>
-          <tr>
+      <Box
+        display="flex"
+        justifyContent="space-between"
+        width="100%"
+        fontSize="0.875rem"
+      >
+        <Typography variant="body2">{formatTime(progress)}</Typography>
+        <Typography variant="body2">{formatTime(length)}</Typography>
+      </Box>
+      <Box display="flex" gap={1} justifyContent="center">
+        <IconButton
+          onClick={togglePlayPause}
+          sx={{ color: '#3b82f6' }}
+          data-testid="play-pause-button"
+        >
+          {status === 'playing' ? (
+            <PauseIcon data-testid="pause-icon" />
+          ) : (
+            <PlayArrowIcon data-testid="play-icon" />
+          )}
+        </IconButton>
+      </Box>
+      <Table
+        className="mt-sm border-separate"
+        sx={{ borderSpacing: '0.75rem' }}
+      >
+        <TableBody>
+          <TableRow>
             {Array.from(assets.keys()).map((name, index) => (
-              <td key={index} className="pb-sm">
-                <button
+              <TableCell key={index} className="pb-sm">
+                <Button
                   key={`asset-selector-${index}`}
                   onClick={() => {
-                    setSelectedPlayer(index)
+                    handleSampleSelect(index)
                   }}
-                  className={`h-full w-full rounded-md text-white font-semibold p-xs
-                              ${
-                                selectedPlayer === index
-                                  ? 'bg-blue-500'
-                                  : 'bg-blue-300'
-                              }`}
+                  variant="contained"
+                  sx={{
+                    bgcolor: selectedPlayer === index ? '#db2777' : '#3b82f6',
+                    color: 'white',
+                    fontWeight: 'bold',
+                    '&:hover': {
+                      bgcolor: '#db2777'
+                    }
+                  }}
+                  data-testid={`sample-button-${index}`}
                 >
                   {name}
-                </button>
-              </td>
+                </Button>
+              </TableCell>
             ))}
-          </tr>
+          </TableRow>
           {Array.from(Array(footerLevels).keys()).map((idx) => (
-            <tr key={idx} className="mt-sm gap-sm w-full">
+            <TableRow key={idx} className="mt-sm gap-sm w-full">
               {Array.from(assets.keys()).map((name) => {
                 const footer: JSX.Element | undefined = assets
                   .get(name)
                   ?.footers?.at(idx)
                 return (
-                  <td key={name} className="h-1">
+                  <TableCell key={name} className="h-1">
                     {footer}
-                  </td>
+                  </TableCell>
                 )
               })}
-            </tr>
+            </TableRow>
           ))}
-        </tbody>
-      </table>
-    </div>
+        </TableBody>
+      </Table>
+    </Box>
   )
 }
 

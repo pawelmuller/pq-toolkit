@@ -1,9 +1,12 @@
 # Documentation for `PqToolkitAPIClient`
 
-::: api_client.PqToolkitAPIClient
+::: pqtoolkit.PqToolkitAPIClient
     handler: python
     options:
       members:
+        - log_in
+        - is_logged_in
+        - get_user
         - get_experiments
         - get_experiment
         - create_experiment

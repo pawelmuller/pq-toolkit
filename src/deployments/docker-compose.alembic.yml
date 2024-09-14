@@ -1,0 +1,45 @@
+version: '3'
+
+services:
+  # Database
+  pq-toolkit-db:
+    image: postgres
+    shm_size: 128m
+    environment:
+      POSTGRES_USER: $POSTGRES_USER
+      POSTGRES_PASSWORD: $POSTGRES_PASSWORD
+      POSTGRES_DB: $POSTGRES_DB
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -d $${POSTGRES_USER} -U $${POSTGRES_USER}"
+        ]
+      interval: 1s
+      timeout: 5s
+      retries: 10
+    volumes:
+      - $POSTGRES_VOLUME:/var/lib/postgresql/data
+
+  # FastAPI backend
+  pq-toolkit-api-dev:
+    build: ../pq-toolkit-api
+    depends_on:
+      pq-toolkit-db:
+        condition: service_healthy
+    environment:
+      PROJECT_NAME: $PROJECT_NAME
+      POSTGRES_USER: $POSTGRES_USER
+      POSTGRES_PASSWORD: $POSTGRES_PASSWORD
+      POSTGRES_DB: $POSTGRES_DB
+      POSTGRES_SERVER: pq-toolkit-db
+      FIRST_SUPERUSER_NAME: $FIRST_SUPERUSER_NAME
+      FIRST_SUPERUSER_PASSWORD: $FIRST_SUPERUSER_PASSWORD
+      MINIO_ROOT_USER: $MINIO_ROOT_USER
+      MINIO_ROOT_PASSWORD: $MINIO_ROOT_PASSWORD
+      MINIO_ENDPOINT: $MINIO_ENDPOINT
+      MINIO_STORAGE_USE_HTTPS: $MINIO_STORAGE_USE_HTTPS
+      PQ_API_PORT: $PQ_API_PORT
+    command: sh -c "bash"
+    volumes:
+      - ../pq-toolkit-api/app:/app/app

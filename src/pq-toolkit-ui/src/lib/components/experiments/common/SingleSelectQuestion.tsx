@@ -33,13 +33,15 @@ const SingleSelectQuestion = ({
 
   return (
     <div className="w-full">
-      <div className="text-md font-semibold">{text}</div>
+      <div className="font-semibold text-2xl md:text-lg">{text}</div>
       <div className="flex gap-sm mt-sm">
         {selectableOptions.map((option, idx) => (
           <div
             key={`option_${idx}`}
-            className={`w-full min-h-[4rem] h-max max-h-[8rem] rounded-md ${
-              option.selected ? 'bg-blue-500' : 'bg-blue-100'
+            className={`w-full min-h-[4rem] h-max max-h-[8rem] rounded-md font-semibold text-lg md:text-base text-white transform hover:scale-105 duration-300 ease-in-out ${
+              option.selected
+                ? 'bg-pink-500 dark:bg-pink-600'
+                : 'bg-pink-200 dark:bg-pink-300 hover:bg-pink-500 dark:hover:bg-pink-600'
             } flex items-center justify-center cursor-pointer`}
             onClick={() => {
               onSelect(option.idx)

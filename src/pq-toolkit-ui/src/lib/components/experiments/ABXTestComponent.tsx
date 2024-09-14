@@ -14,12 +14,14 @@ const ABXTestComponent = ({
   testData,
   initialValues,
   experimentName,
-  setAnswer
+  setAnswer,
+  feedback
 }: {
   testData: FullABXTest
   initialValues?: PartialResult<ABXResult>
   experimentName: string
   setAnswer: (result: PartialResult<ABXResult>) => void
+  feedback: string
 }): JSX.Element => {
   const { samples, questions } = testData
 
@@ -79,7 +81,8 @@ const ABXTestComponent = ({
       selections: Object.keys(questionsSelected).map((questionId) => ({
         questionId,
         sampleId: questionsSelected[questionId]
-      }))
+      })),
+      feedback
     }
     setAnswer(result)
   }, [
@@ -87,11 +90,15 @@ const ABXTestComponent = ({
     setAnswer,
     testData.testNumber,
     testData.xSampleId,
-    xSelected
+    xSelected,
+    feedback
   ])
 
   return (
-    <div className="bg-white rounded-md p-lg flex flex-col items-center text-black">
+    <div className="flex flex-col items-center bg-gray-100 dark:bg-gray-700 rounded-xl p-8 shadow-2xl">
+      <h2 className="relative text-center text-3xl md:text-2xl font-semibold -mb-2">
+        ABX Test
+      </h2>
       <div className="flex gap-md mt-md">
         <MultiPlayer
           assets={getCombinedSamples()}

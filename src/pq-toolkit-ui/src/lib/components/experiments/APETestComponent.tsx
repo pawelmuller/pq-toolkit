@@ -14,12 +14,14 @@ const APETestComponent = ({
   testData,
   initialValues,
   experimentName,
-  setAnswer
+  setAnswer,
+  feedback
 }: {
   testData: APETest
   initialValues?: PartialResult<APEResult>
   experimentName: string
   setAnswer: (result: PartialResult<APEResult>) => void
+  feedback: string
 }): JSX.Element => {
   // console.log(initialValues)
   const { axis, samples } = testData
@@ -64,31 +66,35 @@ const APETestComponent = ({
           sampleId,
           rating: responses.get(questionId)?.get(sampleId) as number
         }))
-      }))
+      })),
+      feedback
     }
     setAnswer(result)
-  }, [responses, setAnswer, testData.testNumber])
+  }, [responses, setAnswer, testData.testNumber, feedback])
 
   return (
-    <div className="bg-white rounded-md p-lg flex flex-col items-center text-black">
+    <div className="flex flex-col items-center bg-gray-100 dark:bg-gray-700 rounded-xl p-8 shadow-2xl">
+      <h2 className="relative text-center text-3xl md:text-2xl font-semibold -mb-2">
+        APE Test
+      </h2>
       <div className="flex gap-md mt-md">
         <MultiPlayer
-          assets={samples.reduce<Map<string, {url: string}>>((map, sample, idx) => {
-            map.set(
-              `Sample ${idx + 1}`,
-              {
+          assets={samples.reduce<Map<string, { url: string }>>(
+            (map, sample, idx) => {
+              map.set(`Sample ${idx + 1}`, {
                 url: getSampleUrl(experimentName, sample.assetPath)
-              }
-            )
-            return map
-          }, new Map<string, {url: string}>())}
+              })
+              return map
+            },
+            new Map<string, { url: string }>()
+          )}
           selectedPlayerState={selectedPlayerState}
         />
       </div>
-      <div className="flex flex-col gap-sm w-full mt-md">
+      <div className="flex flex-col gap-sm w-full mt-4">
         {axis.map(({ text, questionId }) => (
           <div className="mb-sm" key={`q${questionId}`}>
-            {text}
+            <div className="font-semibold text-2xl md:text-lg mb-1">{text}</div>
             <OrderSlider
               key={`slider_${questionId}`}
               currentSample={selectedPlayerState[0]}

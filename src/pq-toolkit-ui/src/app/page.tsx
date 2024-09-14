@@ -4,33 +4,43 @@ import { experimentsListSchema } from './models'
 import useSWR from 'swr'
 import Loading from './loading'
 import { validateApiData } from '@/core/apiHandlers/clientApiHandler'
+import Header from '@/lib/components/basic/header'
+import Blobs from '../lib/components/basic/blobs'
 
 const Home = (): JSX.Element => {
   return (
-    <main className="flex min-h-screen p-24">
-      <div className="flex flex-col h-full w-full items-center justify-center my-auto">
-        <div
-          className="relative before:absolute before:h-[300px] before:w-[480px] before:-translate-x-1/2 before:-translate-y-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-[240px] after:translate-x-1/3 after:-translate-y-1/2 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700 before:dark:opacity-10 after:dark:from-sky-900 after:dark:via-[#0141ff] after:dark:opacity-40 before:lg:h-[360px] z-[-1]
-        text-center mb-md"
-        >
-          <h1 className="text-6xl font-bold">Perceptual Qualities Toolkit</h1>
-          <h2 className="text-xl font-semibold mt-sm">
-            Home page of experiment UI for Perceptual Qualities Python Toolkit
-          </h2>
+    <div className="min-h-screen bg-gray-100 dark:bg-stone-900">
+      <Header />
+      <div className="flex flex-col h-full w-full items-center justify-center my-auto mt-40">
+        <div className="relative text-center mb-sm md:mb-md lg:mb-lg">
+          <Blobs />
+          <div className="fadeInUp">
+            <h1 className="relative text-5xl md:text-6xl font-bold">
+              Perceptual Qualities Toolkit
+            </h1>
+            <h2 className="relative text-lg md:text-xl font-semibold mt-sm">
+              Home page of experiment UI for Perceptual Qualities Python Toolkit
+            </h2>
+          </div>
         </div>
         <ExperimentsListWidget />
       </div>
-    </main>
+    </div>
   )
 }
 
 const ExperimentsListWidget = (): JSX.Element => {
-  const { data: apiData, error, isLoading } = useSWR(`/api/v1/experiments`)
+  const { data: apiData, error, isLoading } = useSWR(`/api/v1/experiments/`)
 
-  if (isLoading) return <Loading />
+  if (isLoading)
+    return (
+      <div className="fadeInUp">
+        <Loading />
+      </div>
+    )
   if (error != null)
     return (
-      <div className="flex w-full items-center justify-center text-center h2">
+      <div className="flex w-full fadeInUp items-center justify-center text-center h2">
         API Error
         <br />
         {error.toString()}
@@ -43,19 +53,29 @@ const ExperimentsListWidget = (): JSX.Element => {
   if (validationError != null) {
     console.error(validationError)
     return (
-      <div className="flex w-full items-center justify-center text-center h2">
+      <div className="flex w-full fadeInUp items-center justify-center text-center h2">
         Invalid data from API, please check console for details
       </div>
     )
   }
 
   return (
-    <div className="flex flex-col items-center z-10">
-      <div>Configured experiments:</div>
-      <ul>
+    <div className="flex flex-col items-center fadeInUp z-10 w-full max-w-2xl mx-auto bg-white/10 dark:bg-gray-800/10 backdrop-blur-md rounded-3xl p-8 shadow-2xl">
+      <div className="font-bold text-xl md:text-2xl mb-10">
+        Configured Experiments
+      </div>
+      <ul className="space-y-2 w-full">
         {data.experiments.map((name, idx) => (
-          <li key={idx} className="text-center">
-            <Link href={`/${name}`}>{name}</Link>
+          <li
+            key={idx}
+            className="text-center text-base font-semibold justify-center rounded-md transition-transform transform hover:scale-105 whitespace-normal break-words"
+          >
+            <Link
+              href={`/${name}`}
+              className="block bg-blue-400 dark:bg-blue-500 hover:bg-pink-500 dark:hover:bg-pink-600 p-2 rounded-md"
+            >
+              {name}
+            </Link>
           </li>
         ))}
       </ul>

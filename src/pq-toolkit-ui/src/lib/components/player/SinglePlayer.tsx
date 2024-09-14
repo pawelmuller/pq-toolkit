@@ -1,7 +1,9 @@
 'use client'
 import { useEffect, useRef, useState } from 'react'
 import { Howl } from 'howler'
-import { PauseButton, PlayButton, StopButton } from './ControlButtons'
+import { IconButton, Slider, Typography, Box } from '@mui/material'
+import PlayArrowIcon from '@mui/icons-material/PlayArrow'
+import PauseIcon from '@mui/icons-material/Pause'
 import { formatTime } from './utils/playerUtils'
 
 const SinglePlayer = ({
@@ -71,41 +73,61 @@ const SinglePlayer = ({
     }
   }, [status])
 
+  const togglePlayPause = (): void => {
+    if (status === 'playing') {
+      setStatus('paused')
+    } else {
+      setStatus('playing')
+    }
+  }
+
   return (
-    <div className="flex flex-col items-center min-w-[16rem]">
-      <div className="text-md font-semibold">{name}</div>
-      <input
-        type="range"
-        min="0"
+    <Box
+      display="flex"
+      flexDirection="column"
+      alignItems="center"
+      minWidth="16rem"
+      sx={{ p: 2, borderRadius: 1 }}
+    >
+      <h1 className="font-semibold text-2xl md:text-xl">{name}</h1>
+      <Slider
+        min={0}
         max={length}
         value={progress}
-        onChange={(e) => {
-          playerRef.current.seek(parseInt(e.target.value))
-          setProgress(parseInt(e.target.value))
+        onChange={(e, value) => {
+          playerRef.current.seek(value as number)
+          setProgress(value as number)
         }}
-        className="w-full appearance-none bg-blue-100 rounded-full"
+        sx={{ width: '100%', color: '#3b82f6' }}
+        data-testid="progress-slider"
       />
-      <div className="w-full flex justify-end text-sm font-light">
-        {formatTime(progress)}/{formatTime(length)}
-      </div>
-      <div className="flex gap-sm justify-center">
-        <PlayButton
-          onClick={() => {
-            setStatus('playing')
-          }}
-        />
-        <PauseButton
-          onClick={() => {
-            setStatus('paused')
-          }}
-        />
-        <StopButton
-          onClick={() => {
-            setStatus('stopped')
-          }}
-        />
-      </div>
-    </div>
+      <Box
+        display="flex"
+        justifyContent="space-between"
+        width="100%"
+        fontSize="0.875rem"
+      >
+        <Typography variant="body2" data-testid="current-time">
+          {formatTime(progress)}
+        </Typography>
+        <Typography variant="body2" data-testid="total-time">
+          {formatTime(length)}
+        </Typography>
+      </Box>
+      <Box display="flex" gap={1} justifyContent="center">
+        <IconButton
+          onClick={togglePlayPause}
+          sx={{ color: '#3b82f6' }}
+          data-testid="play-pause-button"
+        >
+          {status === 'playing' ? (
+            <PauseIcon data-testid="pause-icon" />
+          ) : (
+            <PlayArrowIcon data-testid="play-icon" />
+          )}
+        </IconButton>
+      </Box>
+    </Box>
   )
 }
 

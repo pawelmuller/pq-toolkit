@@ -14,12 +14,14 @@ const MUSHRATestComponent = ({
   testData,
   initialValues,
   experimentName,
-  setAnswer
+  setAnswer,
+  feedback
 }: {
   testData: FullMUSHRATest
   initialValues?: PartialResult<MUSHRAResult>
   experimentName: string
   setAnswer: (result: PartialResult<MUSHRAResult>) => void
+  feedback: string
 }): JSX.Element => {
   const { reference, anchors, samples, question } = testData
 
@@ -79,7 +81,8 @@ const MUSHRATestComponent = ({
       samplesScores: testData.samples.map(({ sampleId }) => ({
         sampleId,
         score: ratings.get(sampleId) ?? -1
-      }))
+      })),
+      feedback
     }
 
     setAnswer(result)
@@ -89,7 +92,8 @@ const MUSHRATestComponent = ({
     testData.testNumber,
     testData.anchors,
     testData.samples,
-    reference.sampleId
+    reference.sampleId,
+    feedback
   ])
 
   const sliderSetRating = (value: number, sampleId: string): void => {
@@ -101,12 +105,15 @@ const MUSHRATestComponent = ({
   }
 
   const getMUSHRAscale = (): JSX.Element => {
-    const scale = ['terrible', 'bad', 'poor', 'fair', 'good', 'excellent']
+    const scale = ['Terrible', 'Bad', 'Poor', 'Fair', 'Good', 'Excellent']
 
     return (
       <div className="h-full flex flex-col justify-between">
         {scale.reverse().map((label: string) => (
-          <div className="text-right" key={label}>
+          <div
+            className="text-right text-xl font-bold text-pink-500 dark:text-pink-600"
+            key={label}
+          >
             {label}
           </div>
         ))}
@@ -115,7 +122,10 @@ const MUSHRATestComponent = ({
   }
 
   return (
-    <div className="bg-white rounded-md p-lg flex flex-col items-center text-black">
+    <div className="flex flex-col items-center bg-gray-100 dark:bg-gray-700 rounded-xl p-8 shadow-2xl">
+      <h2 className="relative text-center text-3xl md:text-2xl font-semibold -mb-2">
+        MUSHRA Test
+      </h2>
       <div className="flex flex-col gap-md">
         <div className="flex flex-col gap-xs">
           <div className="text-center">{question}</div>
@@ -138,7 +148,10 @@ const MUSHRATestComponent = ({
                           sliderSetRating(value, sample.sampleId)
                         }}
                       />,
-                      <div className="text-center" key={`rating_${idx}`}>
+                      <div
+                        className="text-center text-xl font-bold text-pink-500 dark:text-pink-600"
+                        key={`rating_${idx}`}
+                      >
                         {ratings.get(sample.sampleId) ?? 0}
                       </div>
                     ]
