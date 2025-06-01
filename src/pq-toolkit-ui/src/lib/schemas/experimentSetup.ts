@@ -8,7 +8,7 @@ import { z } from 'zod'
 export const SampleSchema = z.object({
   sampleId: z.string().min(1),
   assetPath: z.string().min(1)
-})
+});
 
 /**
  * Type from {@link SampleSchema}
@@ -29,7 +29,7 @@ export type Sample = z.infer<typeof SampleSchema>
 export const QuestionSchema = z.object({
   questionId: z.string().min(1),
   text: z.string().min(1)
-})
+});
 
 /**
  * Type from {@link QuestionSchema}
@@ -44,7 +44,7 @@ export type Question = z.infer<typeof QuestionSchema>
 /**
  * Enum of all available test types
  */
-export const TestTypeEnum = z.enum(['AB', 'ABX', 'MUSHRA', 'APE'])
+export const TestTypeEnum = z.enum(['AB', 'ABX', 'MUSHRA', 'APE']);
 
 /**
  * Type from {@link TestTypeEnum}
@@ -59,7 +59,7 @@ export const BaseTestSchema = z.object({
   testNumber: z.number(),
   type: TestTypeEnum,
   samples: z.array(SampleSchema)
-})
+});
 
 /**
  * Type from {@link BaseTestSchema}
@@ -78,7 +78,7 @@ export const ABTestSchema = BaseTestSchema.extend({
   type: z.enum(['AB']),
   samples: z.array(SampleSchema).min(2),
   questions: z.array(QuestionSchema).min(1)
-})
+});
 
 /**
  * Type from {@link ABTestSchema}
@@ -100,14 +100,14 @@ export const ABXTestSchema = BaseTestSchema.extend({
   samples: z.array(SampleSchema).min(2).max(2),
   xSampleId: z.string().optional().nullable(),
   questions: z.array(QuestionSchema).optional().nullable()
-})
+});
 
 /**
  * ABX test schema with all required fields filled
  */
 export const FullABXTestSchema = ABXTestSchema.extend({
   xSampleId: z.string().min(1)
-})
+});
 
 /**
  * Type from {@link ABXTestSchema}
@@ -139,14 +139,14 @@ export const MUSHRATestSchema = BaseTestSchema.extend({
   reference: SampleSchema,
   anchors: z.array(SampleSchema).min(1),
   samples: z.array(SampleSchema).min(2)
-})
+});
 
 /**
  * MUSHRA test schema with all required fields filled
  */
 export const FullMUSHRATestSchema = MUSHRATestSchema.extend({
   samplesShuffle: z.array(z.string())
-})
+});
 
 /**
  * Type from {@link MUSHRATestSchema}
@@ -180,7 +180,7 @@ export const APETestSchema = BaseTestSchema.extend({
   type: z.enum(['APE']),
   samples: z.array(SampleSchema).min(2),
   axis: z.array(QuestionSchema).min(1)
-})
+});
 
 /**
  * Type from {@link APETestSchema}
@@ -202,7 +202,7 @@ export const ExperimentSetupSchema = z.object({
   description: z.string(),
   endText: z.string().optional(),
   tests: z.array(BaseTestSchema.passthrough()).min(1)
-})
+});
 
 /**
  * Type from {@link ExperimentSetupSchema}

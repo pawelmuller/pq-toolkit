@@ -9,21 +9,21 @@
       "type": "AB",
       "samples": [
         {
-          "sampleId": "s1",
-          "assetPath": "file_sample_5.mp3"
+          "sampleId": "file-sample-5.mp3",
+          "assetPath": "file-sample-5.mp3"
         },
         {
-          "sampleId": "s2",
-          "assetPath": "file_sample_700.mp3"
+          "sampleId": "file-sample-700.mp3",
+          "assetPath": "file-sample-700.mp3"
         }
       ],
       "questions": [
         {
-          "questionId": "q1",
+          "questionId": "Select better quality",
           "text": "Select better quality"
         },
         {
-          "questionId": "q2",
+          "questionId": "Select more warmth",
           "text": "Select more warmth"
         }
       ]
@@ -33,11 +33,11 @@
       "type": "ABX",
       "samples": [
         {
-          "sampleId": "s3",
+          "sampleId": "sample-12s.mp3",
           "assetPath": "sample-12s.mp3"
         },
         {
-          "sampleId": "s4",
+          "sampleId": "sample-15s.mp3",
           "assetPath": "sample-15s.mp3"
         }
       ]
@@ -47,21 +47,21 @@
       "type": "ABX",
       "samples": [
         {
-          "sampleId": "s1",
-          "assetPath": "file_sample_5.mp3"
+          "sampleId": "file-sample-5.mp3",
+          "assetPath": "file-sample-5.mp3"
         },
         {
-          "sampleId": "s2",
-          "assetPath": "file_sample_700.mp3"
+          "sampleId": "file-sample-700.mp3",
+          "assetPath": "file-sample-700.mp3"
         }
       ],
       "questions": [
         {
-          "questionId": "q1",
+          "questionId": "Select better quality",
           "text": "Select better quality"
         },
         {
-          "questionId": "q2",
+          "questionId": "Select more warmth",
           "text": "Select more warmth"
         }
       ]
@@ -71,25 +71,25 @@
       "type": "APE",
       "samples": [
         {
-          "sampleId": "s1",
-          "assetPath": "file_sample_5.mp3"
+          "sampleId": "file-sample-5.mp3",
+          "assetPath": "file-sample-5.mp3"
         },
         {
-          "sampleId": "s3",
+          "sampleId": "sample-12s.mp3",
           "assetPath": "sample-12s.mp3"
         },
         {
-          "sampleId": "s4",
+          "sampleId": "sample-15s.mp3",
           "assetPath": "sample-15s.mp3"
         }
       ],
       "axis": [
         {
-          "questionId": "q1",
+          "questionId": "Quality",
           "text": "Quality"
         },
         {
-          "questionId": "q2",
+          "questionId": "Depth",
           "text": "Depth"
         }
       ]
@@ -99,21 +99,21 @@
       "type": "MUSHRA",
       "reference": {
         "sampleId": "ref",
-        "assetPath": "file_sample_5.mp3"
+        "assetPath": "file-sample-5.mp3"
       },
       "anchors": [
         {
-          "sampleId": "a1",
-          "assetPath": "file_sample_700.mp3"
+          "sampleId": "file-sample-700.mp3",
+          "assetPath": "file-sample-700.mp3"
         }
       ],
       "samples": [
         {
-          "sampleId": "s1",
+          "sampleId": "sample-12s.mp3",
           "assetPath": "sample-12s.mp3"
         },
         {
-          "sampleId": "s2",
+          "sampleId": "sample-15s.mp3",
           "assetPath": "sample-15s.mp3"
         }
       ]

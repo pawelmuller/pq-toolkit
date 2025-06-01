@@ -57,6 +57,7 @@ psycopg = "3.1.19"
 psycopg-binary = "3.1.19"
 tenacity = "8.3.0"
 pyjwt = "2.8.0"
+fpdf = "*"
 
 [tool.poetry.dev-dependencies]
 ruff = "0.4.6"

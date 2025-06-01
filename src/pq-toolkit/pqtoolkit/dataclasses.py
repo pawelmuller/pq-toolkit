@@ -143,7 +143,7 @@ class PqTestBaseResult(BaseModel):
     test_number: int = Field(
         alias="testNumber", validation_alias=AliasChoices("testNumber", "test_number")
     )
-
+    feedback: str | None = None
 
 class PqSelection(BaseModel):
     question_id: str = Field(
@@ -232,3 +232,5 @@ class PqExperiment(BaseModel):
                     case PqTestTypes.MUSHRA:
                         tests_list.append(PqTestMUSHRA(**test))
         return tests_list
+
+

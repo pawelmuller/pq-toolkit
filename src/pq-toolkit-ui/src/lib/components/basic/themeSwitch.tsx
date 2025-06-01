@@ -1,17 +1,17 @@
-'use client'
+'use client';
 
-import { useEffect, useState } from 'react'
-import { useTheme } from 'next-themes'
-import { FaCog, FaSun, FaMoon } from 'react-icons/fa'
+import { useEffect, useState } from 'react';
+import { useTheme } from 'next-themes';
+import { FaCog, FaSun, FaMoon } from 'react-icons/fa';
 
 export default function ThemeSwitch(): JSX.Element {
-  const { setTheme, resolvedTheme } = useTheme()
-  const [mounted, setMounted] = useState<boolean>(false)
-  const [hovered, setHovered] = useState<boolean>(false)
+  const { setTheme, resolvedTheme } = useTheme();
+  const [mounted, setMounted] = useState<boolean>(false);
+  const [hovered, setHovered] = useState<boolean>(false);
 
   useEffect(() => {
-    setMounted(true)
-  }, [])
+    setMounted(true);
+  }, []);
 
   if (!mounted) {
     return (
@@ -28,23 +28,23 @@ export default function ThemeSwitch(): JSX.Element {
           />
         </div>
       </div>
-    )
+    );
   }
 
-  const isDark = resolvedTheme === 'dark'
+  const isDark = resolvedTheme === 'dark';
 
   return (
     <div
       className="flex items-center justify-center h-8 w-8 md:w-9 md:h-9 rounded-full cursor-pointer"
       role="button"
       onClick={() => {
-        setTheme(isDark ? 'light' : 'dark')
+        setTheme(isDark ? 'light' : 'dark');
       }}
       onMouseEnter={() => {
-        setHovered(true)
+        setHovered(true);
       }}
       onMouseLeave={() => {
-        setHovered(false)
+        setHovered(false);
       }}
     >
       <div className="relative w-7 h-7 md:w-9 md:h-9">
@@ -72,5 +72,5 @@ export default function ThemeSwitch(): JSX.Element {
         />
       </div>
     </div>
-  )
+  );
 }

@@ -2,6 +2,7 @@ from pydantic import BaseModel, Field, AliasChoices, ConfigDict, field_validator
 from enum import Enum
 import inspect
 import uuid
+from typing import Optional
 
 
 class AccessToken(BaseModel):
@@ -151,7 +152,8 @@ class PqTestBaseResult(BaseModel):
     test_number: int = Field(
         alias="testNumber", validation_alias=AliasChoices("testNumber", "test_number")
     )
-
+    type: Optional[str] = None
+    feedback: Optional[str] = None
 
 class PqSelection(BaseModel):
     question_id: str = Field(
@@ -169,7 +171,7 @@ class PqTestABResult(PqTestBaseResult):
 class PqTestABXResult(PqTestBaseResult):
     x_sample_id: str = Field(alias="xSampleId")
     x_selected: str = Field(alias="xSelected")
-    selections: list[PqSelection] | list
+    selections: list[PqSelection] #| list
 
 
 class PqTestMUSHRAScore(BaseModel):
@@ -181,7 +183,6 @@ class PqTestMUSHRAResult(PqTestBaseResult):
     reference_score: int = Field(alias="referenceScore")
     anchors_scores: list[PqTestMUSHRAScore] = Field(alias="anchorsScores")
     samples_scores: list[PqTestMUSHRAScore] = Field(alias="samplesScores")
-
 
 class PqTestAPESampleRating(BaseModel):
     sample_id: str = Field(alias="sampleId")
@@ -211,12 +212,14 @@ class PqExperiment(BaseModel):
         uid: A unique ID of the experiment.
         name: Experiment name.
         description: Experiment description.
+        experiment_use: The usage type of the experiment, either 'research' or 'production'.
         tests: A list of test objects
     """
 
     uid: UUID4 | str = uuid.uuid4()
     name: str
     description: str
+    experiment_use: str = Field(alias="experimentUse", default=None)
     end_text: str | None = Field(alias="endText", default=None)
     tests: list[PqTestMUSHRA | PqTestAPE | PqTestABX | PqTestAB]
 
@@ -265,3 +268,29 @@ class PqApiStatus(BaseModel):
 
 class PqExperimentName(BaseModel):
     name: str
+
+class PqSampleRating(BaseModel):
+    """
+    Class representing sound sample.
+
+    Attributes:
+        sample_id: An ID of the sample.
+        asset_path: Path to the sample.
+    """
+
+    sample_id: str = Field(
+        alias="sampleId", validation_alias=AliasChoices("sampleId", "sample_id")
+    )
+    name: str
+    asset_path: str = Field(
+        alias="assetPath", validation_alias=AliasChoices("assetPath", "asset_path")
+    )
+
+    rating: float
+
+class PqSampleRatingList(BaseModel):
+    samples: list[PqSampleRating]
+
+
+class PqSamplePaths(BaseModel):
+    asset_path: list[str]

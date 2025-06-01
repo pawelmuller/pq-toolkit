@@ -49,9 +49,7 @@ class PqToolkitAPIClient:
         self._oauth_id = None
         self._endpoint = f"{self._base_host}:{self._base_port}/api/{api_version}"
 
-        response = self._get(
-            "/status",
-        )
+        response = self._get("/status")
         status = response.json().get("status")
         if status != "HEALTHY":
             raise ConnectionError(f"Cannot read status from {self._endpoint}")
@@ -99,9 +97,7 @@ class PqToolkitAPIClient:
                             is_collection = True
                             type_to_return = iterable_type.__args__[0]
                             break
-                        if inspect.isclass(iterable_type) and issubclass(
-                            iterable_type, BaseModel
-                        ):
+                        if inspect.isclass(iterable_type) and issubclass(iterable_type, BaseModel):
                             break
             else:
                 type_to_return = types_to_return
@@ -125,17 +121,14 @@ class PqToolkitAPIClient:
             types_to_return = type_hints.get("return")
 
             if not types_to_return:
-                raise PqSerializationException(
-                    f"Function {func.__name__} has not ben annotated with any return type"
-                )
+                raise PqSerializationException(f"Function {func.__name__} has not ben annotated with any return type")
 
             type_to_return, is_collection = _determine_return_type(types_to_return)
 
             if not issubclass(type_to_return, BaseModel):
                 raise PqSerializationException(
                     f"Function {func.__name__} has not ben annotated with Pydantic's "
-                    f"BaseModel subclass or an Union with its subclass."
-                )
+                    f"BaseModel subclass or an Union with its subclass.")
 
             result = func(*args, **kwargs)
 
@@ -146,9 +139,7 @@ class PqToolkitAPIClient:
                 casted_result = _parse_response(result, is_collection, type_to_return)
                 return casted_result
             except (RuntimeError, PydanticSchemaGenerationError, ValidationError) as e:
-                raise PqSerializationException(
-                    f"Cannot cast the result to {types_to_return}: {e}"
-                )
+                raise PqSerializationException(f"Cannot cast the result to {types_to_return}: {e}")
 
         return wrapper
 
@@ -249,9 +240,7 @@ class PqToolkitAPIClient:
                 experiments = response.json().get("experiments")
                 return experiments
             case 409:
-                raise PqExperimentAlreadyExistsException(
-                    experiment_name=experiment_name
-                )
+                raise PqExperimentAlreadyExistsException(experiment_name=experiment_name)
             case 401:
                 raise NotAuthorisedError()
             case _:
@@ -293,10 +282,7 @@ class PqToolkitAPIClient:
         """
 
         if not isinstance(experiment_setup, PqExperiment):
-            raise PqExperimentSetupException(
-                experiment_name=experiment_name,
-                message="The experiment settings must be a PqExperiment",
-            )
+            raise PqExperimentSetupException(experiment_name=experiment_name,message="The experiment settings must be a PqExperiment")
         model_dict = experiment_setup.model_dump_json(by_alias=True, exclude_none=True)
         files_struct = {
             "file": (
@@ -315,17 +301,13 @@ class PqToolkitAPIClient:
                     raise PqExperimentSetupException(experiment_name=experiment_name)
             case 400:
                 message = response.json().get("message")
-                raise PqExperimentSetupException(
-                    experiment_name=experiment_name, message=message
-                )
+                raise PqExperimentSetupException(experiment_name=experiment_name, message=message)
             case 401:
                 raise NotAuthorisedError()
             case _:
                 raise DetailedError(response.json())
 
-    def upload_sample(
-        self, *, experiment_name: str, sample_name: str, sample_binary: bytes | BinaryIO
-    ):
+    def upload_sample(self, *, experiment_name: str, sample_name: str, sample_binary: bytes | BinaryIO):
         """
         Method allows to upload a sample to the experiment.
 
@@ -346,24 +328,16 @@ class PqToolkitAPIClient:
                 {"Content-Disposition": "form-data"},
             )
         }
-        response = self._post(
-            f"/experiments/{experiment_name}/samples", files=files_struct
-        )
+        response = self._post(f"/experiments/{experiment_name}/samples", files=files_struct)
 
         match response.status_code:
             case 200:
                 is_success = response.json().get("success")
                 if not is_success:
-                    raise PqExperimentSampleUploadException(
-                        experiment_name=experiment_name, sample_name=sample_name
-                    )
+                    raise PqExperimentSampleUploadException(experiment_name=experiment_name, sample_name=sample_name)
             case 400:
                 message = response.json().get("message")
-                raise PqExperimentSampleUploadException(
-                    experiment_name=experiment_name,
-                    sample_name=sample_name,
-                    message=message,
-                )
+                raise PqExperimentSampleUploadException( experiment_name=experiment_name, sample_name=sample_name, message=message)
             case 401:
                 raise NotAuthorisedError()
             case _:
@@ -386,9 +360,7 @@ class PqToolkitAPIClient:
         return []
 
     @_serialize_with_pydantic
-    def get_experiment_test_results(
-        self, *, experiment_name: str, result_name: str
-    ) -> PqTestResultsList | None:
+    def get_experiment_test_results(self, *, experiment_name: str, result_name: str) -> PqTestResultsList | None:
         """
         Method allows to get a list of experiments' results' names.
 

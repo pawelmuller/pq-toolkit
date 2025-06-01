@@ -1,5 +1,4 @@
-# Getting started
-
+# API Client Walkthrough
 
 ## Creation of the API client
 All the communication with the backend is organised by the API Client.

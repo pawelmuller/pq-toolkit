@@ -1,10 +1,10 @@
-import '@testing-library/jest-dom'
-import { render, screen, fireEvent } from '@testing-library/react'
-import MultiPlayer from '../MultiPlayer'
+import '@testing-library/jest-dom';
+import { render, screen, fireEvent } from '@testing-library/react';
+import MultiPlayer from '../MultiPlayer';
 
 // Mockowanie metod Howl
 jest.mock('howler', () => {
-  const actualHowler = jest.requireActual('howler')
+  const actualHowler = jest.requireActual('howler');
   return {
     Howl: jest.fn().mockImplementation((options) => ({
       ...options,
@@ -16,12 +16,12 @@ jest.mock('howler', () => {
       duration: jest.fn().mockReturnValue(120)
     })),
     Howler: actualHowler.Howler
-  }
-})
+  };
+});
 
 describe('MultiPlayer', () => {
   it('renders a multi sample player', () => {
-    const [state, setState] = [0, jest.fn()]
+    const [state, setState] = [0, jest.fn()];
     render(
       <MultiPlayer
         assets={
@@ -32,17 +32,17 @@ describe('MultiPlayer', () => {
         }
         selectedPlayerState={[state, setState]}
       />
-    )
+    );
 
-    expect(screen.queryByTestId('play-pause-button')).toBeInTheDocument()
-    expect(screen.queryByTestId('progress-slider')).toBeInTheDocument()
+    expect(screen.queryByTestId('play-pause-button')).toBeInTheDocument();
+    expect(screen.queryByTestId('progress-slider')).toBeInTheDocument();
 
-    expect(screen.getByText('sample1')).toBeInTheDocument()
-    expect(screen.getByText('sample2')).toBeInTheDocument()
-  })
+    expect(screen.getByText('sample1')).toBeInTheDocument();
+    expect(screen.getByText('sample2')).toBeInTheDocument();
+  });
 
   it('toggles play and pause', () => {
-    const [state, setState] = [0, jest.fn()]
+    const [state, setState] = [0, jest.fn()];
     render(
       <MultiPlayer
         assets={
@@ -53,13 +53,13 @@ describe('MultiPlayer', () => {
         }
         selectedPlayerState={[state, setState]}
       />
-    )
+    );
 
-    const playPauseButton = screen.getByTestId('play-pause-button')
-    fireEvent.click(playPauseButton)
-    expect(screen.queryByTestId('pause-icon')).toBeInTheDocument()
+    const playPauseButton = screen.getByTestId('play-pause-button');
+    fireEvent.click(playPauseButton);
+    expect(screen.queryByTestId('pause-icon')).toBeInTheDocument();
 
-    fireEvent.click(playPauseButton)
-    expect(screen.queryByTestId('play-icon')).toBeInTheDocument()
-  })
-})
+    fireEvent.click(playPauseButton);
+    expect(screen.queryByTestId('play-icon')).toBeInTheDocument();
+  });
+});

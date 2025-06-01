@@ -1,4 +1,4 @@
-'use client'
+'use client';
 
 const Loading = (): JSX.Element => {
   return (
@@ -25,7 +25,7 @@ const Loading = (): JSX.Element => {
         </div>
       </div>
     </main>
-  )
-}
+  );
+};
 
-export default Loading
+export default Loading;

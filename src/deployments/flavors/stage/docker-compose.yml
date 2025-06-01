@@ -30,7 +30,7 @@ services:
 
   # FastAPI backend
   pq-toolkit-api:
-    build: ../pq-toolkit-api
+    build: ../../../pq-toolkit-api
     depends_on:
       pq-toolkit-db:
         condition: service_healthy
@@ -53,7 +53,7 @@ services:
   # Frontend
   pq-toolkit-ui:
     build:
-      context: ../pq-toolkit-ui
+      context: ../../../pq-toolkit-ui
       dockerfile: Dockerfile.dev
       args:
         NEXT_PUBLIC_API_URL: "htshts"
@@ -77,7 +77,7 @@ services:
   # Gateway
   pq-gateway:
     build:
-      context: pq-gateway
+      context: ../../pq-gateway
       dockerfile: Dockerfile
     ports:
       - $GATEWAY_PORT:$GATEWAY_PORT

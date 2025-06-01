@@ -1,58 +1,58 @@
-'use client'
+'use client';
 
-import { useEffect, useState } from 'react'
-import Header from '@/lib/components/basic/header'
-import Blobs from '../basic/blobs'
-import { loginFetch } from '@/lib/utils/fetchers'
-import { LoginSchema, type UserData } from '@/lib/schemas/apiResults'
-import { type KeyedMutator } from 'swr'
+import { useEffect, useState } from 'react';
+import Header from '@/lib/components/basic/header';
+import Blobs from '../basic/blobs';
+import { loginFetch } from '@/lib/utils/fetchers';
+import { LoginSchema, type UserData } from '@/lib/schemas/apiResults';
+import { type KeyedMutator } from 'swr';
 
 const LoginPage = ({
   refreshAdminPage
 }: {
   refreshAdminPage: KeyedMutator<UserData>
 }): JSX.Element => {
-  const [password, setPassword] = useState<string>('')
-  const [errorRequest, setErrorRequest] = useState<boolean>(false)
+  const [password, setPassword] = useState<string>('');
+  const [errorRequest, setErrorRequest] = useState<boolean>(false);
 
   const loginAttempt = async (): Promise<undefined> => {
     try {
-      const response = await loginFetch(password, LoginSchema)
-      const accessToken = response.access_token
-      localStorage.setItem('token', accessToken)
-      setPassword('')
-      setErrorRequest(false)
-      await refreshAdminPage()
+      const response = await loginFetch(password, LoginSchema);
+      const accessToken = response.access_token;
+      localStorage.setItem('token', accessToken);
+      setPassword('');
+      setErrorRequest(false);
+      await refreshAdminPage();
     } catch (error) {
-      setErrorRequest(true)
+      setErrorRequest(true);
     }
-  }
+  };
   useEffect(() => {
     async function handleKeyDown(e: KeyboardEvent): Promise<void> {
       if (e.key === 'Enter') {
-        await loginAttempt()
+        await loginAttempt();
       }
     }
 
     const keyDownListener = (event: KeyboardEvent): void => {
       handleKeyDown(event).catch((err) => {
-        console.error(err)
-      })
-    }
+        console.error(err);
+      });
+    };
 
-    document.addEventListener('keydown', keyDownListener)
+    document.addEventListener('keydown', keyDownListener);
 
     return function cleanup(): void {
-      document.removeEventListener('keydown', keyDownListener)
-    }
-  }, [password])
+      document.removeEventListener('keydown', keyDownListener);
+    };
+  }, [password]);
   return (
     <div className="min-h-screen bg-gray-100 dark:bg-stone-900">
       <Header />
       <div className="flex flex-col h-full w-full items-center justify-center my-auto mt-40">
         <div className="relative text-center mb-sm">
           <Blobs />
-          <div className="fadeInUp">
+          <div className="fadeInUp dark:text-white">
             <h1 className="relative text-5xl md:text-6xl font-bold">
               Perceptual Qualities Toolkit
             </h1>
@@ -72,8 +72,8 @@ const LoginPage = ({
                 type="password"
                 value={password}
                 onChange={(e) => {
-                  setErrorRequest(false)
-                  setPassword(e.target.value)
+                  setErrorRequest(false);
+                  setPassword(e.target.value);
                 }}
               ></input>
             </div>
@@ -89,8 +89,8 @@ const LoginPage = ({
                 className="bg-clip-text font-bold text-transparent bg-gradient-to-r from-cyan-500  to-pink-500 cursor-pointer"
                 onClick={() => {
                   void (async () => {
-                    await loginAttempt()
-                  })()
+                    await loginAttempt();
+                  })();
                 }}
               >
                 Login
@@ -100,7 +100,7 @@ const LoginPage = ({
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default LoginPage
+export default LoginPage;

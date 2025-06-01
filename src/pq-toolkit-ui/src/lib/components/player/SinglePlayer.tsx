@@ -1,10 +1,10 @@
-'use client'
-import { useEffect, useRef, useState } from 'react'
-import { Howl } from 'howler'
-import { IconButton, Slider, Typography, Box } from '@mui/material'
-import PlayArrowIcon from '@mui/icons-material/PlayArrow'
-import PauseIcon from '@mui/icons-material/Pause'
-import { formatTime } from './utils/playerUtils'
+'use client';
+import { useEffect, useRef, useState } from 'react';
+import { Howl } from 'howler';
+import { IconButton, Slider, Typography, Box } from '@mui/material';
+import PlayArrowIcon from '@mui/icons-material/PlayArrow';
+import PauseIcon from '@mui/icons-material/Pause';
+import { formatTime } from './utils/playerUtils';
 
 const SinglePlayer = ({
   assetPath,
@@ -19,67 +19,67 @@ const SinglePlayer = ({
       volume: 0.5,
       loop: true
     })
-  )
+  );
 
-  const [progress, setProgress] = useState(0)
+  const [progress, setProgress] = useState(0);
 
-  const length = Math.round(playerRef.current.duration() ?? 0)
+  const length = Math.round(playerRef.current.duration() ?? 0);
 
   const [status, setStatus] = useState<'stopped' | 'playing' | 'paused'>(
     'stopped'
-  )
+  );
 
   const progressUpdater: React.MutableRefObject<NodeJS.Timeout | null> =
-    useRef(null)
+    useRef(null);
 
   const startUpdating = (): void => {
     if (progressUpdater.current == null) {
       progressUpdater.current = setInterval(() => {
-        setProgress(Math.round(playerRef.current.seek() ?? 0))
-      }, 100)
+        setProgress(Math.round(playerRef.current.seek() ?? 0));
+      }, 100);
     }
-  }
+  };
 
   const stopUpdating = (): void => {
     if (progressUpdater.current != null) {
-      clearInterval(progressUpdater.current)
-      progressUpdater.current = null
+      clearInterval(progressUpdater.current);
+      progressUpdater.current = null;
     }
-  }
+  };
 
   useEffect(() => {
-    const player = playerRef.current
+    const player = playerRef.current;
 
     switch (status) {
       case 'playing':
-        player.seek(progress)
-        player.play()
-        startUpdating()
-        break
+        player.seek(progress);
+        player.play();
+        startUpdating();
+        break;
       case 'paused':
-        player.pause()
-        stopUpdating()
-        break
+        player.pause();
+        stopUpdating();
+        break;
       case 'stopped':
-        player.stop()
-        stopUpdating()
-        setProgress(0)
-        break
+        player.stop();
+        stopUpdating();
+        setProgress(0);
+        break;
     }
 
     return () => {
-      player.stop()
-      stopUpdating()
-    }
-  }, [status])
+      player.stop();
+      stopUpdating();
+    };
+  }, [status]);
 
   const togglePlayPause = (): void => {
     if (status === 'playing') {
-      setStatus('paused')
+      setStatus('paused');
     } else {
-      setStatus('playing')
+      setStatus('playing');
     }
-  }
+  };
 
   return (
     <Box
@@ -95,8 +95,8 @@ const SinglePlayer = ({
         max={length}
         value={progress}
         onChange={(e, value) => {
-          playerRef.current.seek(value as number)
-          setProgress(value as number)
+          playerRef.current.seek(value as number);
+          setProgress(value as number);
         }}
         sx={{ width: '100%', color: '#3b82f6' }}
         data-testid="progress-slider"
@@ -128,7 +128,7 @@ const SinglePlayer = ({
         </IconButton>
       </Box>
     </Box>
-  )
-}
+  );
+};
 
-export default SinglePlayer
+export default SinglePlayer;

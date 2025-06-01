@@ -1,4 +1,4 @@
-import { z } from 'zod'
+import { z } from 'zod';
 
 /**
  * Defines a single selection of a sample for a question
@@ -6,7 +6,7 @@ import { z } from 'zod'
 export const SelectionSchema = z.object({
   questionId: z.string().min(1),
   sampleId: z.string().min(1)
-})
+});
 
 /**
  * Type from {@link SelectionSchema}
@@ -23,7 +23,7 @@ export type Selection = z.infer<typeof SelectionSchema>
 export const BaseResultSchema = z.object({
   testNumber: z.number(),
   feedback: z.string().optional()
-})
+});
 
 /**
  * Type from {@link BaseResultSchema}
@@ -41,7 +41,7 @@ export type BaseResult = z.infer<typeof BaseResultSchema>
  */
 export const ABResultSchema = BaseResultSchema.extend({
   selections: z.array(SelectionSchema)
-})
+});
 
 /**
  * Type from {@link ABResultSchema}
@@ -60,7 +60,7 @@ export const ABXResultSchema = BaseResultSchema.extend({
   xSampleId: z.string(),
   xSelected: z.string(),
   selections: z.array(SelectionSchema).optional()
-})
+});
 
 /**
  * Type from {@link ABXResultSchema}
@@ -89,7 +89,7 @@ export const MUSHRAResultSchema = BaseResultSchema.extend({
       score: z.number().min(0).max(100)
     })
   )
-})
+});
 
 /**
  * Type from {@link MUSHRAResultSchema}
@@ -117,7 +117,7 @@ export const APEResultSchema = BaseResultSchema.extend({
       )
     })
   )
-})
+});
 
 /**
  * Type from {@link APEResultSchema}

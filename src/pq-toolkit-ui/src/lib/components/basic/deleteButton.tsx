@@ -1,12 +1,12 @@
 import {
   deleteExperimentSchema,
   type getExperimentsData
-} from '@/lib/schemas/apiResults'
-import { useState } from 'react'
-import { FaCheck, FaTrash } from 'react-icons/fa'
-import { FaXmark } from 'react-icons/fa6'
-import { type KeyedMutator } from 'swr'
-import { deleteExperimentFetch } from '@/lib/utils/fetchers'
+} from '@/lib/schemas/apiResults';
+import { useState } from 'react';
+import { FaCheck, FaTrash } from 'react-icons/fa';
+import { FaXmark } from 'react-icons/fa6';
+import { type KeyedMutator } from 'swr';
+import { deleteExperimentFetch } from '@/lib/utils/fetchers';
 
 const DeleteButton = ({
   name,
@@ -19,7 +19,7 @@ const DeleteButton = ({
   selectedExperiment: string
   setSelectedExperiment: React.Dispatch<React.SetStateAction<string>>
 }): JSX.Element => {
-  const [deleteConfirm, setDeleteConfirm] = useState<boolean>(false)
+  const [deleteConfirm, setDeleteConfirm] = useState<boolean>(false);
 
   return (
     <div className="mr-4">
@@ -30,7 +30,7 @@ const DeleteButton = ({
             className="fill-red-500 mr-2 cursor-pointer transform hover:scale-125 duration-300 ease-in-out"
             size={26}
             onClick={() => {
-              setDeleteConfirm(false)
+              setDeleteConfirm(false);
             }}
           />
           <FaCheck
@@ -40,14 +40,14 @@ const DeleteButton = ({
             onClick={() => {
               deleteExperimentFetch(name, deleteExperimentSchema)
                 .then(async () => {
-                  await refreshPage()
+                  await refreshPage();
                 })
                 .catch((err) => {
-                  console.error(err)
-                })
-              setDeleteConfirm(false)
+                  console.error(err);
+                });
+              setDeleteConfirm(false);
               if (selectedExperiment === name) {
-                setSelectedExperiment('')
+                setSelectedExperiment('');
               }
             }}
           />
@@ -58,12 +58,12 @@ const DeleteButton = ({
           className="fill-red-500 cursor-pointer transform hover:scale-125 duration-300 ease-in-out"
           size={27}
           onClick={() => {
-            setDeleteConfirm(true)
+            setDeleteConfirm(true);
           }}
         />
       )}
     </div>
-  )
-}
+  );
+};
 
-export default DeleteButton
+export default DeleteButton;

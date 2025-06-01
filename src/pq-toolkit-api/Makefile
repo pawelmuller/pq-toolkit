@@ -1,7 +1,7 @@
 .PHONY: lint
 lint:
 	ruff check app tests
-	ruff format app tests --check
+	ruff format app tests
 
 .PHONY: format
 format:

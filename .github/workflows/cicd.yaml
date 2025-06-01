@@ -1,0 +1,118 @@
+name: Run Tests
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+  pull_request:
+    branches:
+      - main
+      - develop
+      
+permissions:
+  contents: write
+
+env:
+  MKDOCS_CONFIG: docs/mkdocs.yml
+  DOCS_REQ: docs/python-docs-requirements.txt
+
+jobs:
+  build_dev_image:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Install Docker Compose
+        run: sudo apt-get install docker-compose
+
+      - name: Ensure .env file existence
+        run: test -f src/deployments/flavors/dev/.env 
+
+      - name: Build Image
+        run: docker compose -f src/deployments/flavors/dev/docker-compose.yml build
+
+  service_check_and_test:
+    runs-on: ubuntu-latest
+    needs: build_dev_image
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Ensure .env file existence
+        run: test -f src/deployments/flavors/dev/.env 
+
+      - name: Start Docker Compose services
+        run: |
+          docker compose -f src/deployments/flavors/dev/docker-compose.yml --env-file src/deployments/flavors/dev/.env up -d
+
+      - name: Wait for Database and API to be healthy
+        run: |
+          until docker compose -f src/deployments/flavors/dev/docker-compose.yml --env-file src/deployments/flavors/dev/.env exec pq-toolkit-db-dev pg_isready -U postgres; do
+            echo "Waiting for database..."
+            docker compose -f src/deployments/flavors/dev/docker-compose.yml --env-file src/deployments/flavors/dev/.env logs pq-toolkit-db-dev
+            sleep 1
+          done
+
+      - name: Wait for Minio to be ready
+        run: |
+          until docker compose -f src/deployments/flavors/dev/docker-compose.yml --env-file src/deployments/flavors/dev/.env exec pq-sample-storage-minio-dev curl -s http://localhost:9000 > /dev/null; do
+            echo "Waiting for Minio to be ready..."
+            docker compose -f src/deployments/flavors/dev/docker-compose.yml --env-file src/deployments/flavors/dev/.env logs pq-sample-storage-minio-dev
+            sleep 1
+          done
+          echo "Minio is ready."
+
+      - name: Run Linting
+        run: docker compose -f src/deployments/flavors/dev/docker-compose.yml --env-file src/deployments/flavors/dev/.env exec pq-toolkit-api-dev make lint
+
+      - name: Run Tests
+        run: docker compose -f src/deployments/flavors/dev/docker-compose.yml --env-file src/deployments/flavors/dev/.env exec pq-toolkit-api-dev make test
+
+  cleanup:
+    runs-on: ubuntu-latest
+    needs: service_check_and_test
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Ensure .env file existence
+        run: test -f src/deployments/flavors/dev/.env 
+
+      - name: Clean up Docker
+        run: docker compose -f src/deployments/flavors/dev/docker-compose.yml down --rmi all
+
+  pages:
+    runs-on: ubuntu-latest
+    needs: cleanup
+    steps:
+      - uses: actions/checkout@v4
+      - name: Configure Git Credentials
+        run: |
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: 3.x
+      - run: echo "cache_id=$(date --utc '+%V')" >> $GITHUB_ENV 
+      - uses: actions/cache@v4
+        with:
+          key: mkdocs-material-${{ env.cache_id }}
+          path: .cache
+          restore-keys: |
+            mkdocs-material-
+
+      - run: |
+         pip install -r $DOCS_REQ
+         pip install --upgrade pip  
+      - name: Build documentation
+        run: mkdocs build --config-file $MKDOCS_CONFIG
+
+      - run: mkdocs gh-deploy --config-file $MKDOCS_CONFIG --force

@@ -12,7 +12,7 @@ def example_byte_stream():
 @pytest.fixture
 def sample_manager_localhost():
     return SampleManager(
-        endpoint="localhost",
+        endpoint="pq-sample-storage-minio-dev",
         port=9000,
         access_key="minioadmin",
         secret_key="minioadmin",

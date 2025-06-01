@@ -1,6 +1,6 @@
-'use client'
+'use client';
 
-import { useEffect } from 'react'
+import { useEffect } from 'react';
 
 export const Error = ({
   error,
@@ -10,21 +10,21 @@ export const Error = ({
   reset: () => void
 }): JSX.Element => {
   useEffect(() => {
-    console.error(error)
-  }, [error])
+    console.error(error);
+  }, [error]);
 
   return (
     <div className="text-center">
       <h3>Something went wrong!</h3>
       <button
         onClick={() => {
-          reset()
+          reset();
         }}
       >
         Try again
       </button>
     </div>
-  )
-}
+  );
+};
 
-export default Error
+export default Error;

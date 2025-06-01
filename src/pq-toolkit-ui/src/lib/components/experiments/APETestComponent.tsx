@@ -1,14 +1,14 @@
-'use client'
+'use client';
 
-import { type APETest } from '@/lib/schemas/experimentSetup'
+import { type APETest } from '@/lib/schemas/experimentSetup';
 import {
   type APEResult,
   type PartialResult
-} from '@/lib/schemas/experimentState'
-import MultiPlayer from '../player/MultiPlayer'
-import { getSampleUrl } from './common/utils'
-import OrderSlider from './common/OrderSlider'
-import { useEffect, useState } from 'react'
+} from '@/lib/schemas/experimentState';
+import MultiPlayer from '../player/MultiPlayer';
+import { getSampleUrl } from './common/utils';
+import OrderSlider from './common/OrderSlider';
+import { useEffect, useState } from 'react';
 
 const APETestComponent = ({
   testData,
@@ -23,37 +23,30 @@ const APETestComponent = ({
   setAnswer: (result: PartialResult<APEResult>) => void
   feedback: string
 }): JSX.Element => {
-  // console.log(initialValues)
-  const { axis, samples } = testData
-  const selectedPlayerState = useState<number>(0)
+  const { axis, samples } = testData;
+  const selectedPlayerState = useState<number>(0);
   const [responses, setResponses] = useState(
     axis.reduce<Map<string, Map<string, number>>>((mapAxis, sampleAxis) => {
       const axisResults = initialValues?.axisResults?.find(
         (r) => r.axisId === sampleAxis.questionId
-      )
+      );
       mapAxis.set(
         sampleAxis.questionId,
         samples.reduce<Map<string, number>>((mapSamples, sampleSamples) => {
-          const idx =
-            axisResults?.sampleRatings.findIndex(
-              (r) => r.sampleId === sampleSamples.sampleId
-            ) ?? -1
+          const idx = axisResults?.sampleRatings.findIndex((r) => r.sampleId === sampleSamples.sampleId) ?? -1;
 
           if (idx !== -1) {
-            mapSamples.set(
-              sampleSamples.sampleId,
-              axisResults?.sampleRatings[idx].rating ?? 0
-            )
+            mapSamples.set(sampleSamples.sampleId, axisResults?.sampleRatings[idx].rating ?? 0);
           } else {
-            mapSamples.set(sampleSamples.sampleId, 0)
+            mapSamples.set(sampleSamples.sampleId, 0);
           }
 
-          return mapSamples
+          return mapSamples;
         }, new Map<string, number>())
-      )
-      return mapAxis
+      );
+      return mapAxis;
     }, new Map<string, Map<string, number>>())
-  )
+  );
 
   useEffect(() => {
     const result: PartialResult<APEResult> = {
@@ -68,9 +61,9 @@ const APETestComponent = ({
         }))
       })),
       feedback
-    }
-    setAnswer(result)
-  }, [responses, setAnswer, testData.testNumber, feedback])
+    };
+    setAnswer(result);
+  }, [responses, setAnswer, testData.testNumber, feedback]);
 
   return (
     <div className="flex flex-col items-center bg-gray-100 dark:bg-gray-700 rounded-xl p-8 shadow-2xl">
@@ -83,8 +76,8 @@ const APETestComponent = ({
             (map, sample, idx) => {
               map.set(`Sample ${idx + 1}`, {
                 url: getSampleUrl(experimentName, sample.assetPath)
-              })
-              return map
+              });
+              return map;
             },
             new Map<string, { url: string }>()
           )}
@@ -102,17 +95,17 @@ const APETestComponent = ({
               initialValues={responses.get(questionId)}
               updateResponses={(newValueMap: Map<string, number>) => {
                 setResponses((prevState) => {
-                  const newResponses = new Map(prevState)
-                  newResponses.set(questionId, newValueMap)
-                  return newResponses
-                })
+                  const newResponses = new Map(prevState);
+                  newResponses.set(questionId, newValueMap);
+                  return newResponses;
+                });
               }}
             />
           </div>
         ))}
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default APETestComponent
+export default APETestComponent;

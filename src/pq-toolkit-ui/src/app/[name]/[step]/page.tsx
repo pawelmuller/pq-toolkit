@@ -1,58 +1,60 @@
-'use client'
+'use client';
 
-import ABTestComponent from '@/lib/components/experiments/ABTestComponent'
-import ABXTestComponent from '@/lib/components/experiments/ABXTestComponent'
-import APETestComponent from '@/lib/components/experiments/APETestComponent'
-import MUSHRATestComponent from '@/lib/components/experiments/MUSHRATestComponent'
+import ABTestComponent from '@/lib/components/experiments/ABTestComponent';
+import ABXTestComponent from '@/lib/components/experiments/ABXTestComponent';
+import APETestComponent from '@/lib/components/experiments/APETestComponent';
+import MUSHRATestComponent from '@/lib/components/experiments/MUSHRATestComponent';
 import {
   TestTypeEnum,
   type ABTest,
   type APETest,
   type FullABXTest,
   type FullMUSHRATest
-} from '@/lib/schemas/experimentSetup'
-import Link from 'next/link'
-import { useContext, useState } from 'react'
-import InvalidConfigurationError from '../invalid-configuration-error'
-import { ExperimentContext } from '../layout'
-import Loading from '../loading'
+} from '@/lib/schemas/experimentSetup';
+import Link from 'next/link';
+import { useContext, useState } from 'react';
+import InvalidConfigurationError from '../invalid-configuration-error';
+import { ExperimentContext } from '../layout';
+import Loading from '../loading';
 import {
   type PartialResult,
   type ABResult,
   type ABXResult,
   type MUSHRAResult,
   type APEResult
-} from '@/lib/schemas/experimentState'
-import Header from '@/lib/components/basic/header'
-import Blobs from '../../../lib/components/basic/blobs'
-
-export const revalidate = 0
+} from '@/lib/schemas/experimentState';
+import Header from '@/lib/components/basic/header';
+import Blobs from '../../../lib/components/basic/blobs';
 
 const TestPage = ({
   params
 }: {
   params: { name: string; step: string }
 }): JSX.Element => {
-  const { name } = params
+  const name = params.name;
 
-  const context = useContext(ExperimentContext)
-  const data = context?.data
-  const results = context?.results
-  const saveResults = context?.saveResults
+  const context = useContext(ExperimentContext);
+  const data = context?.data;
+  const results = context?.results;
+  const saveResults = context?.saveResults;
 
-  const [feedback, setFeedback] = useState('')
+  const [feedback, setFeedback] = useState('');
 
-  if (context?.error === true) return <InvalidConfigurationError />
-  if (data == null || results == null) return <Loading />
-
-  const { tests } = data
-
-  const step = parseInt(params.step)
-  if (isNaN(step) || step > tests.length || step < 1) {
-    return <div>Invalid step</div>
+  if (context?.error === true) {
+      return <InvalidConfigurationError />;
+  }
+  if (data == null || results == null) {
+      return <Loading />;
   }
 
-  const currentTest = tests[step - 1]
+  const tests = data.tests;
+
+  const step = parseInt(params.step);
+  if (isNaN(step) || step > tests.length || step < 1) {
+    return <div>Invalid step</div>;
+  }
+
+  const currentTest = tests[step - 1];
 
   const getTestComponent = (): JSX.Element => {
     switch (currentTest.type) {
@@ -67,11 +69,11 @@ const TestPage = ({
             }
             experimentName={name}
             setAnswer={(result) => {
-              context?.setAnswer(result)
+              context?.setAnswer(result);
             }}
             feedback={feedback}
           />
-        )
+        );
       case TestTypeEnum.enum.ABX:
         return (
           <ABXTestComponent
@@ -83,11 +85,11 @@ const TestPage = ({
             }
             experimentName={name}
             setAnswer={(result) => {
-              context?.setAnswer(result)
+              context?.setAnswer(result);
             }}
             feedback={feedback}
           />
-        )
+        );
       case TestTypeEnum.enum.MUSHRA:
         return (
           <MUSHRATestComponent
@@ -99,11 +101,11 @@ const TestPage = ({
             }
             experimentName={name}
             setAnswer={(result) => {
-              context?.setAnswer(result)
+              context?.setAnswer(result);
             }}
             feedback={feedback}
           />
-        )
+        );
       case TestTypeEnum.enum.APE:
         return (
           <APETestComponent
@@ -115,19 +117,19 @@ const TestPage = ({
             }
             experimentName={name}
             setAnswer={(result) => {
-              context?.setAnswer(result)
+              context?.setAnswer(result);
             }}
             feedback={feedback}
           />
-        )
+        );
     }
-  }
+  };
 
   return (
     <div className="min-h-screen bg-gray-100 dark:bg-stone-900">
       <Header />
       <div className="flex flex-col h-full w-full items-center justify-center my-auto mt-40">
-        <div className="relative text-center mb-sm">
+        <div className="relative text-center mb-sm dark:text-white">
           <Blobs />
           <div className="fadeInUp">
             <h1 className="relative text-5xl md:text-6xl font-bold">
@@ -150,7 +152,7 @@ const TestPage = ({
                       placeholder="Write your feedback here..."
                       value={feedback}
                       onChange={(e) => {
-                        setFeedback(e.target.value)
+                        setFeedback(e.target.value);
                       }}
                     />
                   </div>
@@ -183,7 +185,7 @@ const TestPage = ({
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default TestPage
+export default TestPage;

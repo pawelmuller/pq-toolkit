@@ -1,6 +1,6 @@
-'use client'
+'use client';
 
-import { useState } from 'react'
+import { useState } from 'react';
 
 const SingleSelectQuestion = ({
   text,
@@ -19,17 +19,17 @@ const SingleSelectQuestion = ({
       name,
       selected: initialSelection === idx
     }))
-  )
+  );
 
   const onSelect = (selectedIdx: number): void => {
     setSelectableOptions((prevState) => {
       return prevState.map((option) => ({
         ...option,
         selected: option.idx === selectedIdx
-      }))
-    })
-    onOptionSelect(selectedIdx)
-  }
+      }));
+    });
+    onOptionSelect(selectedIdx);
+  };
 
   return (
     <div className="w-full">
@@ -44,7 +44,7 @@ const SingleSelectQuestion = ({
                 : 'bg-pink-200 dark:bg-pink-300 hover:bg-pink-500 dark:hover:bg-pink-600'
             } flex items-center justify-center cursor-pointer`}
             onClick={() => {
-              onSelect(option.idx)
+              onSelect(option.idx);
             }}
           >
             Sample {idx + 1}
@@ -52,7 +52,7 @@ const SingleSelectQuestion = ({
         ))}
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default SingleSelectQuestion
+export default SingleSelectQuestion;

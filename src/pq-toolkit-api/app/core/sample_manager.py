@@ -5,6 +5,7 @@ from io import IOBase
 from urllib3.response import HTTPResponse
 from pydantic_settings import BaseSettings
 from app.utils import PqException
+from minio.commonconfig import CopySource
 
 
 class SampleDoesNotExistError(PqException):
@@ -111,6 +112,42 @@ class SampleManager:
                 length=-1,
                 part_size=10 * 1024 * 1024,
             )
+            return object_name
+        except minio.error.S3Error as e:
+            raise S3Error(e.code)
+
+    def upload_sample_directly(
+        self, sample_name: str, sample_data: IOBase
+    ):
+        object_name = self._object_name_from_experiment_and_sample(
+            "directly", sample_name
+        )
+        try:
+            self._client.put_object(
+                self._sample_bucket_name,
+                object_name,
+                sample_data,
+                length=-1,
+                part_size=10 * 1024 * 1024,
+            )
+            return object_name
+        except minio.error.S3Error as e:
+            raise S3Error(e.code)
+
+    def copy_sample(self, source_object_name, target_experiment_name: str,
+                    target_sample_name: str):
+
+        target_object_name = self._object_name_from_experiment_and_sample(
+            target_experiment_name, target_sample_name
+        )
+
+        try:
+            self._client.copy_object(
+                bucket_name=self._sample_bucket_name,
+                object_name=target_object_name,
+                source=CopySource(self._sample_bucket_name, source_object_name)
+            )
+            return target_object_name
         except minio.error.S3Error as e:
             raise S3Error(e.code)
 
@@ -143,12 +180,36 @@ class SampleManager:
 
         return self._sample_data_generator(response, chunk_size)
 
+    def get_sample_directly(
+            self, sample_name: str, chunk_size: int = 1024 * 1024
+    ):
+
+        if not self._check_object_exists(sample_name):
+            raise SampleDoesNotExistError(sample_name)
+
+        try:
+            response: HTTPResponse = self._client.get_object(
+                self._sample_bucket_name, sample_name
+            )
+        except minio.error.S3Error as e:
+            raise S3Error(e.code)
+
+        return self._sample_data_generator(response, chunk_size)
+
     def remove_sample(self, experiment_name: str, sample_name: str):
         object_name = self._object_name_from_experiment_and_sample(
             experiment_name, sample_name
         )
 
         if not self.check_sample_exists(experiment_name, sample_name):
+            raise SampleDoesNotExistError(object_name)
+
+        self._client.remove_object(self._sample_bucket_name, object_name)
+
+
+    def remove_sample_directly(self, object_name: str):
+
+        if not self._check_object_exists(object_name):
             raise SampleDoesNotExistError(object_name)
 
         self._client.remove_object(self._sample_bucket_name, object_name)

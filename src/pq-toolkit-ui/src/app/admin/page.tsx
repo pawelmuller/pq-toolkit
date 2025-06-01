@@ -1,23 +1,27 @@
-'use client'
+'use client';
 
-import useSWR, { type KeyedMutator } from 'swr'
-import Loading from '../loading'
-import LoginPage from '../../lib/components/login/login-page'
-import { addNewExperimentFetch, userFetch } from '@/lib/utils/fetchers'
+import useSWR, { type KeyedMutator } from 'swr';
+import Loading from '../loading';
+import LoginPage from '../../lib/components/login/login-page';
+import { addNewExperimentFetch, userFetch } from '@/lib/utils/fetchers';
 import {
   addExperimentSchema,
   type getExperimentsData,
   type UserData
-} from '@/lib/schemas/apiResults'
-import { useState } from 'react'
-import { validateApiData } from '@/core/apiHandlers/clientApiHandler'
-import { adminExperimentsListSchema } from './models'
-import Header from '@/lib/components/basic/header'
-import Blobs from '@/lib/components/basic/blobs'
-import { FaExpand, FaMinus, FaPlus } from 'react-icons/fa'
-import CreateExperimentForm from '@/lib/components/form/createExperimentForm'
-import DeleteButton from '@/lib/components/basic/deleteButton'
-import { TbLogout2 } from 'react-icons/tb'
+} from '@/lib/schemas/apiResults';
+import { useState } from 'react';
+import { validateApiData } from '@/core/apiHandlers/clientApiHandler';
+import { adminExperimentsListSchema } from './models';
+import Header from '@/lib/components/basic/header';
+import Blobs from '@/lib/components/basic/blobs';
+import { FaExpand, FaMinus, FaPlus } from 'react-icons/fa';
+import CreateExperimentForm from '@/lib/components/form/createExperimentForm';
+import DeleteButton from '@/lib/components/basic/deleteButton';
+import { TbLogout2 } from 'react-icons/tb';
+
+const MAX_EXPERIMENTS = 15;
+const MAX_EXPERIMENT_NAME_LENGTH = 50;
+
 const AdminPage = ({
   refreshAdminPage
 }: {
@@ -28,12 +32,14 @@ const AdminPage = ({
     error,
     isLoading,
     mutate
-  } = useSWR<getExperimentsData>(`/api/v1/experiments`)
+  } = useSWR<getExperimentsData>(`/api/v1/experiments`);
 
-  const [selectedExperiment, setSelectedExperiment] = useState<string>('')
-  const [isListVisible, setIsListVisible] = useState<boolean>(true)
+  const [selectedExperiment, setSelectedExperiment] = useState<string>('');
+  const [isListVisible, setIsListVisible] = useState<boolean>(true);
 
-  if (isLoading) return <Loading />
+  if (isLoading) {
+      return <Loading />;
+  }
   if (error != null)
     return (
       <div className="flex w-full min-h-screen items-center justify-center text-center h2">
@@ -41,45 +47,31 @@ const AdminPage = ({
         <br />
         {error.toString()}
       </div>
-    )
+    );
   const { data, validationError } = validateApiData(
     apiData,
     adminExperimentsListSchema
-  )
+  );
   if (validationError != null) {
-    console.error(validationError)
+    console.error(validationError);
     return (
       <div className="flex w-full min-h-screen items-center justify-center text-center h2">
         Invalid data from API, please check console for details
       </div>
-    )
+    );
   }
 
   return (
     <div className="min-h-screen bg-gray-100 dark:bg-stone-900">
       <Header />
-      <div className="flex justify-end fadeInUp mr-4 md:mr-10 z-50">
-        <button
-          className="flex items-center font-semibold max-md:text-sm max-md:px-2 max-md:py-1 bg-blue-400 dark:bg-blue-500 hover:bg-pink-500 dark:hover:bg-pink-600 text-white px-4 py-2 rounded-full shadow-lg transform transition-transform duration-300 ease-in-out hover:scale-105"
-          onClick={() => {
-            localStorage.removeItem('token')
-            refreshAdminPage().catch((error) => {
-              console.error(error)
-            })
-          }}
-        >
-          <TbLogout2 className="mr-2" />
-          Logout
-        </button>
-      </div>
       <div className="flex flex-col h-full w-full items-center justify-center my-auto mt-32">
         <div className="relative text-center mb-sm md:mb-md lg:mb-lg">
           <Blobs />
           <div className="fadeInUp">
-            <h1 className="relative text-5xl md:text-6xl font-bold">
+            <h1 className="relative text-5xl md:text-6xl font-bold dark:text-white">
               Perceptual Qualities Toolkit
             </h1>
-            <h2 className="relative text-2xl md:text-3xl font-semibold mt-sm">
+            <h2 className="relative text-2xl md:text-3xl font-semibold mt-sm dark:text-white">
               Experiment Configurator
             </h2>
           </div>
@@ -98,7 +90,7 @@ const AdminPage = ({
               <button
                 className="flex items-center text-sm bg-blue-400 dark:bg-blue-500 hover:bg-pink-500 dark:hover:bg-pink-600 transform hover:scale-110 duration-300 ease-in-out rounded-xl p-xxs text-white"
                 onClick={() => {
-                  setIsListVisible(true)
+                  setIsListVisible(true);
                 }}
               >
                 <FaExpand className="mr-2" />
@@ -117,8 +109,8 @@ const AdminPage = ({
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
 const AdminExperimentsListWidget = ({
   experiments,
@@ -138,7 +130,7 @@ const AdminExperimentsListWidget = ({
       <button
         className="absolute top-4 right-4 flex items-center text-sm bg-blue-400 dark:bg-blue-500 hover:bg-pink-500 dark:hover:bg-pink-600 transform hover:scale-110 duration-300 ease-in-out rounded-xl p-xxs text-white"
         onClick={() => {
-          setIsListVisible(false)
+          setIsListVisible(false);
         }}
       >
         <FaMinus className="mr-2" />
@@ -164,7 +156,7 @@ const AdminExperimentsListWidget = ({
               <div
                 className="font-semibold text-white w-9/12 sm:w-[85%] lg:w-[90%] 2xl:w-10/12 bg-blue-400 dark:bg-blue-500 hover:bg-pink-500 dark:hover:bg-pink-600 transform hover:scale-105 duration-300 ease-in-out p-2 rounded-md cursor-pointer"
                 onClick={() => {
-                  setSelectedExperiment(name)
+                  setSelectedExperiment(name);
                 }}
               >
                 {name}
@@ -180,8 +172,8 @@ const AdminExperimentsListWidget = ({
         </ul>
       </div>
     </div>
-  )
-}
+  );
+};
 
 const AddExperimentWidget = ({
   experiments,
@@ -190,43 +182,77 @@ const AddExperimentWidget = ({
   experiments: string[]
   refreshPage: KeyedMutator<getExperimentsData>
 }): JSX.Element => {
-  const [newExperimentName, setNewExperimentName] = useState('')
+  const [newExperimentName, setNewExperimentName] = useState('');
+
+  const handleAdd = () => {
+    if (
+      newExperimentName.length === 0 ||
+      newExperimentName.length > MAX_EXPERIMENT_NAME_LENGTH ||
+      experiments.includes(newExperimentName) ||
+      experiments.length >= MAX_EXPERIMENTS
+    ) {
+      return;
+    }
+
+    addNewExperimentFetch(newExperimentName, addExperimentSchema)
+      .then(async () => {
+        try {
+          await refreshPage();
+        } catch (error) {
+          console.error(error);
+        }
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+
+    setNewExperimentName('');
+  };
 
   return (
-    <div className="flex items-center z-10 mt-4 w-full">
-      <input
-        className="rounded outline-0 border-2 bg-gray-100 border-gray-300 dark:bg-gray-700 dark:border-gray-500 dark:text-white text-black w-full"
-        onChange={(e) => {
-          setNewExperimentName(e.target.value)
-        }}
-        value={newExperimentName}
-      />
-      <button
-        onClick={() => {
-          addNewExperimentFetch(newExperimentName, addExperimentSchema)
-            .then(async () => {
-              try {
-                await refreshPage()
-              } catch (error) {
-                console.error(error)
-              }
-            })
-            .catch((error) => {
-              console.error(error)
-            })
-          setNewExperimentName('')
-        }}
-        disabled={
-          newExperimentName.length === 0 ||
-          experiments.includes(newExperimentName)
-        }
-        className="flex items-center text-sm disabled:bg-gray-400 dark:disabled:bg-gray-700 dark:disabled:text-gray-400 bg-blue-400 dark:bg-blue-500 hover:bg-pink-500 dark:hover:bg-pink-600 transform hover:scale-110 duration-300 disabled:transform-none ease-in-out rounded-xl p-xxs ml-4 text-white"
-      >
-        <FaPlus />
-      </button>
+    <div className="flex flex-col items-center z-10 mt-4 w-full">
+      <div className="flex items-center w-full">
+        <input
+          className="rounded outline-0 border-2 bg-gray-100 border-gray-300 dark:bg-gray-700 dark:border-gray-500 dark:text-white text-black w-full"
+          onChange={(e) => setNewExperimentName(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') {
+              handleAdd();
+            }
+          }}
+          value={newExperimentName}
+          maxLength={MAX_EXPERIMENT_NAME_LENGTH}
+        />
+        <button
+          onClick={handleAdd}
+          disabled={
+            newExperimentName.length === 0 ||
+            newExperimentName.length > MAX_EXPERIMENT_NAME_LENGTH ||
+            experiments.includes(newExperimentName) ||
+            experiments.length >= MAX_EXPERIMENTS
+          }
+          className="flex items-center text-sm disabled:bg-gray-400 dark:disabled:bg-gray-700 dark:disabled:text-gray-400 bg-blue-400 dark:bg-blue-500 hover:bg-pink-500 dark:hover:bg-pink-600 transform hover:scale-110 duration-300 disabled:transform-none ease-in-out rounded-xl p-xxs ml-4 text-white"
+        >
+          <FaPlus />
+        </button>
+      </div>
+      <div className="mt-4 text-sm md:text-base text-gray-600 dark:text-gray-300">
+        First time?{' '}
+        <a
+          href="/admin/guide"
+          className="text-blue-500 dark:text-blue-400 hover:underline"
+        >
+          Check administrator guide
+        </a>
+      </div>
+      {experiments.length >= MAX_EXPERIMENTS && (
+        <div className="mt-2 text-red-500 dark:text-red-400">
+          Maximum number of experiments reached.
+        </div>
+      )}
     </div>
-  )
-}
+  );
+};
 
 const LoginSwitch = (): JSX.Element => {
   const {
@@ -234,23 +260,26 @@ const LoginSwitch = (): JSX.Element => {
     error,
     isLoading,
     mutate
-  } = useSWR<UserData>(`/api/v1/auth/user`, userFetch)
-  if (isLoading) return <Loading />
+  } = useSWR<UserData>(`/api/v1/auth/user`, userFetch);
+  if (isLoading) {
+      return <Loading />;
+  }
   if (error != null)
     if (error.message.includes('"status":401') as boolean) {
-      return <LoginPage refreshAdminPage={mutate} />
+      return <LoginPage refreshAdminPage={mutate} />;
     } else
       return (
         <div>
           <div>Authorization Error</div>
           <div>{error.toString()}</div>
         </div>
-      )
+      );
   if (apiData?.is_active ?? false) {
-    return <AdminPage refreshAdminPage={mutate} />
+    return <AdminPage refreshAdminPage={mutate} />;
   } else {
-    return <LoginPage refreshAdminPage={mutate} />
+    return <LoginPage refreshAdminPage={mutate} />;
   }
-}
+};
 
-export default LoginSwitch
+export default LoginSwitch;
+

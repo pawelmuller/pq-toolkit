@@ -1,4 +1,4 @@
-import Swal from 'sweetalert2'
+import Swal from 'sweetalert2';
 
 const SwalBase = Swal.mixin({
   customClass: {
@@ -17,7 +17,7 @@ const SwalBase = Swal.mixin({
   allowEscapeKey: true,
   allowEnterKey: true,
   showCancelButton: true
-})
+});
 
 export const fireConfirmationModal = async ({
   title,
@@ -32,9 +32,9 @@ export const fireConfirmationModal = async ({
     title
   }).then(async (result) => {
     if (result.isConfirmed) {
-      onConfirm?.()
+      onConfirm?.();
     } else if (result.isDenied) {
-      onDeny?.()
+      onDeny?.();
     }
-  })
-}
+  });
+};

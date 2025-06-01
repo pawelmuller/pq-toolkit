@@ -1,5 +1,5 @@
-import { Slider } from '@mui/material'
-import React, { type Dispatch, type SetStateAction } from 'react'
+import { Slider } from '@mui/material';
+import React, { type Dispatch, type SetStateAction } from 'react';
 
 const VerticalMultislider = ({
   ratings,
@@ -10,11 +10,11 @@ const VerticalMultislider = ({
 }): JSX.Element => {
   const updateState = (key: string, value: number | number[]): void => {
     setRatings((prevState) => {
-      const newState = new Map(prevState)
-      if (typeof value === 'number') newState.set(key, value)
-      return newState
-    })
-  }
+      const newState = new Map(prevState);
+      if (typeof value === 'number') newState.set(key, value);
+      return newState;
+    });
+  };
 
   const sampleRatingLabels = [
     'terrible',
@@ -23,7 +23,7 @@ const VerticalMultislider = ({
     'fair',
     'good',
     'excellent'
-  ]
+  ];
 
   return (
     <div className="w-full flex flex-row ">
@@ -60,7 +60,7 @@ const VerticalMultislider = ({
                           max={100}
                           value={ratings.get(key)}
                           onChange={(_: any, value: number | number[]) => {
-                            updateState(key, value)
+                            updateState(key, value);
                           }}
                         />
                       </div>
@@ -86,7 +86,7 @@ const VerticalMultislider = ({
         </tbody>
       </table>
     </div>
-  )
-}
+  );
+};
 
-export default VerticalMultislider
+export default VerticalMultislider;

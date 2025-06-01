@@ -1,14 +1,14 @@
-'use client'
+'use client';
 
-import { type FullMUSHRATest } from '@/lib/schemas/experimentSetup'
+import { type FullMUSHRATest } from '@/lib/schemas/experimentSetup';
 import {
   type MUSHRAResult,
   type PartialResult
-} from '@/lib/schemas/experimentState'
-import MultiPlayer from '../player/MultiPlayer'
-import { getSampleUrl } from './common/utils'
-import React, { useEffect, useState } from 'react'
-import VerticalSlider from '@/lib/components/experiments/common/VerticalSlider'
+} from '@/lib/schemas/experimentState';
+import MultiPlayer from '../player/MultiPlayer';
+import { getSampleUrl } from './common/utils';
+import React, { useEffect, useState } from 'react';
+import VerticalSlider from '@/lib/components/experiments/common/VerticalSlider';
 
 const MUSHRATestComponent = ({
   testData,
@@ -23,52 +23,50 @@ const MUSHRATestComponent = ({
   setAnswer: (result: PartialResult<MUSHRAResult>) => void
   feedback: string
 }): JSX.Element => {
-  const { reference, anchors, samples, question } = testData
+  const { reference, anchors, samples, question } = testData;
 
   const prepareSamples = (): Array<{ sampleId: string; assetPath: string }> => {
-    const samplesCombined = [...samples, ...anchors, reference]
+    const samplesCombined = [...samples, ...anchors, reference];
     samplesCombined.sort((a, b) =>
       testData.samplesShuffle.findIndex((v) => v === a.sampleId) >
       testData.samplesShuffle.findIndex((v) => v === b.sampleId)
         ? 1
         : -1
-    )
-    return samplesCombined
-  }
+    );
+    return samplesCombined;
+  };
 
-  const [shuffledSamples] = useState<
-    Array<{ sampleId: string; assetPath: string }>
-  >(prepareSamples())
+  const [shuffledSamples] = useState<Array<{ sampleId: string; assetPath: string }>>(prepareSamples());
 
   const [ratings, setRatings] = useState<Map<string, number>>(() => {
-    const savedRatings: Array<{ sampleId: string; score: number }> = []
+    const savedRatings: Array<{ sampleId: string; score: number }> = [];
     if (initialValues?.samplesScores != null) {
-      savedRatings.push(...initialValues.samplesScores)
+      savedRatings.push(...initialValues.samplesScores);
     }
     if (initialValues?.anchorsScores != null) {
-      savedRatings.push(...initialValues.anchorsScores)
+      savedRatings.push(...initialValues.anchorsScores);
     }
     if (initialValues?.referenceScore != null) {
       savedRatings.push({
         sampleId: reference.sampleId,
         score: initialValues.referenceScore
-      })
+      });
     }
 
     return shuffledSamples.reduce<Map<string, number>>((map, sample) => {
-      const idx = savedRatings.findIndex((r) => r.sampleId === sample.sampleId)
+      const idx = savedRatings.findIndex((r) => r.sampleId === sample.sampleId);
 
       if (idx !== -1) {
-        map.set(sample.sampleId, savedRatings[idx].score)
+        map.set(sample.sampleId, savedRatings[idx].score);
       } else {
-        map.set(sample.sampleId, 50)
+        map.set(sample.sampleId, 50);
       }
 
-      return map
-    }, new Map<string, number>())
-  })
+      return map;
+    }, new Map<string, number>());
+  });
 
-  const selectedPlayerState = useState<number>(0)
+  const selectedPlayerState = useState<number>(0);
 
   useEffect(() => {
     const result: MUSHRAResult = {
@@ -83,9 +81,9 @@ const MUSHRATestComponent = ({
         score: ratings.get(sampleId) ?? -1
       })),
       feedback
-    }
+    };
 
-    setAnswer(result)
+    setAnswer(result);
   }, [
     setAnswer,
     ratings,
@@ -94,18 +92,18 @@ const MUSHRATestComponent = ({
     testData.samples,
     reference.sampleId,
     feedback
-  ])
+  ]);
 
   const sliderSetRating = (value: number, sampleId: string): void => {
     setRatings((prevState) => {
-      const newState = new Map(prevState)
-      newState.set(sampleId, value)
-      return newState
-    })
-  }
+      const newState = new Map(prevState);
+      newState.set(sampleId, value);
+      return newState;
+    });
+  };
 
   const getMUSHRAscale = (): JSX.Element => {
-    const scale = ['Terrible', 'Bad', 'Poor', 'Fair', 'Good', 'Excellent']
+    const scale = ['Terrible', 'Bad', 'Poor', 'Fair', 'Good', 'Excellent'];
 
     return (
       <div className="h-full flex flex-col justify-between">
@@ -118,8 +116,8 @@ const MUSHRATestComponent = ({
           </div>
         ))}
       </div>
-    )
-  }
+    );
+  };
 
   return (
     <div className="flex flex-col items-center bg-gray-100 dark:bg-gray-700 rounded-xl p-8 shadow-2xl">
@@ -134,7 +132,7 @@ const MUSHRATestComponent = ({
           assets={[reference, ...shuffledSamples].reduce<
             Map<string, { url: string; footers: JSX.Element[] }>
           >((map, sample, idx) => {
-            const sampleName = idx === 0 ? 'Reference' : `Sample ${idx}`
+            const sampleName = idx === 0 ? 'Reference' : `Sample ${idx}`;
             map.set(sampleName, {
               url: getSampleUrl(experimentName, sample.assetPath),
               footers:
@@ -155,14 +153,14 @@ const MUSHRATestComponent = ({
                         {ratings.get(sample.sampleId) ?? 0}
                       </div>
                     ]
-            })
-            return map
+            });
+            return map;
           }, new Map<string, { url: string; footers: JSX.Element[] }>())}
           selectedPlayerState={selectedPlayerState}
         />
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default MUSHRATestComponent
+export default MUSHRATestComponent;

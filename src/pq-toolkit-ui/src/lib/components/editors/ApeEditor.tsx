@@ -7,10 +7,11 @@ import {
   type ExperimentSetup,
   type FullABXTest,
   type MUSHRATest
-} from '@/lib/schemas/experimentSetup'
-import { useState } from 'react'
-import { FaPlus } from 'react-icons/fa'
-import DeleteAxisComp from '../form/deleteAxisComp'
+} from '@/lib/schemas/experimentSetup';
+import { useState } from 'react';
+import { FaPlus } from 'react-icons/fa';
+import DeleteAxisComp from '../form/deleteAxisComp';
+import { useToast, ToastType } from '@/lib/contexts/ToastContext';
 
 const ApeEditor = ({
   currentTest,
@@ -24,11 +25,38 @@ const ApeEditor = ({
       ABTest | ABXTest | FullABXTest | MUSHRATest | APETest | BaseTest
     >
   >
-  fileList: File[]
+  fileList: string[]
   setSetup: React.Dispatch<React.SetStateAction<ExperimentSetup>>
 }): JSX.Element => {
-  const [newQuestion, setNewQuestion] = useState('')
-  const [sampleTest, setSampleTest] = useState<Sample[]>(currentTest.samples)
+  const [newQuestion, setNewQuestion] = useState('');
+  const [sampleTest, setSampleTest] = useState<Sample[]>(currentTest.samples);
+  const { addToast } = useToast();
+  
+  const handleAddAxis = () => {
+    if (newQuestion.length === 0) {
+      addToast('Axis label cannot be empty', ToastType.WARNING);
+      return;
+    }
+  
+    if (currentTest.axis?.some((q) => q.text === newQuestion)) {
+      addToast('This axis already exists', ToastType.WARNING);
+      return;
+    }
+  
+    const updatedAxis = currentTest.axis != null
+      ? [...currentTest.axis, { questionId: newQuestion, text: newQuestion }]
+      : [{ questionId: newQuestion, text: newQuestion }];
+  
+    const updatedTest = {
+      ...currentTest,
+      axis: updatedAxis
+    };
+  
+    setCurrentTest(updatedTest);
+    setNewQuestion('');
+    addToast('Axis added successfully', ToastType.SUCCESS);
+  };
+
   return (
     <div className="w-full">
       <h4 className="font-semibold text-sm lg:text-base mb-1 mt-3">Samples</h4>
@@ -39,34 +67,34 @@ const ApeEditor = ({
               No Samples available. Please upload some.
             </h3>
           ) : (
-            fileList.map((file, index) => (
+            fileList.map((assetPath, index) => (
               <label
                 key={index}
                 className="flex items-center relative cursor-pointer mr-2 break-words w-full"
               >
                 <input
                   type="checkbox"
-                  id={file.name}
+                  id={assetPath}
                   checked={sampleTest.some(
-                    (sample) => sample.assetPath === file.name
+                    (sample) => sample.assetPath === assetPath
                   )}
-                  name={file.name}
+                  name={assetPath}
                   onChange={(e) => {
                     if (e.target.checked) {
                       setSampleTest((oldarray) => [
                         ...oldarray,
-                        { sampleId: 's0', assetPath: file.name }
-                      ])
+                        { sampleId: assetPath, assetPath: assetPath }
+                      ]);
                     } else {
                       const foundJSON = sampleTest.find(
-                        (item) => item.assetPath === file.name
-                      )
+                        (item) => item.assetPath === assetPath
+                      );
                       if (foundJSON !== undefined) {
                         setSampleTest((oldarray) =>
                           oldarray.filter(
-                            (sample) => sample.assetPath !== file.name
+                            (sample) => sample.assetPath !== assetPath
                           )
-                        )
+                        );
                       }
                     }
                   }}
@@ -76,14 +104,14 @@ const ApeEditor = ({
                   <span
                     className={`w-4 h-4 rounded border-2 flex items-center justify-center ${
                       sampleTest.some(
-                        (sample) => sample.assetPath === file.name
+                        (sample) => sample.assetPath === assetPath
                       )
                         ? 'bg-pink-500 border-pink-500 dark:bg-pink-600 dark:border-pink-600'
                         : 'bg-gray-200 border-gray-400'
                     } transition-transform transform hover:scale-110 duration-100 ease-in-out`}
                   >
                     {sampleTest.some(
-                      (sample) => sample.assetPath === file.name
+                      (sample) => sample.assetPath === assetPath
                     ) && (
                       <svg
                         className="w-3 h-3 text-white"
@@ -102,7 +130,7 @@ const ApeEditor = ({
                     )}
                   </span>
                 </span>
-                <span className="ml-2 break-words w-full">{file.name}</span>
+                <span className="ml-2 break-words w-full">{assetPath}</span>
               </label>
             ))
           )}
@@ -113,8 +141,11 @@ const ApeEditor = ({
         <input
           className="rounded outline-0 border-2 bg-gray-50 border-gray-300 dark:bg-gray-800 dark:border-gray-500 text-black dark:text-white w-full"
           value={newQuestion}
-          onChange={(e) => {
-            setNewQuestion(e.target.value)
+          onChange={(e) => setNewQuestion(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') {
+              handleAddAxis();
+            }
           }}
         />
         <button
@@ -125,18 +156,18 @@ const ApeEditor = ({
                 axis: [
                   ...currentTest.axis,
                   {
-                    questionId: `q${currentTest.axis.length + 1}`,
+                    questionId: newQuestion,
                     text: newQuestion
                   }
                 ]
-              })
+              });
             } else {
               setCurrentTest({
                 ...currentTest,
-                axis: [{ questionId: 'q1', text: newQuestion }]
-              })
+                axis: [{ questionId: newQuestion, text: newQuestion }]
+              });
             }
-            setNewQuestion('')
+            setNewQuestion('');
           }}
           disabled={
             newQuestion.length === 0 ||
@@ -176,12 +207,12 @@ const ApeEditor = ({
                 .filter((test) => test.testNumber !== currentTest.testNumber)
                 .map((test) => {
                   if (test.testNumber > currentTest.testNumber) {
-                    return { ...test, testNumber: test.testNumber - 1 }
+                    return { ...test, testNumber: test.testNumber - 1 };
                   }
-                  return test
+                  return test;
                 })
-            }))
-            setCurrentTest((oldTest) => ({ ...oldTest, testNumber: -1 }))
+            }));
+            setCurrentTest((oldTest) => ({ ...oldTest, testNumber: -1 }));
           }}
         >
           Delete
@@ -192,16 +223,16 @@ const ApeEditor = ({
             const updatedTest = {
               ...currentTest,
               samples: sampleTest
-            }
+            };
 
             if ('questions' in updatedTest) {
-              delete updatedTest.questions
+              delete updatedTest.questions;
             }
             if ('anchors' in updatedTest) {
-              delete updatedTest.anchors
+              delete updatedTest.anchors;
             }
             if ('reference' in updatedTest) {
-              delete updatedTest.reference
+              delete updatedTest.reference;
             }
 
             setSetup((oldSetup) => ({
@@ -209,15 +240,15 @@ const ApeEditor = ({
               tests: oldSetup.tests.map((test) =>
                 test.testNumber === updatedTest.testNumber ? updatedTest : test
               )
-            }))
+            }));
 
-            setCurrentTest(updatedTest)
+            setCurrentTest(updatedTest);
           }}
         >
           Save
         </button>
       </div>
     </div>
-  )
-}
-export default ApeEditor
+  );
+};
+export default ApeEditor;
