@@ -1,25 +1,25 @@
-'use client'
+'use client';
 
-import { useContext, useEffect, useState } from 'react'
-import { ExperimentContext } from './layout'
-import Loading from './loading'
-import InvalidConfigurationError from './invalid-configuration-error'
-import Header from '@/lib/components/basic/header'
-import Blobs from '../../lib/components/basic/blobs'
+import { useContext, useEffect, useState } from 'react';
+import { ExperimentContext } from './layout';
+import Loading from './loading';
+import InvalidConfigurationError from './invalid-configuration-error';
+import Header from '@/lib/components/basic/header';
+import Blobs from '../../lib/components/basic/blobs';
 
 const ExperimentWelcomePage = (props: {
   params: { name: string }
 }): JSX.Element => {
-  const { name: experimentName } = props.params
-  const context = useContext(ExperimentContext)
-  const data = context?.data
-  const [errorRequest, setErrorRequest] = useState(false)
+  const { name: experimentName } = props.params;
+  const context = useContext(ExperimentContext);
+  const data = context?.data;
+  const [errorRequest, setErrorRequest] = useState(false);
 
   useEffect(() => {
     if (context?.error ?? false) {
-      setErrorRequest(true)
+      setErrorRequest(true);
     }
-  }, [context?.error])
+  }, [context?.error]);
 
   return (
     <div className="min-h-screen bg-gray-100 dark:bg-stone-900">
@@ -48,7 +48,7 @@ const ExperimentWelcomePage = (props: {
                   <div
                     className="bg-clip-text text-base md:text-lg font-bold text-transparent bg-gradient-to-r from-cyan-500  to-pink-500 cursor-pointer"
                     onClick={() => {
-                      window.location.href = `/${experimentName}/1`
+                      window.location.href = `/${experimentName}/1`;
                     }}
                   >
                     Start
@@ -60,7 +60,7 @@ const ExperimentWelcomePage = (props: {
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default ExperimentWelcomePage
+export default ExperimentWelcomePage;

@@ -1,31 +1,31 @@
-'use client'
-import { useEffect, useState } from 'react'
-import { FaArrowUp } from 'react-icons/fa'
+'use client';
+import { useEffect, useState } from 'react';
+import { FaArrowUp } from 'react-icons/fa';
 
 const ScrollToTopButton = (): JSX.Element => {
-  const [isVisible, setIsVisible] = useState<boolean>(false)
+  const [isVisible, setIsVisible] = useState<boolean>(false);
 
   const toggleVisibility = (): void => {
     if (window.scrollY > 300) {
-      setIsVisible(true)
+      setIsVisible(true);
     } else {
-      setIsVisible(false)
+      setIsVisible(false);
     }
-  }
+  };
 
   const scrollToTop = (): void => {
     window.scrollTo({
       top: 0,
       behavior: 'smooth'
-    })
-  }
+    });
+  };
 
   useEffect(() => {
-    window.addEventListener('scroll', toggleVisibility)
+    window.addEventListener('scroll', toggleVisibility);
     return () => {
-      window.removeEventListener('scroll', toggleVisibility)
-    }
-  }, [])
+      window.removeEventListener('scroll', toggleVisibility);
+    };
+  }, []);
 
   return (
     <>
@@ -40,7 +40,7 @@ const ScrollToTopButton = (): JSX.Element => {
         </div>
       )}
     </>
-  )
-}
+  );
+};
 
-export default ScrollToTopButton
+export default ScrollToTopButton;

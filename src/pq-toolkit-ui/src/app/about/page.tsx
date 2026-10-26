@@ -1,6 +1,6 @@
-'use client'
-import Header from '@/lib/components/basic/header'
-import ScrollToTopButton from '@/lib/components/basic/scrollToTopButton'
+'use client';
+import Header from '@/lib/components/basic/header';
+import ScrollToTopButton from '@/lib/components/basic/scrollToTopButton';
 
 const About = (): JSX.Element => {
   return (
@@ -162,7 +162,7 @@ const About = (): JSX.Element => {
       </div>
       <ScrollToTopButton />
     </div>
-  )
-}
+  );
+};
 
-export default About
+export default About;

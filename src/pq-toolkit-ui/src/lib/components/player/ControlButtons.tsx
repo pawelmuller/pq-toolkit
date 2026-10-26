@@ -1,4 +1,4 @@
-import { FaStop, FaPause, FaPlay } from 'react-icons/fa'
+import { FaStop, FaPause, FaPlay } from 'react-icons/fa';
 
 export const PlayButton = ({
   onClick
@@ -9,8 +9,8 @@ export const PlayButton = ({
     <div data-testid="play-button">
       <ControlButton label={<FaPlay />} onClick={onClick} />
     </div>
-  )
-}
+  );
+};
 
 export const PauseButton = ({
   onClick
@@ -21,8 +21,8 @@ export const PauseButton = ({
     <div data-testid="pause-button">
       <ControlButton label={<FaPause />} onClick={onClick} />
     </div>
-  )
-}
+  );
+};
 
 export const StopButton = ({
   onClick
@@ -33,8 +33,8 @@ export const StopButton = ({
     <div data-testid="stop-button">
       <ControlButton label={<FaStop />} onClick={onClick} />
     </div>
-  )
-}
+  );
+};
 
 const ControlButton = ({
   label,
@@ -50,5 +50,5 @@ const ControlButton = ({
     >
       {label}
     </button>
-  )
-}
+  );
+};

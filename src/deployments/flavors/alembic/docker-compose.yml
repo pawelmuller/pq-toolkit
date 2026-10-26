@@ -23,7 +23,7 @@ services:
 
   # FastAPI backend
   pq-toolkit-api-dev:
-    build: ../pq-toolkit-api
+    build: ../../../pq-toolkit-api
     depends_on:
       pq-toolkit-db:
         condition: service_healthy
@@ -42,4 +42,4 @@ services:
       PQ_API_PORT: $PQ_API_PORT
     command: sh -c "bash"
     volumes:
-      - ../pq-toolkit-api/app:/app/app
+      - ../../../pq-toolkit-api/app:/app/app

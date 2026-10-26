@@ -1,6 +1,6 @@
-'use client'
-import Header from '@/lib/components/basic/header'
-import ScrollToTopButton from '@/lib/components/basic/scrollToTopButton'
+'use client';
+import Header from '@/lib/components/basic/header';
+import ScrollToTopButton from '@/lib/components/basic/scrollToTopButton';
 
 const AboutMushra = (): JSX.Element => {
   return (
@@ -100,7 +100,7 @@ const AboutMushra = (): JSX.Element => {
       </div>
       <ScrollToTopButton />
     </div>
-  )
-}
+  );
+};
 
-export default AboutMushra
+export default AboutMushra;

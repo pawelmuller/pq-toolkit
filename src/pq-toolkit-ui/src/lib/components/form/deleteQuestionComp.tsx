@@ -32,7 +32,7 @@ const DeleteQuestionComp = (props: DeleteQuestionCompProps): JSX.Element => {
             className="fill-red-500 mr-2 cursor-pointer transform hover:scale-125 duration-300 ease-in-out"
             size={25}
             onClick={() => {
-              setDeleteConfirm(false)
+              setDeleteConfirm(false);
             }}
           />
           <FaCheck
@@ -40,7 +40,7 @@ const DeleteQuestionComp = (props: DeleteQuestionCompProps): JSX.Element => {
             className="fill-green-500 cursor-pointer transform hover:scale-125 duration-300 ease-in-out"
             size={24}
             onClick={() => {
-              setDeleteConfirm(false)
+              setDeleteConfirm(false);
               props.setCurrentTest((oldTest) => {
                 if ('questions' in oldTest) {
                   return {
@@ -48,13 +48,13 @@ const DeleteQuestionComp = (props: DeleteQuestionCompProps): JSX.Element => {
                     questions: oldTest.questions?.filter(
                       (_: Question, i: number) => i !== props.index
                     )
-                  }
+                  };
                 } else {
                   return {
                     ...oldTest
-                  }
+                  };
                 }
-              })
+              });
             }}
           />
         </div>
@@ -64,12 +64,12 @@ const DeleteQuestionComp = (props: DeleteQuestionCompProps): JSX.Element => {
           className="fill-red-500 cursor-pointer mr-0 sm:mr-2 transform hover:scale-125 duration-300 ease-in-out"
           size={25}
           onClick={() => {
-            setDeleteConfirm(true)
+            setDeleteConfirm(true);
           }}
         />
       )}
     </div>
-  )
-}
+  );
+};
 
-export default DeleteQuestionComp
+export default DeleteQuestionComp;

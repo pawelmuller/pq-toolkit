@@ -1,6 +1,6 @@
-'use client'
-import { Slider, styled } from '@mui/material'
-import React from 'react'
+'use client';
+import { Slider, styled } from '@mui/material';
+import React from 'react';
 
 // Custom styling for the slider with a blue to red gradient through purple
 const CustomSlider = styled(Slider)({
@@ -29,7 +29,7 @@ const CustomSlider = styled(Slider)({
     height: '4px',
     borderRadius: '50%'
   }
-})
+});
 
 const VerticalSlider = ({
   rating,
@@ -58,12 +58,12 @@ const VerticalSlider = ({
           max={100}
           value={rating}
           onChange={(_: Event, value: number | number[]) => {
-            if (typeof value === 'number') setRating(value)
+            if (typeof value === 'number') setRating(value);
           }}
         />
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default VerticalSlider
+export default VerticalSlider;

@@ -1,6 +1,6 @@
-'use client'
-import Header from '@/lib/components/basic/header'
-import ScrollToTopButton from '@/lib/components/basic/scrollToTopButton'
+'use client';
+import Header from '@/lib/components/basic/header';
+import ScrollToTopButton from '@/lib/components/basic/scrollToTopButton';
 
 const AboutAPE = (): JSX.Element => {
   return (
@@ -101,7 +101,7 @@ const AboutAPE = (): JSX.Element => {
       </div>
       <ScrollToTopButton />
     </div>
-  )
-}
+  );
+};
 
-export default AboutAPE
+export default AboutAPE;

@@ -1,10 +1,10 @@
-import { validateApiData } from '@/core/apiHandlers/clientApiHandler'
+import { validateApiData } from '@/core/apiHandlers/clientApiHandler';
 import {
   type ExperimentSetup,
   ExperimentSetupSchema
-} from '@/lib/schemas/experimentSetup'
-import { validateTestSchema } from '@/lib/schemas/utils'
-import useSWR from 'swr'
+} from '@/lib/schemas/experimentSetup';
+import { validateTestSchema } from '@/lib/schemas/utils';
+import useSWR from 'swr';
 
 const useExperimentData = (
   experimentName: string,
@@ -29,30 +29,36 @@ const useExperimentData = (
     error,
     isLoading,
     mutate
-  } = useSWR(`/api/v1/experiments/${experimentName}`, config)
+  } = useSWR(`/api/v1/experiments/${experimentName}`, config);
 
-  if (isLoading) return { isLoading, mutate }
+  if (isLoading) {
+    return { isLoading, mutate };
+  }
 
-  if (error != null) return { isLoading, apiError: error, mutate }
+  if (error != null) {
+    return { isLoading, apiError: error, mutate };
+  }
 
   const { data, validationError } = validateApiData(
     apiData,
     ExperimentSetupSchema
-  )
-  if (validationError != null)
-    return { isLoading, validationErrors: [validationError], mutate }
+  );
+  if (validationError != null) {
+    return {isLoading, validationErrors: [validationError], mutate};
+  }
 
-  const testValidationErrors: string[] = []
+  const testValidationErrors: string[] = [];
   data.tests.forEach((test) => {
-    const validationResult = validateTestSchema(test)
+    const validationResult = validateTestSchema(test);
     if (validationResult.validationError != null)
-      testValidationErrors.push(validationResult.validationError)
-    else test = validationResult.data
-  })
-  if (testValidationErrors.length > 0)
-    return { isLoading, validationErrors: testValidationErrors, mutate }
+      testValidationErrors.push(validationResult.validationError);
+    else test = validationResult.data;
+  });
+  if (testValidationErrors.length > 0) {
+    return {isLoading, validationErrors: testValidationErrors, mutate};
+  }
 
-  return { isLoading, experimentData: data, mutate }
-}
+  return { isLoading, experimentData: data, mutate };
+};
 
-export default useExperimentData
+export default useExperimentData;

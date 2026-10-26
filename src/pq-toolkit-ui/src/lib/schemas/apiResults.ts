@@ -1,4 +1,4 @@
-import { string, z } from 'zod'
+import { string, z } from 'zod';
 
 /**
  * Schema for user data
@@ -10,7 +10,7 @@ export const UserSchema = z.object({
   email: z.string(),
   hashed_password: z.string(),
   is_active: z.boolean()
-})
+});
 
 /**
  * Type from {@link UserSchema}
@@ -30,7 +30,7 @@ export type UserData = z.infer<typeof UserSchema>
 export const LoginSchema = z.object({
   access_token: z.string(),
   token_type: z.string()
-})
+});
 
 /**
  * Type from {@link LoginSchema}
@@ -46,7 +46,7 @@ export type LoginData = z.infer<typeof LoginSchema>
  */
 export const getExperimentsSchema = z.object({
   experiments: z.array(string())
-})
+});
 
 /**
  * Type from {@link getExperimentsSchema}
@@ -60,7 +60,7 @@ export type getExperimentsData = z.infer<typeof getExperimentsSchema>
  */
 export const addExperimentSchema = z.object({
   experiments: z.array(string())
-})
+});
 
 /**
  * Type from {@link addExperimentSchema}
@@ -74,7 +74,7 @@ export type addExperimentData = z.infer<typeof addExperimentSchema>
  */
 export const deleteExperimentSchema = z.object({
   experiments: z.array(string())
-})
+});
 
 /**
  * Type from {@link deleteExperimentSchema}
@@ -88,7 +88,7 @@ export type deleteExperimentData = z.infer<typeof deleteExperimentSchema>
  */
 export const setUpExperimentSchema = z.object({
   success: z.boolean()
-})
+});
 
 /**
  * Type from {@link setUpExperimentSchema}
@@ -102,7 +102,7 @@ export type setUpExperimentData = z.infer<typeof setUpExperimentSchema>
  */
 export const uploadSampleSchema = z.object({
   success: z.boolean()
-})
+});
 
 /**
  * Type from {@link uploadSampleSchema}
@@ -114,7 +114,7 @@ export type uploadSampleData = z.infer<typeof uploadSampleSchema>
  * Schema for retrieving samples
  * Defines an array of sample names as strings
  */
-export const getSamplesSchema = z.array(z.string())
+export const getSamplesSchema = z.array(z.string());
 
 /**
  * Type from {@link getSamplesSchema}
@@ -131,3 +131,34 @@ export const getSampleSchema = z.string()
  * Type from {@link getSampleSchema}
  */
 export type getSampleData = z.infer<typeof getSampleSchema>
+
+/**
+ * Schema for a single sample
+ * Defines the structure for a sample
+ */
+export const SampleSchema = z.object({
+  sampleId: z.string(),
+  name: z.string(),
+  assetPath: z.string(),
+  rating: z.number()
+});
+
+/**
+ * Type from {@link SampleSchema}
+ * Represents a single sample
+ */
+export type SampleData = z.infer<typeof SampleSchema>;
+
+/**
+ * Schema for a list of samples
+ * Defines an array of samples
+ */
+export const SamplesListSchema = z.object({
+  samples: z.array(SampleSchema)
+});
+
+/**
+ * Type from {@link SamplesListSchema}
+ * Represents a list of samples
+ */
+export type SamplesListData = z.infer<typeof SamplesListSchema>;

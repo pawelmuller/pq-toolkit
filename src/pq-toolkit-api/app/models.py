@@ -19,6 +19,11 @@ class Sample(SQLModel, table=True):
     id: int | None = Field(default=None, primary_key=True)
     title: str = Field(index=True)
     file_path: str
+    ratings: list["Rating"] = Relationship(back_populates="sample")
+
+    class Config:
+        arbitrary_types_allowed = True
+
 
 
 class Experiment(SQLModel, table=True):
@@ -52,3 +57,13 @@ class ExperimentTestResult(SQLModel, table=True):
     experiment_use: str
 
     test: Test = Relationship(back_populates="experiment_test_results")
+
+
+class Rating(SQLModel, table=True):
+    id: int | None = Field(default=None, primary_key=True)
+    sample_id: int = Field(foreign_key="sample.id")
+    rating: float
+    sample: Sample = Relationship(back_populates="ratings")
+
+    class Config:
+        arbitrary_types_allowed = True

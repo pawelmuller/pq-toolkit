@@ -1,0 +1,122 @@
+{
+  "uid": "1234-5678-1234-1234",
+  "name": "Test 1",
+  "description": "Example experiment configuration 1Example experiment configuration 1Example experiment configuration 1Example experiment configuration 1Example experiment configuration 1Example experiment configuration 1Example experiment configuration 1",
+  "endText": "This is custom end textThis is custom end textThis is custom end textThis is custom end textThis is custom end textThis is custom end textThis is custom end textThis is custom end textThis is custom end textThis is custom end textThis is custom end textThis is custom end textThis is custom end textThis is custom end text",
+  "tests": [
+    {
+      "testNumber": 1,
+      "type": "AB",
+      "samples": [
+        {
+          "sampleId": "file-sample-5.mp3",
+          "assetPath": "file-sample-5.mp3"
+        },
+        {
+          "sampleId": "file-sample-700.mp3",
+          "assetPath": "file-sample-700.mp3"
+        }
+      ],
+      "questions": [
+        {
+          "questionId": "Select better quality",
+          "text": "Select better quality"
+        },
+        {
+          "questionId": "Select more warmth",
+          "text": "Select more warmth"
+        }
+      ]
+    },
+    {
+      "testNumber": 2,
+      "type": "ABX",
+      "samples": [
+        {
+          "sampleId": "sample-12s.mp3",
+          "assetPath": "sample-12s.mp3"
+        },
+        {
+          "sampleId": "sample-15s.mp3",
+          "assetPath": "sample-15s.mp3"
+        }
+      ]
+    },
+    {
+      "testNumber": 3,
+      "type": "ABX",
+      "samples": [
+        {
+          "sampleId": "file-sample-5.mp3",
+          "assetPath": "file-sample-5.mp3"
+        },
+        {
+          "sampleId": "file-sample-700.mp3",
+          "assetPath": "file-sample-700.mp3"
+        }
+      ],
+      "questions": [
+        {
+          "questionId": "Select better quality",
+          "text": "Select better quality"
+        },
+        {
+          "questionId": "Select more warmth",
+          "text": "Select more warmth"
+        }
+      ]
+    },
+    {
+      "testNumber": 4,
+      "type": "APE",
+      "samples": [
+        {
+          "sampleId": "file-sample-5.mp3",
+          "assetPath": "file-sample-5.mp3"
+        },
+        {
+          "sampleId": "sample-12s.mp3",
+          "assetPath": "sample-12s.mp3"
+        },
+        {
+          "sampleId": "sample-15s.mp3",
+          "assetPath": "sample-15s.mp3"
+        }
+      ],
+      "axis": [
+        {
+          "questionId": "Quality",
+          "text": "Quality"
+        },
+        {
+          "questionId": "Depth",
+          "text": "Depth"
+        }
+      ]
+    },
+    {
+      "testNumber": 5,
+      "type": "MUSHRA",
+      "reference": {
+        "sampleId": "ref",
+        "assetPath": "file-sample-5.mp3"
+      },
+      "anchors": [
+        {
+          "sampleId": "file-sample-700.mp3",
+          "assetPath": "file-sample-700.mp3"
+        }
+      ],
+      "samples": [
+        {
+          "sampleId": "sample-12s.mp3",
+          "assetPath": "sample-12s.mp3"
+        },
+        {
+          "sampleId": "sample-15s.mp3",
+          "assetPath": "sample-15s.mp3"
+        }
+      ]
+    }
+  ]
+}

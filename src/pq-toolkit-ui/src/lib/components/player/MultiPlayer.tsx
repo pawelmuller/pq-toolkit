@@ -1,28 +1,12 @@
-'use client'
+'use client';
 
-import {
-  type Dispatch,
-  type SetStateAction,
-  useEffect,
-  useRef,
-  useState
-} from 'react'
-import { Howl } from 'howler'
-import {
-  IconButton,
-  Slider,
-  Typography,
-  Box,
-  Button,
-  Table,
-  TableBody,
-  TableCell,
-  TableRow
-} from '@mui/material'
-import PlayArrowIcon from '@mui/icons-material/PlayArrow'
-import PauseIcon from '@mui/icons-material/Pause'
-import { formatTime } from './utils/playerUtils'
-import { max } from '@floating-ui/utils'
+import {type Dispatch, type SetStateAction, useEffect, useRef, useState} from 'react';
+import { Howl } from 'howler';
+import {IconButton, Slider, Typography, Box, Button, Table, TableBody, TableCell, TableRow} from '@mui/material';
+import PlayArrowIcon from '@mui/icons-material/PlayArrow';
+import PauseIcon from '@mui/icons-material/Pause';
+import { formatTime } from './utils/playerUtils';
+import { max } from '@floating-ui/utils';
 
 const MultiPlayer = ({
   assets,
@@ -39,97 +23,92 @@ const MultiPlayer = ({
           volume: 0.0,
           preload: true,
           onend: () => {
-            setStatus('stopped')
+            setStatus('stopped');
           }
         })
     )
-  )
+  );
 
-  const getPlayerLength = (player: Howl): number => player.duration() ?? 0
+  const getPlayerLength = (player: Howl): number => player.duration() ?? 0;
 
-  const [selectedPlayer, setSelectedPlayer] = selectedPlayerState
+  const [selectedPlayer, setSelectedPlayer] = selectedPlayerState;
 
   useEffect(() => {
     playersRef.current.forEach((player, idx) => {
       if (idx === selectedPlayer) {
-        player.volume(0.5)
+        player.volume(0.5);
       } else {
-        player.volume(0.0)
+        player.volume(0.0);
       }
-    })
-    setProgress(0)
-  }, [selectedPlayer])
+    });
+    setProgress(0);
+  }, [selectedPlayer]);
 
-  const [progress, setProgress] = useState(0)
-  const length = Math.round(
-    Math.min(...playersRef.current.map(getPlayerLength))
-  )
-  const [status, setStatus] = useState<'stopped' | 'playing' | 'paused'>(
-    'stopped'
-  )
-  const progressUpdater: React.MutableRefObject<NodeJS.Timeout | null> =
-    useRef(null)
+  const [progress, setProgress] = useState(0);
+  const length = Math.round(Math.min(...playersRef.current.map(getPlayerLength)));
+  const [status, setStatus] = useState<'stopped' | 'playing' | 'paused'>('stopped');
+  const progressUpdater: React.MutableRefObject<NodeJS.Timeout | null> = useRef(null);
 
-  const allFooterLevels: number[] = []
-  assets.forEach((item) => allFooterLevels.push(item.footers?.length ?? 0))
-  const footerLevels: number = max(...allFooterLevels)
+  const allFooterLevels: number[] = [];
+  assets.forEach((item) => allFooterLevels.push(item.footers?.length ?? 0));
+  const footerLevels: number = max(...allFooterLevels);
 
   const startUpdating = (): void => {
     if (progressUpdater.current == null) {
       progressUpdater.current = setInterval(() => {
-        setProgress(Math.round(playersRef.current[0].seek() ?? 0))
-      }, 100)
+        setProgress(Math.round(playersRef.current[0].seek() ?? 0));
+      }, 100);
     }
-  }
+  };
   const stopUpdating = (): void => {
     if (progressUpdater.current != null) {
-      clearInterval(progressUpdater.current)
-      progressUpdater.current = null
+      clearInterval(progressUpdater.current);
+      progressUpdater.current = null;
     }
-  }
+  };
 
   const seekAllPlayers = (time: number): void => {
-    playersRef.current.forEach((player) => player.seek(time))
-  }
+    playersRef.current.forEach((player) => player.seek(time));
+  };
 
   useEffect(() => {
-    const allPlayers = playersRef.current
+    const allPlayers = playersRef.current;
     switch (status) {
       case 'playing':
-        allPlayers.forEach((player) => player.seek(progress))
-        allPlayers.forEach((player) => player.play())
-        startUpdating()
-        break
+        allPlayers.forEach((player) => player.seek(progress));
+        allPlayers.forEach((player) => player.play());
+        startUpdating();
+        break;
       case 'paused':
-        allPlayers.forEach((player) => player.pause())
-        stopUpdating()
-        break
+        allPlayers.forEach((player) => player.pause());
+        stopUpdating();
+        break;
       case 'stopped':
-        allPlayers.forEach((player) => player.stop())
-        stopUpdating()
-        setProgress(0)
-        break
+        allPlayers.forEach((player) => player.stop());
+        stopUpdating();
+        setProgress(0);
+        break;
     }
 
     return () => {
-      allPlayers.forEach((player) => player.stop())
-      stopUpdating()
-    }
-  }, [status])
+      allPlayers.forEach((player) => player.stop());
+      stopUpdating();
+    };
+  }, [status]);
 
   const togglePlayPause = (): void => {
     if (status === 'playing') {
-      setStatus('paused')
+      setStatus('paused');
     } else {
-      setStatus('playing')
+      setStatus('playing');
     }
-  }
+  };
 
   const handleSampleSelect = (index: number): void => {
-    setSelectedPlayer(index)
-    setStatus('stopped')
-    setProgress(0)
-  }
+    setSelectedPlayer(index);
+    setStatus('stopped');
+    setProgress(0);
+  };
 
   return (
     <Box
@@ -144,8 +123,8 @@ const MultiPlayer = ({
         max={length}
         value={progress}
         onChange={(e, value) => {
-          seekAllPlayers(value as number)
-          setProgress(value as number)
+          seekAllPlayers(value as number);
+          setProgress(value as number);
         }}
         sx={{ width: '100%', color: '#3b82f6' }}
         data-testid="progress-slider"
@@ -183,7 +162,7 @@ const MultiPlayer = ({
                 <Button
                   key={`asset-selector-${index}`}
                   onClick={() => {
-                    handleSampleSelect(index)
+                    handleSampleSelect(index);
                   }}
                   variant="contained"
                   sx={{
@@ -206,19 +185,19 @@ const MultiPlayer = ({
               {Array.from(assets.keys()).map((name) => {
                 const footer: JSX.Element | undefined = assets
                   .get(name)
-                  ?.footers?.at(idx)
+                  ?.footers?.at(idx);
                 return (
                   <TableCell key={name} className="h-1">
                     {footer}
                   </TableCell>
-                )
+                );
               })}
             </TableRow>
           ))}
         </TableBody>
       </Table>
     </Box>
-  )
-}
+  );
+};
 
-export default MultiPlayer
+export default MultiPlayer;
